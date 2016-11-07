@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form i18nBaseUri="preside-objects.saml2_consumer:">
+	<tab id="default" sortorder="10">
+		<fieldset id="default" sortorder="10">
+			<field binding="saml2_consumer.name"             sortorder="10" control="textinput" />
+			<field binding="saml2_consumer.metadata"         sortorder="20" control="textarea" />
+			<field binding="saml2_consumer.login_message"    sortorder="30" />
+		</fieldset>
+	</tab>
+	<tab id="access" sortorder="20">
+		<fieldset id="access" sortorder="10">
+			<field binding="saml2_consumer.access_condition"      sortorder="10" control="conditionPicker" ruleContext="user" quickadd="true" quickedit="true" />
+			<field binding="saml2_consumer.access_denied_message" sortorder="20" />
+		</fieldset>
+	</tab>
+</form>
