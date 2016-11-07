@@ -13,7 +13,7 @@ component {
 		var samlXml    = ToString( ToBinary( postParams.SAMLRequest ?: "" ) )
 
 		return {
-			  samlRequest = new samlIdProvider.core.SamlRequest( samlXml )
+			  samlRequest = new SamlRequest( samlXml )
 			, relayState  = postParams.relayState ?: ""
 			, samlXml     = samlXml
 		};

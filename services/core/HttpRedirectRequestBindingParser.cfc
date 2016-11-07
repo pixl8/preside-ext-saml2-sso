@@ -12,7 +12,7 @@ component {
 		var samlXml = _decode( url.samlRequest );
 
 		return {
-			  samlRequest = new samlIdProvider.core.SamlRequest( samlXml )
+			  samlRequest = new SamlRequest( samlXml )
 			, relayState  = url.relayState ?: ""
 			, samlXml     = samlXml
 		};
