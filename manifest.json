@@ -1,0 +1,7 @@
+{
+	  "id"        : "preside-ext-saml2-sso"
+	, "title"     : "SAML2 Single Sign On for Preside"
+	, "author"    : "Pixl8 Interactive"
+	, "version"   : "1.0.0"
+	, "changelog" : ""
+}
