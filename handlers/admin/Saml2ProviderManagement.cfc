@@ -74,4 +74,49 @@ component extends="preside.system.base.AdminHandler" {
 		);
 	}
 
+	public void function editConsumer( event, rc, prc ) {
+		if ( !hasCmsPermission( "saml2.provider.manage" ) ) {
+			event.adminAccessDenied();
+		}
+
+		var consumerId = rc.id ?: "";
+
+		prc.consumer = consumerDao.selectData( id=consumerId );
+		if ( !prc.consumer.recordCount ) {
+			event.notFound();
+		}
+
+		prc.consumer = QueryRowToStruct( prc.consumer );
+
+		prc.pageTitle    = translateResource( uri="saml2:provider.editConsumer.page.title", data=[ prc.consumer.name ] );
+		prc.pageSubTitle = translateResource( uri="saml2:provider.editConsumer.page.subtitle", data=[ prc.consumer.name ] );
+
+		event.addAdminBreadCrumb(
+			  title = translateResource( uri="saml2:provider.editConsumer.breadcrumb.title", data=[ prc.consumer.name ] )
+			, link  = event.buildAdminLink( linkto="saml2ProviderManagement.editConsumer", queryString="id=" & consumerId )
+		);
+	}
+
+	public void function editConsumerAction( event, rc, prc ) {
+		if ( !hasCmsPermission( "saml2.provider.manage" ) ) {
+			event.adminAccessDenied();
+		}
+
+		runEvent(
+			  event          = "admin.DataManager._editRecordAction"
+			, private        = true
+			, prePostExempt  = true
+			, eventArguments = {
+				  object            = "saml2_consumer"
+				, errorUrl          = event.buildAdminLink( linkto="saml2ProviderManagement.editConsumer", querystring="id=" & ( rc.id ?: "" )  )
+				, successUrl        = event.buildAdminLink( linkto="saml2ProviderManagement" )
+				, redirectOnSuccess = true
+				, audit             = true
+				, auditType         = "saml2providerconsumer"
+				, auditAction       = "edit_consumer"
+			}
+		);
+
+	}
+
 }
