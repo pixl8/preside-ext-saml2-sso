@@ -1,0 +1,8 @@
+{
+    "name":"samltests",
+    "web":{
+        "http":{
+            "port":"9009"
+        }
+    }
+}

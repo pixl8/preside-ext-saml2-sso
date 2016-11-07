@@ -21,7 +21,12 @@
         "test.sh"
     ],
     "devDependencies":{
+        
     },
     "installPaths":{
+        "testbox":"tests/testbox"
+    },
+    "dependencies":{
+        "testbox":"^2.3.0+00044"
     }
 }
