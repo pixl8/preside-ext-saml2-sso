@@ -10,6 +10,8 @@ component {
 			  provider = [ "navigate", "manage", "deleteConsumer" ]
 			, consumer = [ "navigate", "manage" ]
 		};
+		settings.adminRoles.sysadmin.append( "saml2.*" );
+		settings.adminRoles.sysadmin.append( "!saml2.provider.deleteConsumer" );
 
 		settings.adminSideBarItems.insertAt( settings.adminSideBarItems.findNoCase( "websiteUserManager" )+1, "saml2" );
 
