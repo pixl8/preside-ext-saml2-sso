@@ -12,5 +12,7 @@ component {
 		};
 
 		settings.adminSideBarItems.insertAt( settings.adminSideBarItems.findNoCase( "websiteUserManager" )+1, "saml2" );
+
+		settings.validationProviders.append( "samlMetaDataValidator" );
 	}
 }

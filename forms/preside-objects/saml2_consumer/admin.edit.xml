@@ -3,7 +3,9 @@
 	<tab id="default" sortorder="10">
 		<fieldset id="default" sortorder="10">
 			<field binding="saml2_consumer.name"             sortorder="10" control="textinput" />
-			<field binding="saml2_consumer.metadata"         sortorder="20" control="textarea" />
+			<field binding="saml2_consumer.metadata"         sortorder="20" control="textarea">
+				<rule validator="samlMetadata" />
+			</field>
 			<field binding="saml2_consumer.login_message"    sortorder="30" />
 		</fieldset>
 	</tab>
