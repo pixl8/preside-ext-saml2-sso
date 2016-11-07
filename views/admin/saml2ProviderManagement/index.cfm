@@ -9,7 +9,7 @@
 			#renderView( view="/admin/datamanager/_objectDataTable", args={
 				  objectName      = "saml2_consumer"
 				, useMultiActions = false
-				// , datasourceUrl   = event.buildAdminLink( linkTo="ajaxProxy", queryString="action=websiteBenefitsManager.getBenefitsForAjaxDataTables" )
+				, datasourceUrl   = event.buildAdminLink( linkTo="saml2ProviderManagement.getConsumersForAjaxDataTables" )
 				, gridFields      = [ "name" ]
 			} )#
 		<cfelse>

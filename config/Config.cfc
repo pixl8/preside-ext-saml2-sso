@@ -7,7 +7,7 @@ component {
 		settings.features.samlSsoConsumer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 
 		settings.adminPermissions.saml2 = {
-			  provider = [ "navigate", "manage" ]
+			  provider = [ "navigate", "manage", "deleteConsumer" ]
 			, consumer = [ "navigate", "manage" ]
 		};
 

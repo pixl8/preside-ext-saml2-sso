@@ -16,7 +16,6 @@ component extends="preside.system.base.AdminHandler" {
 		);
 	}
 
-
 	public void function index( event, rc, prc ) {
 		prc.pageTitle    = translateResource( "saml2:provider.page.title" );
 		prc.pageSubTitle = translateResource( "saml2:provider.page.subtitle" );
@@ -24,6 +23,19 @@ component extends="preside.system.base.AdminHandler" {
 		prc.consumersExist  = consumerDao.dataExists();
 		prc.canAdd          = hasCmsPermission( "saml2.provider.manage" )
 		prc.addConsumerLink = prc.canAdd ? event.buildAdminLink( "saml2ProviderManagement.addConsumer" ) : "";
+	}
+
+	public void function getConsumersForAjaxDataTables( event, rc, prc ) {
+		runEvent(
+			  event          = "admin.DataManager._getObjectRecordsForAjaxDataTables"
+			, prePostExempt  = true
+			, private        = true
+			, eventArguments = {
+				  object      = "saml2_consumer"
+				, gridFields  = "name"
+				, actionsView = "/admin/saml2ProviderManagement/_consumerGridActions"
+			}
+		);
 	}
 
 	public void function addConsumer( event, rc, prc ) {
