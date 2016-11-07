@@ -119,4 +119,24 @@ component extends="preside.system.base.AdminHandler" {
 
 	}
 
+	function deleteConsumerAction( event, rc, prc ) {
+		if( !hasCmsPermission( "saml2.provider.deleteConsumer" ) ) {
+			event.adminAccessDenied();
+		}
+
+		runEvent(
+			  event          = "admin.DataManager._deleteRecordAction"
+			, private        = true
+			, prePostExempt  = true
+			, eventArguments = {
+				  object      = "saml2_consumer"
+				, postAction  = "saml2ProviderManagement"
+				, audit       = true
+				, auditType   = "saml2providerconsumer"
+				, auditAction = "edit_consumer"
+			}
+		);
+	}
+
+
 }
