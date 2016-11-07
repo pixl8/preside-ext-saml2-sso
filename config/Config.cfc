@@ -10,5 +10,7 @@ component {
 			  provider = [ "navigate", "manage" ]
 			, consumer = [ "navigate", "manage" ]
 		};
+
+		settings.adminSideBarItems.insertAt( settings.adminSideBarItems.findNoCase( "websiteUserManager" )+1, "saml2" );
 	}
 }
