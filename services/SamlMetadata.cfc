@@ -1,4 +1,4 @@
-component extends="samlIdProvider.util.AbstractSamlObject" {
+component extends="AbstractSamlObject" {
 
 // PUBLIC API METHODS
 	public struct function getMemento() {

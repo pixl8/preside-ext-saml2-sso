@@ -1,5 +1,5 @@
 
-component extends="samlIdProvider.util.AbstractSamlObject" {
+component extends="AbstractSamlObject" {
 
 	public struct function getMemento() {
 		var memento = {

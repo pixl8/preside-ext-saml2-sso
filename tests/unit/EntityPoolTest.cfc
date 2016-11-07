@@ -45,7 +45,7 @@ component extends="testbox.system.BaseSpec" {
 	}
 
 	private any function _getPool() {
-		return new samlIdProvider.core.EntityPool( metadataDir="/tests/resources/entityPool/" );
+		return new samlIdProvider.SamlEntityPool( metadataDir="/tests/resources/entityPool/" );
 	}
 
 }

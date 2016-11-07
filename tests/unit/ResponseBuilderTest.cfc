@@ -20,7 +20,7 @@ component extends="testbox.system.BaseSpec" {
 
 				expect( IsXml( response ) ).toBeTrue();
 
-				var openSamlObjectRepresentingResponse = new samlIdProvider.util.OpenSamlUtils().xmlToOpenSamlObject( response );
+				var openSamlObjectRepresentingResponse = new samlIdProvider.OpenSamlUtils().xmlToOpenSamlObject( response );
 				try {
 					openSamlObjectRepresentingResponse.validate( true );
 				} catch ( any e ) {
@@ -49,10 +49,10 @@ component extends="testbox.system.BaseSpec" {
 	}
 
 	private any function _getBuilder() {
-		var testKeyStore = new samlIdProvider.util.KeyStore( ExpandPath( "/tests/resources/keystore/teststore" ), "teststorepass" );
-		var xmlSigner    = new samlIdProvider.util.XmlSigner( testKeyStore );
+		var testKeyStore = new samlIdProvider.SamlKeyStore( ExpandPath( "/tests/resources/keystore/teststore" ), "teststorepass" );
+		var xmlSigner    = new samlIdProvider.SamlXmlSigner( testKeyStore );
 
-		return getMockBox().createMock( object = new samlIdProvider.core.ResponseBuilder( xmlSigner=xmlSigner ) );
+		return getMockBox().createMock( object = new samlIdProvider.SamlResponseBuilder( xmlSigner=xmlSigner ) );
 	}
 
 }

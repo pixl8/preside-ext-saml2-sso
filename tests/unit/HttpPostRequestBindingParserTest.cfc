@@ -11,7 +11,7 @@ component extends="testbox.system.BaseSpec" {
 
 				var result = parser.parse();
 
-				expect( result.samlRequest ?: "" ).toBeInstanceOf( "samlIdProvider.core.SamlRequest" );
+				expect( result.samlRequest ?: "" ).toBeInstanceOf( "samlIdProvider.SamlRequest" );
 				expect( result.samlRequest.getId() ).toBe( "_bec424fa5103428909a30ff1e31168327f79474984" );
 			} );
 
@@ -58,7 +58,7 @@ component extends="testbox.system.BaseSpec" {
 	}
 
 	private any function _getParser() {
-		return getMockBox().createMock( object=new samlIdProvider.core.HttpPostRequestBindingParser() );
+		return getMockBox().createMock( object=new samlIdProvider.HttpPostRequestBindingParser() );
 	}
 
 }
