@@ -1,6 +1,8 @@
 component extends="preside.system.base.AdminHandler" {
 
-	property name="consumerDao" inject="presidecms:object:saml2_consumer";
+	property name="consumerDao"                inject="presidecms:object:saml2_consumer";
+	property name="systemConfigurationService" inject="systemConfigurationService";
+	property name="messageBox"                 inject="coldbox:plugin:messageBox";
 
 	public void function preHandler( event ) {
 		super.preHandler( argumentCollection=arguments );
@@ -119,7 +121,7 @@ component extends="preside.system.base.AdminHandler" {
 
 	}
 
-	function deleteConsumerAction( event, rc, prc ) {
+	public void function deleteConsumerAction( event, rc, prc ) {
 		if( !hasCmsPermission( "saml2.provider.deleteConsumer" ) ) {
 			event.adminAccessDenied();
 		}
@@ -138,5 +140,54 @@ component extends="preside.system.base.AdminHandler" {
 		);
 	}
 
+	public void function settings( event, rc, prc ) {
+		if( !hasCmsPermission( "saml2.provider.manage" ) ) {
+			event.adminAccessDenied();
+		}
 
+		prc.configuration = systemConfigurationService.getCategorySettings( "saml2Provider" );
+
+		prc.pageTitle    = translateResource( uri="saml2:provider.settings.page.title"    );
+		prc.pageSubTitle = translateResource( uri="saml2:provider.settings.page.subtitle" );
+
+		event.addAdminBreadCrumb(
+			  title = translateResource( uri="saml2:provider.settings.breadcrumb.title" )
+			, link  = event.buildAdminLink( linkto="saml2ProviderManagement.settings" )
+		);
+	}
+
+	public void function saveSettingsAction( event, rc, prc ) {
+		if( !hasCmsPermission( "saml2.provider.manage" ) ) {
+			event.adminAccessDenied();
+		}
+
+		var formName         = "saml2.provider.settings";
+		var formData         = event.getCollectionForForm( formName );
+		var validationResult = validateForm( formName, formData );
+
+		if ( !validationResult.validated() ) {
+			messageBox.error( translateResource( uri="saml2:provider.settings.error" ) );
+			formData.validationResult = validationResult;
+			setNextEvent( url=event.buildAdminLink( linkTo="saml2ProviderManagement.settings" ), persistStruct=formData );
+
+		}
+
+		for( var setting in formData ){
+			systemConfigurationService.saveSetting(
+				  category = "saml2Provider"
+				, setting  = setting
+				, value    = formData[ setting ]
+			);
+		}
+
+		event.audit(
+			  action = "saml2provider"
+			, type   = "save_settings"
+			, detail = formData
+		);
+		messageBox.info( translateResource( uri="saml2:provider.settings.saved" ) );
+
+		setNextEvent( url=event.buildAdminLink( linkTo="saml2ProviderManagement" ) );
+
+	}
 }
