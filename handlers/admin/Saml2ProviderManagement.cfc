@@ -40,4 +40,26 @@ component extends="preside.system.base.AdminHandler" {
 		);
 	}
 
+	public void function addConsumerAction( event, rc, prc ) {
+		if ( !hasCmsPermission( "saml2.provider.manage" ) ) {
+			event.adminAccessDenied();
+		}
+
+		runEvent(
+			  event          = "admin.DataManager._addRecordAction"
+			, prePostExempt  = true
+			, private        = true
+			, eventArguments = {
+				  object            = "saml2_consumer"
+				, errorAction       = "saml2ProviderManagement.addConsumer"
+				, viewRecordAction  = "saml2ProviderManagement.editConsumer"
+				, successAction     = "saml2ProviderManagement"
+				, redirectOnSuccess = true
+				, audit             = true
+				, auditType         = "saml2providerconsumer"
+				, auditAction       = "add_consumer"
+			}
+		);
+	}
+
 }

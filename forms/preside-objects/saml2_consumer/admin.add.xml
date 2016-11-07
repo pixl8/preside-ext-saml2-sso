@@ -7,7 +7,7 @@
 			<field binding="saml2_consumer.login_message"    sortorder="30" />
 		</fieldset>
 	</tab>
-	<tab id="access" sortorder="20">
+	<tab id="access" sortorder="20" feature="rulesengine">
 		<fieldset id="access" sortorder="10">
 			<field binding="saml2_consumer.access_condition"      sortorder="10" control="conditionPicker" ruleContext="user" quickadd="true" quickedit="true" />
 			<field binding="saml2_consumer.access_denied_message" sortorder="20" />
