@@ -1,0 +1,36 @@
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="${orgurl}">
+    <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:KeyDescriptor use="signing">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>
+${x509}
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+
+        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="${ssolocation}" />
+
+${attribs}
+    </md:IDPSSODescriptor>
+
+    <md:Organization>
+        <md:OrganizationName xml:lang="en">
+            ${orgshortname}
+        </md:OrganizationName>
+        <md:OrganizationDisplayName xml:lang="en">
+            ${orgfullname}
+        </md:OrganizationDisplayName>
+        <md:OrganizationURL xml:lang="en">
+            ${orgurl}
+        </md:OrganizationURL>
+    </md:Organization>
+    <md:ContactPerson contactType="technical">
+        <md:SurName>${supportcontact}</md:SurName>
+        <md:EmailAddress>mailto:${supportemail}</md:EmailAddress>
+    </md:ContactPerson>
+</md:EntityDescriptor>

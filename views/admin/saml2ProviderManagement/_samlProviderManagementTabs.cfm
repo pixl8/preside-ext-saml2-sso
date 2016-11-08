@@ -12,18 +12,18 @@
 		, link   = ( args.tab == "consumers" ) ? "" : event.buildAdminLink( linkTo="saml2ProviderManagement" )
 	});
 	tabs.append({
-		  id     = "meta"
-		, icon   = "fa-code blue"
-		, title  = translateResource( "saml2:provider.tabs.meta" )
-		, active = ( args.tab == "meta" )
-		, link   = ( args.tab == "meta" ) ? "" : event.buildAdminLink( linkTo="saml2ProviderManagement.previewMetadata" )
-	});
-	tabs.append({
 		  id     = "settings"
 		, icon   = "fa-cogs grey"
 		, title  = translateResource( "saml2:provider.tabs.settings" )
 		, active = ( args.tab == "settings" )
 		, link   = ( args.tab == "settings" ) ? "" : event.buildAdminLink( linkTo="saml2ProviderManagement.settings" )
+	});
+	tabs.append({
+		  id     = "meta"
+		, icon   = "fa-code blue"
+		, title  = translateResource( "saml2:provider.tabs.meta" )
+		, active = ( args.tab == "meta" )
+		, link   = ( args.tab == "meta" ) ? "" : event.buildAdminLink( linkTo="saml2ProviderManagement.previewMetadata" )
 	});
 </cfscript>
 

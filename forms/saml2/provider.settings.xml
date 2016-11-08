@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form i18nBaseUri="saml2:provider.settingsform.">
 	<tab id="default" sortorder="10">
-		<fieldset id="organisation" sortorder="10">
+		<fieldset id="endpoint" sortorder="10">
+			<field name="sso_endpoint_root" sortorder="10" control="textinput" required="true" />
+		</fieldset>
+		<fieldset id="organisation" sortorder="20">
 			<field name="organisation_short_name" sortorder="10" control="textinput" required="true" />
 			<field name="organisation_full_name"  sortorder="20" control="textinput" required="true" />
 			<field name="organisation_url"        sortorder="30" control="textinput" required="true" />
 		</fieldset>
-		<fieldset id="support" sortorder="20">
+		<fieldset id="support" sortorder="30">
 			<field name="support_person"          sortorder="10" control="textinput" required="true" />
 			<field name="support_email"           sortorder="20" control="textinput" required="true" />
 		</fieldset>

@@ -1,8 +1,9 @@
 component extends="preside.system.base.AdminHandler" {
 
-	property name="consumerDao"                inject="presidecms:object:saml2_consumer";
-	property name="systemConfigurationService" inject="systemConfigurationService";
-	property name="messageBox"                 inject="coldbox:plugin:messageBox";
+	property name="consumerDao"                   inject="presidecms:object:saml2_consumer";
+	property name="samlProviderMetadataGenerator" inject="samlProviderMetadataGenerator";
+	property name="systemConfigurationService"    inject="systemConfigurationService";
+	property name="messageBox"                    inject="coldbox:plugin:messageBox";
 
 	public void function preHandler( event ) {
 		super.preHandler( argumentCollection=arguments );
@@ -189,5 +190,24 @@ component extends="preside.system.base.AdminHandler" {
 
 		setNextEvent( url=event.buildAdminLink( linkTo="saml2ProviderManagement" ) );
 
+	}
+
+	public void function previewMetadata( event, rc, prc ) {
+		prc.metadata = samlProviderMetadataGenerator.generateMetadata();
+
+		prc.pageTitle    = translateResource( uri="saml2:provider.previewMetadata.page.title"    );
+		prc.pageSubTitle = translateResource( uri="saml2:provider.previewMetadata.page.subtitle" );
+
+		event.addAdminBreadCrumb(
+			  title = translateResource( uri="saml2:provider.previewMetadata.breadcrumb.title" )
+			, link  = event.buildAdminLink( linkto="saml2ProviderManagement.previewMetadata" )
+		);
+	}
+
+	public void function downloadMetadata( event, rc, prc ) {
+		var metadata = samlProviderMetadataGenerator.generateMetadata();
+
+		header name="Content-Disposition" value="attachment; filename=""IDPMetadata.xml""";
+		content reset=true type="application/xml";WriteOutput( metadata );abort;
 	}
 }
