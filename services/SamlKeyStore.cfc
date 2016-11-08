@@ -1,6 +1,11 @@
 component {
 
 // CONSTRUCTOR
+	/**
+	 * @keystoreFile.inject     coldbox:setting:saml2.keystore.filepath
+	 * @keystorePassword.inject coldbox:setting:saml2.keystore.password
+	 *
+	 */
 	public any function init( required string keystoreFile, required string keystorePassword ) {
 		_setKeystoreFile( arguments.keystoreFile );
 		_setKeystorePassword( arguments.keystorePassword );
