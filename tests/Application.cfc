@@ -1,9 +1,10 @@
 component {
 	this.name = "SAML Apis test suite";
 
-	this.mappings[ '/tests'          ] = ExpandPath( "/" );
-	this.mappings[ '/testbox'        ] = ExpandPath( "/tests/testbox" );
-	this.mappings[ '/samlIdProvider' ] = ExpandPath( "../services/" );
+	this.mappings[ '/tests'                                ] = ExpandPath( "/" );
+	this.mappings[ '/testbox'                              ] = ExpandPath( "/tests/testbox" );
+	this.mappings[ '/samlIdProvider'                       ] = ExpandPath( "../services/" );
+	this.mappings[ '/app/extensions/preside-ext-saml2-sso' ] = ExpandPath( "../" );
 
 	setting requesttimeout="6000";
 

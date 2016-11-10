@@ -109,7 +109,7 @@ component {
 	}
 
 	private string function _getResponseHeader( required date instant, required string issuer, required string id, required string inResponseTo, required string recipientUrl, string statusCode="urn:oasis:names:tc:SAML:2.0:status:Success", string statusMessage="", string subStatusCode="" ) {
-		var xml  = '<saml:Response IssueInstant="#_dateTimeFormat( arguments.instant )#" Version="2.0" ID="#arguments.id#" Destination="#arguments.recipientUrl#" InResponseTo="#arguments.inResponseTo#">';
+		var xml  = '<saml:Response IssueInstant="#_dateTimeFormat( arguments.instant )#" Version="2.0" ID="#arguments.id#" Destination="#arguments.recipientUrl#" InResponseTo="#arguments.inResponseTo#" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" >';
 			xml &= '<samlp:Status>';
 			xml &= '<samlp:StatusCode Value="#arguments.statusCode#">';
 			if ( Len( Trim( arguments.subStatusCode ) ) ) {
@@ -216,7 +216,7 @@ component {
 	}
 
 	private string function _createSamlId() {
-		return 'a' & LCase( CreateUUId() ).reReplace( "[^a-z0-9]", "", "all" ); // IDs must start with a letter!
+		return 'a' & LCase( CreateUUId() ).reReplace( "[^a-z0-9]", "", "all" ); // IDs must start with a letter
 	}
 
 // GETTERS AND SETTERS
