@@ -36,6 +36,13 @@ component {
 	}
 
 	private string function _decode( required string encoded ) {
+		try {
+			var decoded = ToString( ToBinary( arguments.encoded ) );
+			if ( IsXml( decoded ) ) {
+				return decoded;
+			}
+		} catch( any e ) {}
+
 		var Decoder        = CreateObject( "Java", "sun.misc.BASE64Decoder" ).init();
 		var SamlByte       = Decoder.decodeBuffer( arguments.encoded );
 		var ByteClass      = CreateObject( "Java", "java.lang.Byte" ).TYPE;

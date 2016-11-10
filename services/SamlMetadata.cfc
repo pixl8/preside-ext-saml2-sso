@@ -36,7 +36,7 @@ component extends="AbstractSamlObject" {
 			reqs.nameIdFormats.append( format.xmlText );
 		}
 
-		var assertionConsumer = XmlSearch( _getXmlObject(), "/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService[@isDefault='true']" );
+		var assertionConsumer = XmlSearch( _getXmlObject(), "/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService" );
 		if ( assertionConsumer.len() ) {
 			reqs.defaultAssertionConsumer = {
 				  index    = assertionConsumer[1].xmlAttributes.index    ?: 0

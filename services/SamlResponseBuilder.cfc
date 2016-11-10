@@ -1,3 +1,7 @@
+/**
+ * @singleton
+ *
+ */
 component {
 
 	variables._standardAttributes = {
@@ -10,8 +14,20 @@ component {
 	};
 
 // CONSTRUCTOR
-	public any function init( required any xmlSigner ) {
+	/**
+	 * @xmlSigner.inject samlXmlSigner
+	 * @certAlias.inject coldbox:setting:saml2.keystore.certAlias
+	 * @certPass.inject  coldbox:setting:saml2.keystore.certPassword
+	 *
+	 */
+	public any function init(
+		  required any    xmlSigner
+		,          string certAlias = ""
+		,          string certPass  = ""
+	) {
 		_setXmlSigner( arguments.xmlSigner );
+		_setCertAlias( arguments.certAlias );
+		_setCertPass( arguments.certPass );
 
 		return this;
 	}
@@ -27,12 +43,12 @@ component {
 		, required numeric sessionTimeout
 		, required string  sessionIndex
 		, required struct  attributes
-		, required string  signWithKeyName
-		, required string  signWithKeyPassword
+		,          string  signWithKeyName     = _getCertAlias()
+		,          string  signWithKeyPassword = _getCertPass()
 	) {
 		var nowish = getInstant();
 		var xml    = "";
-		var id     = LCase( CreateUUId() );
+		var id     = LCase( _createSamlId() );
 
 		xml  = _getAssertionHeader( instant=nowish, issuer=arguments.issuer, id=id );
 		xml &= _getSubject(
@@ -65,7 +81,7 @@ component {
 	) {
 		var nowish = getInstant();
 		var xml    = "";
-		var id     = LCase( CreateUUId() );
+		var id     = LCase( _createSamlId() );
 
 		xml  = _getXmlHeader() & _getResponseHeader(
 			  instant          = nowish
@@ -93,7 +109,7 @@ component {
 	}
 
 	private string function _getResponseHeader( required date instant, required string issuer, required string id, required string inResponseTo, required string recipientUrl, string statusCode="urn:oasis:names:tc:SAML:2.0:status:Success", string statusMessage="", string subStatusCode="" ) {
-		var xml  = '<saml:Response IssueInstant="#_dateTimeFormat( arguments.instant )#" Version="2.0" ID="#arguments.id#" Destination="#arguments.recipientUrl#" InResponseTo="#arguments.inResponseTo#" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" >';
+		var xml  = '<saml:Response IssueInstant="#_dateTimeFormat( arguments.instant )#" Version="2.0" ID="#arguments.id#" Destination="#arguments.recipientUrl#" InResponseTo="#arguments.inResponseTo#">';
 			xml &= '<samlp:Status>';
 			xml &= '<samlp:StatusCode Value="#arguments.statusCode#">';
 			if ( Len( Trim( arguments.subStatusCode ) ) ) {
@@ -124,7 +140,7 @@ component {
 	private string function _wrapAssertionInResponse( required string instant, required string inResponseTo, required string recipientUrl, required string issuer, required string assertion ) {
 		var formattedInstant = _dateTimeFormat( arguments.instant );
 		var xml  = _getXmlHeader();
-		    xml &= '<samlp:Response ID="#CreateUUId()#" InResponseTo="#arguments.inResponseTo#" Version="2.0" IssueInstant="#formattedInstant#" Destination="#arguments.recipientUrl#" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">';
+		    xml &= '<samlp:Response ID="#_createSamlId()#" InResponseTo="#arguments.inResponseTo#" Version="2.0" IssueInstant="#formattedInstant#" Destination="#arguments.recipientUrl#" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">';
 		    xml &= '<saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">#arguments.issuer#</saml:Issuer>';
 			xml &= '<samlp:Status xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">';
 			xml &= '<samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" />';
@@ -199,11 +215,29 @@ component {
 		return DateFormat( utc, "yyyy-mm-dd" ) & "T" & TimeFormat( utc, "HH:mm:ss" ) & "Z";
 	}
 
+	private string function _createSamlId() {
+		return 'a' & LCase( CreateUUId() ).reReplace( "[^a-z0-9]", "", "all" ); // IDs must start with a letter!
+	}
+
 // GETTERS AND SETTERS
 	private any function _getXmlSigner() {
 		return _xmlSigner;
 	}
 	private void function _setXmlSigner( required any xmlSigner ) {
 		_xmlSigner = arguments.xmlSigner;
+	}
+
+	private string function _getCertAlias() {
+		return _certAlias;
+	}
+	private void function _setCertAlias( required string certAlias ) {
+		_certAlias = arguments.certAlias;
+	}
+
+	private string function _getCertPass() {
+		return _certPass;
+	}
+	private void function _setCertPass( required string certPass ) {
+		_certPass = arguments.certPass;
 	}
 }

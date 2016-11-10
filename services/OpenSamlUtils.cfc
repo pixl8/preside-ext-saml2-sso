@@ -2,7 +2,7 @@ component {
 
 // CONSTRUCTOR
 	public any function init() {
-		_setLib( DirectoryList( ExpandPath( "/samlIdProvider/lib" ), false, "path", "*.jar" ) );
+		_setLib( DirectoryList( ExpandPath( "/app/extensions/preside-ext-saml2-sso/services/lib" ), false, "path", "*.jar" ) );
 
 		_bootstrapOpenSamlConfiguration();
 

@@ -1,6 +1,10 @@
 component {
 
 // CONSTRUCTOR
+	/**
+	 * @keyStore.inject samlKeyStore
+	 *
+	 */
 	public any function init( required any keyStore ) {
 		_setKeyStore( arguments.keyStore );
 		_setOpenSamlUtils( new OpenSamlUtils() );

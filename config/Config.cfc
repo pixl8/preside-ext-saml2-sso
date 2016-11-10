@@ -11,8 +11,9 @@ component {
 			, certAlias    = ( settings.injectedConfig.samlCertAlias        ?: "" )
 			, certPassword = ( settings.injectedConfig.samlCertPassword     ?: "" )
 		};
+		settings.saml2.authCheckHandler = "saml2.authenticationCheck";
 		settings.saml2.attributes = {};
-		settings.saml2.attributes.retrievalHandler = "saml2Provider.retrieveAttributes";
+		settings.saml2.attributes.retrievalHandler = "saml2.retrieveAttributes";
 		settings.saml2.attributes.supported = {
 			  email       = { friendlyName="Email"      , samlUrn="urn:oid:0.9.2342.19200300.100.1.3", samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" }
 			, displayName = { friendlyName="DisplayName", samlUrn="urn:oid:2.16.840.1.113730.3.1.241", samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" }
