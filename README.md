@@ -150,6 +150,9 @@ settings.saml2.keystore = {
 
 If you require a more secure approach (the above should be 'ok' in many SSO scenarios), you can override the core logic to supply keys to the system in any way you like.
 
-To do this, add your own `/services/SamlKeyStore.cfc` file that matches the method signatures of the same file within this extension. 
+To do this, add your own `/services/SamlKeyStore.cfc` file that supplies the following methods (that take no arguments):
 
+* `getPrivateKey()`, should return a `sun.security.provider.DSAPrivateKey` Java object
+* `getCert()`, should return a `sun.security.x509.X509CertImpl` Java object
+* `getFormattedX509Certificate()`, should return a formatted X509 Certificate string (formatted as you would expect it to appear in your application's metadata file)
 
