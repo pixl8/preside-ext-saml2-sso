@@ -16,18 +16,9 @@ component {
 // CONSTRUCTOR
 	/**
 	 * @xmlSigner.inject samlXmlSigner
-	 * @certAlias.inject coldbox:setting:saml2.keystore.certAlias
-	 * @certPass.inject  coldbox:setting:saml2.keystore.certPassword
-	 *
 	 */
-	public any function init(
-		  required any    xmlSigner
-		,          string certAlias = ""
-		,          string certPass  = ""
-	) {
+	public any function init( required any xmlSigner ) {
 		_setXmlSigner( arguments.xmlSigner );
-		_setCertAlias( arguments.certAlias );
-		_setCertPass( arguments.certPass );
 
 		return this;
 	}
@@ -43,8 +34,6 @@ component {
 		, required numeric sessionTimeout
 		, required string  sessionIndex
 		, required struct  attributes
-		,          string  signWithKeyName     = _getCertAlias()
-		,          string  signWithKeyPassword = _getCertPass()
 	) {
 		var nowish = getInstant();
 		var xml    = "";
@@ -63,7 +52,7 @@ component {
 		xml &= _getAttributesStatement( arguments.attributes );
 		xml &= _getAssertionFooter();
 
-		xml = _getXmlSigner().sign( xml, arguments.signWithKeyName, arguments.signWithKeyPassword );
+		xml = _getXmlSigner().sign( xml );
 		xml = Replace( xml, '<?xml version="1.0" encoding="UTF-8"?>', '' );
 
 		return _wrapAssertionInResponse( argumentCollection=arguments, assertion=xml, instant=nowish );
@@ -76,21 +65,19 @@ component {
 		, required string issuer
 		, required string inResponseTo
 		, required string recipientUrl
-		,          string signWithKeyName     = _getCertAlias()
-		,          string signWithKeyPassword = _getCertPass()
 	) {
 		var nowish = getInstant();
 		var xml    = "";
 		var id     = LCase( _createSamlId() );
 
 		xml  = _getXmlHeader() & _getResponseHeader(
-			  instant          = nowish
-			, issuer           = arguments.issuer
-			, id               = id
-			, inResponseTo     = arguments.inResponseTo
-			, recipientUrl     = arguments.recipientUrl
-			, statusCode       = arguments.statusCode
-			, statusMessage    = arguments.statusMessage
+			  instant       = nowish
+			, issuer        = arguments.issuer
+			, id            = id
+			, inResponseTo  = arguments.inResponseTo
+			, recipientUrl  = arguments.recipientUrl
+			, statusCode    = arguments.statusCode
+			, statusMessage = arguments.statusMessage
 			, subStatusCode = arguments.subStatusCode
 		);
 

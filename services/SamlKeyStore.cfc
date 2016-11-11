@@ -4,11 +4,19 @@ component {
 	/**
 	 * @keystoreFile.inject     coldbox:setting:saml2.keystore.filepath
 	 * @keystorePassword.inject coldbox:setting:saml2.keystore.password
-	 *
+	 * @certAlias.inject        coldbox:setting:saml2.keystore.certAlias
+	 * @certPassword.inject     coldbox:setting:saml2.keystore.certPassword
 	 */
-	public any function init( required string keystoreFile, required string keystorePassword ) {
+	public any function init(
+		  required string keystoreFile
+		, required string keystorePassword
+		, required string certAlias
+		, required string certPassword
+	) {
 		_setKeystoreFile( arguments.keystoreFile );
 		_setKeystorePassword( arguments.keystorePassword );
+		_setCertAlias( arguments.certAlias );
+		_setCertPassword( arguments.certPassword );
 
 		return this;
 	}
@@ -24,20 +32,16 @@ component {
 		return keystore;
 	}
 
-	public string function getPrivateKey( required string certificateAlias, required string keyPassword ) {
-		return getKeyStore().getKey( arguments.certificateAlias, arguments.keyPassword.toCharArray() );
+	public any function getPrivateKey() {
+		return getKeyStore().getKey( _getCertAlias(), _getCertPassword().toCharArray() );
 	}
 
-	public string function getCert( required string certificateAlias ) {
-		return getKeyStore().getCertificate( arguments.certificateAlias );
+	public any function getCert() {
+		return getKeyStore().getCertificate( _getCertAlias() );
 	}
 
-	public string function getPublicKey( required string certificateAlias ) {
-		return getCert( arguments.certificateAlias ).getPublicKey();
-	}
-
-	public string function getFormattedX509Certificate( required string certificateAlias ) {
-		var raw      = ToBase64( getCert( arguments.certificateAlias ).getEncoded() );
+	public string function getFormattedX509Certificate() {
+		var raw      = ToBase64( getCert( _getCertAlias() ).getEncoded() );
 		var x509cert = "-----BEGIN CERTIFICATE-----" & Chr( 10 );
 
 		for( var i=1; i <= raw.len(); i++ ) {
@@ -64,5 +68,19 @@ component {
 	}
 	private void function _setKeyStorePassword( required string keyStorePassword ) {
 		_keyStorePassword = arguments.keyStorePassword.toCharArray();
+	}
+
+	private any function _getCertAlias() {
+		return _certAlias;
+	}
+	private void function _setCertAlias( required any certAlias ) {
+		_certAlias = arguments.certAlias;
+	}
+
+	private string function _getCertPassword() {
+		return _certPassword;
+	}
+	private void function _setCertPassword( required string certPassword ) {
+		_certPassword = arguments.certPassword;
 	}
 }

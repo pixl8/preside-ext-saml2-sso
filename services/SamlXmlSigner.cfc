@@ -13,10 +13,10 @@ component {
 	}
 
 // PUBLIC API METHODS
-	public string function sign( required string xmlToSign, required string keyName, required string keyPassword ) {
+	public string function sign( required string xmlToSign ) {
 		var osUtils    = _getOpenSamlUtils();
 		var assertion  = osUtils.xmlToOpenSamlObject( arguments.xmlToSign );
-		var credential = _getOpenSamlCredentialFromKeyStore( arguments.keyName, arguments.keyPassword );
+		var credential = _getOpenSamlCredentialFromKeyStore();
 		var signature  = osUtils.createAndPrepareOpenSamlSignature( credential );
 
 		assertion.setSignature( signature );
@@ -32,12 +32,12 @@ component {
 		return CreateObject( "java", arguments.classPath, _getLib() );
 	}
 
-	private any function _getOpenSamlCredentialFromKeyStore( required string keyName, required string keyPassword ) {
+	private any function _getOpenSamlCredentialFromKeyStore() {
 		var keystore   = _getKeyStore();
 
 		return _getOpenSamlUtils().getOpenSamlCredential(
-			  privateKey  = keystore.getPrivateKey( arguments.keyName, arguments.keyPassword )
-			, certificate = keystore.getCert( arguments.keyName )
+			  privateKey  = keystore.getPrivateKey()
+			, certificate = keystore.getCert()
 		);
 	}
 

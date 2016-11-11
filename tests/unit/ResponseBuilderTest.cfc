@@ -14,8 +14,6 @@ component extends="testbox.system.BaseSpec" {
 					, sessionTimeout      = 30
 					, sessionIndex        = "C894146D-598F-4D9B-8733ACF80280C4B7"
 					, attributes          = { email = "test@test.com", displayName="Test user", firstName="Test", lastName="user" }
-					, signWithKeyName     = "testkey"
-					, signWithKeyPassword = "testkeypass"
 				);
 
 				expect( IsXml( response ) ).toBeTrue();
@@ -39,8 +37,6 @@ component extends="testbox.system.BaseSpec" {
 					, issuer              = "http://www.thewebsite.com/"
 					, inResponseTo        = "aaf23196-1773-2113-474a-fe114412ab72"
 					, recipientUrl        = "https://sp.example.com/SAML2/SSO/POST"
-					, signWithKeyName     = "testkey"
-					, signWithKeyPassword = "testkeypass"
 				);
 
 				expect( IsXml( response ) ).toBeTrue();
@@ -49,7 +45,7 @@ component extends="testbox.system.BaseSpec" {
 	}
 
 	private any function _getBuilder() {
-		var testKeyStore = new samlIdProvider.SamlKeyStore( ExpandPath( "/tests/resources/keystore/teststore" ), "teststorepass" );
+		var testKeyStore = new samlIdProvider.SamlKeyStore( ExpandPath( "/tests/resources/keystore/teststore" ), "teststorepass", "testkey", "testkeypass" );
 		var xmlSigner    = new samlIdProvider.SamlXmlSigner( testKeyStore );
 
 		return getMockBox().createMock( object = new samlIdProvider.SamlResponseBuilder( xmlSigner=xmlSigner ) );
