@@ -33,6 +33,50 @@ git submodule add https://github.com/pixl8/preside-ext-saml2-sso.git application
 
 ## Customization guide
 
+### Provide alternative response data attributes
+
+If you require non-default data attributes to be passed back to your external Service Provider applications, you can do so my registering your attributes in `Config.cfc` and providing an alternative handler for retrieving attributes for the currently logged in user. For example:
+
+```
+// Config.cfc
+// configure additional supported attribute:
+settings.saml2.attributes.supported.membershipNumber = {
+	  friendlyName="MembershipNumber"
+	, samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+};
+
+// configure alternative attribute retrieval handler
+settings.saml2.attributes.retrievalHandler = "mycustom.attribHandlerAction";
+```
+
+```
+// /handler/MyCustom.cfc
+...
+
+private struct function attribHandlerAction() {
+	var userDetails = membershipService.getMemberDetails( userId=getLoggedInUserId() );
+
+	return {
+		  email            = userDetails.email_address
+		, displayName      = userDetails.full_name
+		, firstName        = userDetails.first_name
+		, lastName         = userDetails.last_name
+		, memberShipNumber = userDetails.membership_number
+	};
+}
+...
+```
+
+### Provide alternative authentication logic
+
+The extension performs logic to authenticate user's that uses the built-in website user system to check login and to run any additional access conditions that are set against the particular third party Service Provider. To provide your own logic, specify an alternative coldbox handler in `Config.cfc`:
+
+```
+settings.saml2.authCheckHandler = "mycustom.authHandlerAction";
+```
+
+See `/handlers/Saml2.cfc$authenticationCheck()` for the default implementation.
+
 ### Customize your login page
 
 When logging into the system as a result of a Single-Sign-On request, users may be able to see a custom login message that has been entered specifically for the external Service Provider application. 
