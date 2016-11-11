@@ -86,10 +86,15 @@ component {
 			} );
 		}
 
-		var rulesEngineCondition = samlRequest.issueEntity.consumerRecord.access_condition ?: "";
+		if ( isFeatureEnabled( "rulesengine" ) ) {
+			var rulesEngineCondition = samlRequest.issuerEntity.consumerRecord.access_condition ?: "";
 
-		if ( Len( Trim( rulesEngineCondition ) ) && !rulesEngineWebRequestService.evaluateCondition( rulesEngineCondition ) ) {
-			WriteDump( 'TODO: access denied message' ); abort;
+			if ( Len( Trim( rulesEngineCondition ) ) && !rulesEngineWebRequestService.evaluateCondition( rulesEngineCondition ) ) {
+				event.accessDenied(
+					  reason              = "INSUFFICIENT_PRIVILEGES"
+					, accessDeniedMessage = ( samlRequest.issuerEntity.consumerRecord.access_denied_message ?: "" )
+				);
+			}
 		}
 
 		return;
