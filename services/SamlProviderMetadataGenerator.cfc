@@ -7,12 +7,18 @@ component {
 // CONSTRUCTOR
 	/**
 	 * @samlAttributesService.inject samlAttributesService
-	 * @x509CertPath.inject          coldbox:setting:saml2.keystore.x509Path
+	 * @samlKeyStore.inject          samlKeyStore
+	 * @certificateAlias.inject      coldbox:setting:saml2.keystore.certAlias
 	 *
 	 */
-	public any function init( required any samlAttributesService, required string x509CertPath ) {
+	public any function init(
+		  required any    samlAttributesService
+		, required any    samlKeyStore
+		, required string certificateAlias
+	) {
 		_setSamlAttributesService( arguments.samlAttributesService );
-		_setX509CertPath( arguments.x509CertPath );
+		_setCertificateAlias( arguments.certificateAlias );
+		_setSamlKeyStore( arguments.samlKeyStore );
 
 		return this;
 	}
@@ -36,8 +42,8 @@ component {
 
 // PRIVATE HELPERS
 	private string function _getX509Cert() {
+			return _getSamlKeyStore().getFormattedX509Certificate( _getCertificateAlias() );
 		try {
-			return Trim( FileRead( _getX509CertPath() ) );
 		} catch( any e ) {
 			return "=====ERROR READING X509 CERT. SEE SAML2 EXTENSION DOCUMENTATION FOR SETUP HELP=====";
 		}
@@ -69,11 +75,18 @@ component {
 		_samlAttributesService = arguments.samlAttributesService;
 	}
 
-	private string function _getX509CertPath() {
-		return _x509CertPath;
+	private any function _getSamlKeyStore() {
+		return _samlKeyStore;
 	}
-	private void function _setX509CertPath( required string x509CertPath ) {
-		_x509CertPath = arguments.x509CertPath;
+	private void function _setSamlKeyStore( required any samlKeyStore ) {
+		_samlKeyStore = arguments.samlKeyStore;
+	}
+
+	private string function _getCertificateAlias() {
+		return _certificateAlias;
+	}
+	private void function _setCertificateAlias( required string certificateAlias ) {
+		_certificateAlias = arguments.certificateAlias;
 	}
 
 

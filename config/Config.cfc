@@ -6,7 +6,6 @@ component {
 		settings.saml2 = {};
 		settings.saml2.keystore = {
 			  filepath     = ( settings.injectedConfig.samlKeyStoreFile     ?: ExpandPath( "/uploads/saml2/keystore" ) )
-			, x509Path     = ( settings.injectedConfig.samlX509CertPath     ?: ExpandPath( "/uploads/saml2/x509.cer" ) )
 			, password     = ( settings.injectedConfig.samlKeyStorePassword ?: "" )
 			, certAlias    = ( settings.injectedConfig.samlCertAlias        ?: "" )
 			, certPassword = ( settings.injectedConfig.samlCertPassword     ?: "" )

@@ -36,6 +36,20 @@ component {
 		return getCert( arguments.certificateAlias ).getPublicKey();
 	}
 
+	public string function getFormattedX509Certificate( required string certificateAlias ) {
+		var raw      = ToBase64( getCert( arguments.certificateAlias ).getEncoded() );
+		var x509cert = "-----BEGIN CERTIFICATE-----" & Chr( 10 );
+
+		for( var i=1; i <= raw.len(); i++ ) {
+			x509cert &= raw[i];
+			if ( !i mod 64 && i < raw.len() ) {
+				x509cert &= Chr( 10 );
+			}
+		}
+		x509cert &= Chr(10) & "-----END CERTIFICATE-----";
+
+		return x509cert;
+	}
 
 // GETTERS AND SETTERS
 	private string function _getKeystoreFile() {
