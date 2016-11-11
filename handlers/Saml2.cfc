@@ -18,8 +18,18 @@ component {
 		}
 
 		if ( totallyBadRequest ) {
-			// TODO: something more attractive
-			event.renderData( type="plain", data="400: Bad request", statusCode=400 );
+			event.setHTTPHeader( statusCode="400" );
+			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
+			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
+
+			rc.body = renderView(
+				  view          = "/page-types/samlSsoBadRequest/index"
+				, presideobject = "samlSsoBadRequest"
+				, id            = event.getCurrentPageId()
+				, args          = {}
+			);
+
+			event.setView( "/core/simpleBodyRenderer" );
 			return;
 		}
 
