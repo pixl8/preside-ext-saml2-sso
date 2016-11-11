@@ -32,16 +32,12 @@ component {
 		return keystore;
 	}
 
-	public string function getPrivateKey() {
+	public any function getPrivateKey() {
 		return getKeyStore().getKey( _getCertAlias(), _getCertPassword().toCharArray() );
 	}
 
-	public string function getCert() {
+	public any function getCert() {
 		return getKeyStore().getCertificate( _getCertAlias() );
-	}
-
-	public string function getPublicKey() {
-		return getCert( _getCertAlias() ).getPublicKey();
 	}
 
 	public string function getFormattedX509Certificate() {
