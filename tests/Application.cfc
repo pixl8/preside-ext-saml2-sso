@@ -2,7 +2,7 @@ component {
 	this.name = "SAML Apis test suite";
 
 	this.mappings[ '/tests'                                ] = ExpandPath( "/" );
-	this.mappings[ '/testbox'                              ] = ExpandPath( "/tests/testbox" );
+	this.mappings[ '/testbox'                              ] = ExpandPath( "/testbox" );
 	this.mappings[ '/samlIdProvider'                       ] = ExpandPath( "../services/" );
 	this.mappings[ '/app/extensions/preside-ext-saml2-sso' ] = ExpandPath( "../" );
 

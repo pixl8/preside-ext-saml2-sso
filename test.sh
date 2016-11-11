@@ -3,7 +3,7 @@
 cd `dirname $0`/tests
 CWD="`pwd`"
 
-box "$CWD/runTests.cfm"
+box "$CWD/runtests.cfm"
 
 exitcode=$(<.exitcode)
 rm -f .exitcode
