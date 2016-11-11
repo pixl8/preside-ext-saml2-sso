@@ -76,8 +76,8 @@ component {
 		, required string issuer
 		, required string inResponseTo
 		, required string recipientUrl
-		, required string signWithKeyName
-		, required string signWithKeyPassword
+		,          string signWithKeyName     = _getCertAlias()
+		,          string signWithKeyPassword = _getCertPass()
 	) {
 		var nowish = getInstant();
 		var xml    = "";

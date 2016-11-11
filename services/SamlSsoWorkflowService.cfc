@@ -53,7 +53,7 @@ component {
 	}
 
 	public void function completeWorkflow() {
-		_getWorlflowService().complete( _getWorkflowStateArgs() );
+		_getWorkflowService().complete( argumentCollection=_getWorkflowStateArgs() );
 	}
 
 

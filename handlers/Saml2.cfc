@@ -3,14 +3,17 @@ component {
 	property name="samlRequestParser"            inject="samlRequestParser";
 	property name="samlAttributesService"        inject="samlAttributesService";
 	property name="samlResponseBuilder"          inject="samlResponseBuilder";
+	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
 	property name="rulesEngineWebRequestService" inject="rulesEngineWebRequestService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
+
 
 	public string function sso( event, rc, prc ) {
 		try {
 			var samlRequest       = samlRequestParser.parse();
 			var totallyBadRequest = !IsStruct( samlRequest ) || samlRequest.keyExists( "error" ) ||  !( samlRequest.samlRequest.type ?: "" ).len() || !samlRequest.keyExists( "issuerentity" ) || samlRequest.issuerEntity.isEmpty();
 		} catch( any e ) {
+			logError( e );
 			totallyBadRequest = true;
 		}
 
@@ -25,20 +28,17 @@ component {
 		var samlResponse       = "";
 
 		if ( isWrongRequestType ) {
-			WriteDump('wrong request type'); abort;
-			/* TODO
-			 samlResponse = saml2Proxy.getErrorResponse(
-			      statusCode          = "urn:oasis:names:tc:SAML:2.0:status:Responder"
-			    , subStatusCode       = "urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"
-			    , statusMessage       = "Operation unsupported"
-			    , issuer              = samlRequest.samlRequest.issuer
-			    , inResponseTo        = samlRequest.samlRequest.id
-			    , recipientUrl        = redirectLocation
-			  );
-			*/
+			samlResponse = samlResponseBuilder.buildErrorResponse(
+				  statusCode          = "urn:oasis:names:tc:SAML:2.0:status:Responder"
+				, subStatusCode       = "urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"
+				, statusMessage       = "Operation unsupported"
+				, issuer              = samlRequest.samlRequest.issuer
+				, inResponseTo        = samlRequest.samlRequest.id
+				, recipientUrl        = redirectLocation
+			);
 		} else {
 			runEvent(
-				    event          = authCheckHandler // default, saml2.authenticationCheck (below)
+					event          = authCheckHandler // default, saml2.authenticationCheck (below)
 				  , eventArguments = { samlRequest = samlRequest }
 				  , private        = true
 				  , prePostExempt  = true
@@ -56,6 +56,8 @@ component {
 				, attributes      = samlAttributesService.getAttributeValues()
 			);
 		}
+
+		samlSsoWorkflowService.completeWorkflow();
 
 		return renderView( view="/saml2/ssoResponseForm", args={
 			  samlResponse     = samlResponse
