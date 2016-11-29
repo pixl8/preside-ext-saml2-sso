@@ -15,6 +15,13 @@ extension enable preside-ext-saml2-sso
 reload all
 ```
 
+### JAR Dependencies
+
+If you see errors such as `java.lang.AbstractMethodError: javax.xml.parsers.DocumentBuilderFactory.setFeature(Ljava/lang/String;Z)V`, you'll need to install Xerces and Xalan libs in your Lucee lib directory. The jars that we have tested working can be found here:
+
+* XercesImpl 2.9.1 [http://dist.wso2.org/maven2/org/apache/xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar](http://dist.wso2.org/maven2/org/apache/xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar)
+* Xalan 2.7.1 [http://dist.wso2.org/maven2/org/apache/xalan/xalan/2.7.1/xalan-2.7.1.jar](http://dist.wso2.org/maven2/org/apache/xalan/xalan/2.7.1/xalan-2.7.1.jar)
+
 ### CommandBox (box.json) method
 
 From the root of your application, type the following command:
