@@ -18,7 +18,7 @@ component {
 
 	public date function readDate( required string thedate ) {
 		var formatter = CreateObject( "java", "java.text.SimpleDateFormat" ).init( "yyyy-MM-dd'T'HH:mm:ss'Z'" );
-		var dateMinusOptionalMilliseconds = ReReplace( arguments.theDate, "\.[0-9]{3}Z$", "Z" );
+		var dateMinusOptionalMilliseconds = ReReplace( arguments.theDate, "\.[0-9]+Z$", "Z" );
 
 		return formatter.parse( dateMinusOptionalMilliseconds );
 	}
