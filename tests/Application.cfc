@@ -3,6 +3,7 @@ component {
 
 	this.mappings[ '/tests'                                ] = ExpandPath( "/" );
 	this.mappings[ '/testbox'                              ] = ExpandPath( "/testbox" );
+	this.mappings[ '/javaloader'                           ] = ExpandPath( "/cbjavaloader/models/javaloader" );
 	this.mappings[ '/samlIdProvider'                       ] = ExpandPath( "../services/" );
 	this.mappings[ '/app/extensions/preside-ext-saml2-sso' ] = ExpandPath( "../" );
 
