@@ -2,8 +2,7 @@ component {
 
 // CONSTRUCTOR
 	public any function init() {
-		_setLib( DirectoryList( ExpandPath( "/app/extensions/preside-ext-saml2-sso/services/lib" ), false, "path", "*.jar" ) );
-
+		_setupJavaloader();
 		_bootstrapOpenSamlConfiguration();
 
 		return this;
@@ -113,7 +112,7 @@ component {
 
 // PRIVATE HELPERS
 	private any function _create( required string classPath ) {
-		return CreateObject( "java", arguments.classPath, _getLib() );
+		return server._saml2Jl.create( arguments.classPath );
 	}
 
 	private void function _bootstrapOpenSamlConfiguration() {
@@ -135,18 +134,22 @@ component {
 		return credential;
 	}
 
+	private void function _setupJavaloader() {
+		if ( !StructKeyExists( server, "_saml2Jl" ) ) {
+			var libs = DirectoryList( ExpandPath( "/app/extensions/preside-ext-saml2-sso/services/lib" ), false, "path", "*.jar" );
+
+			// javaloader for some reason depends on application.applicationName
+			application.applicationName = application.applicationName ?: ( application.name ?: Hash( ExpandPath( "/" ) ) );
+
+			server._saml2Jl = new javaloader.JavaLoader( loadPaths=libs )
+		}
+	}
+
 // GETTERS AND SETTERS
 	private any function _getKeyStore() {
 		return _keyStore;
 	}
 	private void function _setKeyStore( required any keyStore ) {
 		_keyStore = arguments.keyStore;
-	}
-
-	private array function _getLib() {
-		return _lib;
-	}
-	private void function _setLib( required array lib ) {
-		_lib = arguments.lib;
 	}
 }
