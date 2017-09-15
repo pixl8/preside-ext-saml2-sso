@@ -2,7 +2,7 @@ component extends="testbox.system.BaseSpec" {
 
 	function run() {
 		describe( "buildAuthenticationAssertion()", function(){
-			it( "should return minimal authentication assertion response XML with minimal args", function(){
+			xit( "should return minimal authentication assertion response XML with minimal args", function(){
 				var builder  = _getBuilder();
 				var response = builder.buildAuthenticationAssertion(
 					  issuer              = "http://www.thewebsite.com/"
