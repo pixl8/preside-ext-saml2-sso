@@ -50,6 +50,23 @@ component {
 		);
 	}
 
+	public struct function getEntityBySlug( required string slug ) {
+		var consumer = $getPresideObject( "saml2_consumer" ).selectData( filter={ slug=arguments.slug } );
+
+		for( var c in consumer ) {
+			var entity        = _getEntityFromMetadata( c.metadata ).getMemento();
+			var savedEntityId = entity.id;
+
+			entity.consumerRecord = c;
+			return entity;
+		}
+
+		throw(
+			  type    = "entitypool.missingentity"
+			, message = "The entity, [#arguments.slug#], could not be found"
+		);
+	}
+
 // PRIVATE HELPERS
 	private any function _getEntityFromMetadata( required string metadata ) {
 		try {

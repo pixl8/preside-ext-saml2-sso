@@ -96,7 +96,7 @@ component {
 	}
 
 	private string function _getResponseHeader( required date instant, required string issuer, required string id, required string inResponseTo, required string recipientUrl, string statusCode="urn:oasis:names:tc:SAML:2.0:status:Success", string statusMessage="", string subStatusCode="" ) {
-		var xml  = '<saml:Response IssueInstant="#_dateTimeFormat( arguments.instant )#" Version="2.0" ID="#arguments.id#" Destination="#arguments.recipientUrl#" InResponseTo="#arguments.inResponseTo#" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" >';
+		var xml  = '<saml:Response IssueInstant="#_dateTimeFormat( arguments.instant )#" Version="2.0" ID="#arguments.id#" Destination="#arguments.recipientUrl#"#( arguments.inResponseTo.len() ? ' InResponseTo="#arguments.inResponseTo#"' : '' )# xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" >';
 			xml &= '<samlp:Status>';
 			xml &= '<samlp:StatusCode Value="#arguments.statusCode#">';
 			if ( Len( Trim( arguments.subStatusCode ) ) ) {
@@ -127,7 +127,7 @@ component {
 	private string function _wrapAssertionInResponse( required string instant, required string inResponseTo, required string recipientUrl, required string issuer, required string assertion ) {
 		var formattedInstant = _dateTimeFormat( arguments.instant );
 		var xml  = _getXmlHeader();
-		    xml &= '<samlp:Response ID="#_createSamlId()#" InResponseTo="#arguments.inResponseTo#" Version="2.0" IssueInstant="#formattedInstant#" Destination="#arguments.recipientUrl#" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">';
+		    xml &= '<samlp:Response ID="#_createSamlId()#"#( arguments.inResponseTo.len() ? ' InResponseTo="#arguments.inResponseTo#"' : '' )# Version="2.0" IssueInstant="#formattedInstant#" Destination="#arguments.recipientUrl#" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">';
 		    xml &= '<saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">#arguments.issuer#</saml:Issuer>';
 			xml &= '<samlp:Status xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">';
 			xml &= '<samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" />';
@@ -145,9 +145,12 @@ component {
 	private string function _getSubject( required date instant, required string nameIdFormat, required string nameIdValue, required string inResponseTo, required string recipientUrl ) {
 		var xml  = '<saml:Subject>';
 		    xml &= '<saml:NameID Format="#arguments.nameIdFormat#">#nameIdValue#</saml:NameID>';
+
+		if ( arguments.inResponseTo.len() ) {
 		    xml &= '<saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">';
 		    xml &= '<saml:SubjectConfirmationData InResponseTo="#arguments.inResponseTo#" Recipient="#arguments.recipientUrl#" NotOnOrAfter="#_dateTimeFormat( DateAdd( 'n', -2, instant ) )#" />';
 		    xml &= '</saml:SubjectConfirmation>';
+		}
 		    xml &= '</saml:Subject>';
 
 		return xml;

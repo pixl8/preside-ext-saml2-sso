@@ -21,13 +21,13 @@
 		<div class="action-buttons btn-group">
 			<cfif canEdit>
 				<a href="#editLink#" data-context-key="e" title="#editTitle#">
-					<i class="fa fa-pencil"></i>
+					<i class="fa fa-fw fa-lg fa-pencil"></i>
 				</a>
 			</cfif>
 
 			<cfif canDelete>
 				<a class="confirmation-prompt" data-context-key="d" href="#deleteLink#" title="#deleteTitle#">
-					<i class="fa fa-trash-o"></i>
+					<i class="fa fa-fw fa-lg fa-trash-o"></i>
 				</a>
 			</cfif>
 		</div>

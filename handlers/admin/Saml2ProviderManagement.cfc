@@ -35,7 +35,7 @@ component extends="preside.system.base.AdminHandler" {
 			, private        = true
 			, eventArguments = {
 				  object      = "saml2_consumer"
-				, gridFields  = "name"
+				, gridFields  = "name,sso_type,sso_link"
 				, actionsView = "/admin/saml2ProviderManagement/_consumerGridActions"
 			}
 		);
