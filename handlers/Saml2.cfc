@@ -4,6 +4,7 @@ component {
 	property name="samlAttributesService"        inject="samlAttributesService";
 	property name="samlResponseBuilder"          inject="samlResponseBuilder";
 	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
+	property name="samlEntityPool"               inject="samlEntityPool";
 	property name="rulesEngineWebRequestService" inject="rulesEngineWebRequestService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
 
@@ -77,8 +78,63 @@ component {
 		} );
 	}
 
-	public void function idpsso( event, rc, prc ) {
-		WriteDump( rc.providerSlug ?: "" ); abort;
+	public any function idpsso( event, rc, prc ) {
+		var slug              = rc.providerSlug ?: "";
+		var totallyBadRequest = !slug.len() > 0;
+
+		if ( slug.len() ) {
+			try {
+				var entity = samlEntityPool.getEntityBySlug( slug );
+				var totallyBadRequest = entity.isEmpty() || ( entity.consumerRecord.sso_type ?: "" ) != "idp";
+			} catch( any e ) {
+				logError( e );
+				totallyBadRequest = true;
+			}
+		}
+
+		if ( totallyBadRequest ) {
+			event.setHTTPHeader( statusCode="400" );
+			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
+			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
+
+			rc.body = renderView(
+				  view          = "/page-types/samlSsoBadRequest/index"
+				, presideobject = "samlSsoBadRequest"
+				, id            = event.getCurrentPageId()
+				, args          = {}
+			);
+
+			event.setView( "/core/simpleBodyRenderer" );
+			return;
+		}
+
+		var redirectLocation = entity.serviceProviderSsoRequirements.defaultAssertionConsumer.location ?: "";
+
+		runEvent(
+				event          = authCheckHandler // default, saml2.authenticationCheck (below)
+			  , eventArguments = { samlRequest = { issuerEntity=entity } }
+			  , private        = true
+			  , prePostExempt  = true
+		);
+
+		samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
+			  issuer          = event.getSiteUrl( includePath=false, includeLanguageSlug=false ).reReplace( "/$", "" ) & "/saml2/idpsso/#slug#/"
+			, inResponseTo    = ""
+			, recipientUrl    = redirectLocation
+			, nameIdFormat    = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+			, nameIdValue     = getLoggedInUserId()
+			, audience        = entity.id
+			, sessionTimeout  = 40
+			, sessionIndex    = session.sessionid
+			, attributes      = samlAttributesService.getAttributeValues()
+		);
+
+		return renderView( view="/saml2/ssoResponseForm", args={
+			  samlResponse     = samlResponse
+			, redirectLocation = redirectLocation
+			, serviceName	   = ( entity.consumerRecord.name ?: "" )
+			, noRelayState     = true
+		} );
 	}
 
 	private void function authenticationCheck( event, rc, prc, samlRequest={} ) {
