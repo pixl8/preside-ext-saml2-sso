@@ -10,7 +10,7 @@
 				  objectName      = "saml2_consumer"
 				, useMultiActions = false
 				, datasourceUrl   = event.buildAdminLink( linkTo="saml2ProviderManagement.getConsumersForAjaxDataTables" )
-				, gridFields      = [ "name" ]
+				, gridFields      = [ "name", "sso_type", "sso_link" ]
 			} )#
 		<cfelse>
 			<p class="alert alert-warning">
