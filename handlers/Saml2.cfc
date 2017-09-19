@@ -77,6 +77,10 @@ component {
 		} );
 	}
 
+	public void function idpsso( event, rc, prc ) {
+		WriteDump( rc.providerSlug ?: "" ); abort;
+	}
+
 	private void function authenticationCheck( event, rc, prc, samlRequest={} ) {
 		if ( !isLoggedIn() ) {
 			setNextEvent( url=event.buildLink( page="login" ), persistStruct={
