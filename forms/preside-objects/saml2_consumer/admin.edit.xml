@@ -3,10 +3,12 @@
 	<tab id="default" sortorder="10">
 		<fieldset id="default" sortorder="10">
 			<field binding="saml2_consumer.name"             sortorder="10" control="textinput" />
-			<field binding="saml2_consumer.metadata"         sortorder="20" control="textarea">
+			<field binding="saml2_consumer.slug"             sortorder="20" control="textinput"                       required="true" />
+			<field binding="saml2_consumer.sso_type"         sortorder="30" control="enumRadioList" defaultValue="sp" required="true" />
+			<field binding="saml2_consumer.metadata"         sortorder="40" control="textarea">
 				<rule validator="samlMetadata" />
 			</field>
-			<field binding="saml2_consumer.login_message"    sortorder="30" />
+			<field binding="saml2_consumer.login_message"    sortorder="50" />
 		</fieldset>
 	</tab>
 	<tab id="access" sortorder="20" feature="rulesengine">
