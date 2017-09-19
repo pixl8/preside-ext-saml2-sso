@@ -146,7 +146,7 @@ component {
 			setNextEvent( url=event.buildLink( page="login" ), persistStruct={
 				  samlRequest     = samlRequest
 				, ssoLoginMessage = ( samlRequest.issuerEntity.consumerRecord.login_message ?: "" )
-				, postLoginUrl    = event.buildLink( linkTo="saml2.sso" )
+				, postLoginUrl    = event.getBaseUrl() & event.getCurrentUrl()
 			} );
 		}
 
