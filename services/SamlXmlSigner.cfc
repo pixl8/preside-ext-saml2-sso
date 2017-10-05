@@ -18,13 +18,17 @@ component {
 		var assertion  = osUtils.xmlToOpenSamlObject( arguments.xmlToSign );
 		var credential = _getOpenSamlCredentialFromKeyStore();
 		var signature  = osUtils.createAndPrepareOpenSamlSignature( credential );
+		var signedXml  = "";
 
 		assertion.setSignature( signature );
 
 		osUtils.openSamlObjectToXml( assertion, false ); // odd looking but necessary. the process of doing this sets the signature into the object's internal XML definition
 		osUtils.signSamlObject( signature );
 
-		return osUtils.openSamlObjectToXml( assertion );
+		signedXml = osUtils.openSamlObjectToXml( assertion );
+		signedXml = _stripWhitespaceFromX509Cert( signedXml );
+
+		return signedXml;
 	}
 
 // PRIVATE HELPERS
@@ -60,6 +64,14 @@ component {
 		obj.validate( true );
 
 		return obj;
+	}
+
+	private string function _stripWhitespaceFromX509Cert( required string samlXml ) {
+		var cert = arguments.samlXml.reReplace( ".*?<ds:X509Certificate>(.*?)<\/ds:X509Certificate>.*", "\1" );
+
+		cert = cert.reReplace( "\s", "", "all" );
+
+		return arguments.samlXml.reReplace( "<ds:X509Certificate>(.*?)<\/ds:X509Certificate>", "<ds:X509Certificate>#cert#</ds:X509Certificate>" );
 	}
 
 // GETTERS AND SETTERS
