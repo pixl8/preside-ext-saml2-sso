@@ -16,7 +16,7 @@
         <input type="hidden" name="RelayState" value="#args.samlRelayState#" />
       </cfif>
     </form>
-    <p>Please while you are redirected to <strong>#args.serviceName#</strong> (#args.redirectLocation#)</p>
+    <p>Please wait while you are redirected to <strong>#args.serviceName#</strong> (#args.redirectLocation#)</p>
     <script type="text/javascript">
       document.getElementById("samlform").submit();
     </script>

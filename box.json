@@ -1,8 +1,8 @@
 {
     "name":"PresideCMS Extension: SAML2 Single Sign On",
     "type":"preside-extensions",
-    "version":"2.0.2",
-    "location":"https://github.com/pixl8/preside-ext-saml2-sso/archive/v2.0.2.zip",
+    "version":"2.0.3",
+    "location":"https://github.com/pixl8/preside-ext-saml2-sso/archive/v2.0.3.zip",
     "author":"Pixl8 Interactive",
     "directory":"application/extensions",
     "homepage":"https://github.com/pixl8/preside-ext-saml2-sso",
