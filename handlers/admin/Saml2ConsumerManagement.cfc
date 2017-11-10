@@ -22,5 +22,6 @@ component extends="preside.system.base.AdminHandler" {
 		prc.pageSubTitle = translateResource( "saml2:consumer.page.subtitle" );
 
 		prc.providers = identityProviderService.listProviders();
+
 	}
 }
