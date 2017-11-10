@@ -37,5 +37,6 @@ component {
 		settings.validationProviders.append( "samlMetaDataValidator" );
 
 		settings.enum.samlSsoType = [ "sp", "idp" ];
+		settings.enum.samlIdpType = [ "admin", "web" ];
 	}
 }
