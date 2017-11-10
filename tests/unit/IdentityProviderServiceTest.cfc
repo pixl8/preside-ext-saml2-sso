@@ -21,6 +21,7 @@ component extends="testbox.system.BaseSpec" {
 					, autoRegister    = true
 					, postAuthHandler = ""
 					, title           = "jumpCloud"
+					, description     = ""
 				} );
 
 				for( var p in providers ) {
@@ -57,6 +58,7 @@ component extends="testbox.system.BaseSpec" {
 				, autoRegister    = false
 				, postAuthHandler = "some.handler"
 				, title           = "Google, init!"
+				, description     = "So, this is nice..."
 			},
 			"JumpCloud" : {}
 		};

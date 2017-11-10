@@ -28,6 +28,7 @@ component {
 				, autoRegister    = providers[ providerId ].autoRegister    ?: true
 				, postAuthHandler = providers[ providerId ].postAuthHandler ?: ""
 				, title           = providers[ providerId ].title           ?: providerId
+				, description     = providers[ providerId ].description     ?: ""
 			} );
 		}
 
