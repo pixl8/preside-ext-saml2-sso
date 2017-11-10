@@ -21,6 +21,8 @@ component {
 			, lastName    = { friendlyName="LastName"   , samlUrn="urn:oid:2.5.4.4"                  , samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" }
 		};
 
+		settings.saml2.identityProviders = settings.saml2.identityProviders ?: {};
+
 
 		settings.features.samlSsoProvider = { enabled=true, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.samlSsoConsumer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
