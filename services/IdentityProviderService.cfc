@@ -49,6 +49,30 @@ component {
 		} );
 	}
 
+	public struct function getProvider( required string id ) {
+		var providers = _getConfiguredProviders();
+
+		for( var providerId in providers ) {
+			if ( providerId == arguments.id ) {
+				var provider = providers[ providerId ].copy();
+				var providerRecord = $getPresideObject( "saml2_identity_provider" ).selectData( slug=arguments.id );
+
+				for ( var pr in providerRecord ) {
+					provider.append( pr, false );
+				}
+
+				return provider;
+			}
+		}
+
+		return {};
+	}
+
+	public string function getIdpIdBySlug( required string slug ) {
+		var providerRecord = $getPresideObject( "saml2_identity_provider" ).selectData( slug=arguments.slug, selectFields=[ "id" ] );
+		return providerRecord.id ?: "";
+	}
+
 // PRIVATE HELPERS
 	private void function _ensureProvidersExistInDb() {
 		var providers = _getConfiguredProviders();
