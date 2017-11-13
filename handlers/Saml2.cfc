@@ -1,6 +1,7 @@
 component {
 
 	property name="samlRequestParser"            inject="samlRequestParser";
+	property name="samlResponseParser"           inject="samlResponseParser";
 	property name="samlAttributesService"        inject="samlAttributesService";
 	property name="samlResponseBuilder"          inject="samlResponseBuilder";
 	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
@@ -175,6 +176,43 @@ component {
 			, lastName    = ListRest( userDetails.display_name ?: "", " " )
 			, id          = userDetails.id ?: getLoggedInUserId()
 		};
+	}
+
+	public void function response( event, rc, prc ) {
+		try {
+			var samlResponse      = samlResponseParser.parse();
+			var totallyBadRequest = !IsStruct( samlResponse ) || samlResponse.keyExists( "error" ) ||  !( samlResponse.samlResponse.type ?: "" ).len() || !samlResponse.keyExists( "issuerentity" ) || samlResponse.issuerEntity.isEmpty();
+		} catch( any e ) {
+			logError( e );
+			totallyBadRequest = true;
+		}
+
+		if ( totallyBadRequest ) {
+			event.setHTTPHeader( statusCode="400" );
+			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
+			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
+
+			rc.body = renderView(
+				  view          = "/page-types/samlSsoBadRequest/index"
+				, presideobject = "samlSsoBadRequest"
+				, id            = event.getCurrentPageId()
+				, args          = {}
+			);
+
+			event.setView( "/core/simpleBodyRenderer" );
+			return;
+		}
+
+		if ( !samlResponse.issuerEntity.idpRecord.postAuthHandler.len() ) {
+			throw( type="saml2.method.not.supported", message="Currently, the SAML2 extension does not support auto login as a result of a SAML assertion response. Instead, you are required to provide a custom postAuthHandler for each IDP to process their response" );
+		}
+
+		runEvent(
+			  event          = samlResponse.issuerEntity.idpRecord.postAuthHandler
+			, eventArguments = samlResponse
+			, private        = true
+			, prePostExempt  = true
+		);
 	}
 
 // HELPERS

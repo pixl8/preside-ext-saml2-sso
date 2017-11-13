@@ -63,4 +63,9 @@ component extends="AbstractSamlObject" {
 		return reqs;
 	}
 
+	public string function getX509Certificate() {
+		var rootEl = getRootNode();
+
+		return rootEl[ "md:IDPSSODescriptor" ][ "md:KeyDescriptor" ][ "ds:KeyInfo" ][ "ds:X509Data" ][ "ds:X509Certificate" ].xmlText ?: "";
+	}
 }

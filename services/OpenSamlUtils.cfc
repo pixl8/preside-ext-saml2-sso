@@ -122,13 +122,12 @@ component {
 	}
 
 	private any function _getCredentialFromMetadata( required string idpMeta ) {
-		var idpMeta = XmlSearch( XmlParse( idpMeta ), "//ds:X509Certificate" );
-		    idpMeta = idpMeta[1].xmlText;
-		    idpMeta = CreateObject( "java", "java.io.ByteArrayInputStream" ).init( idpMeta.getBytes() );
-		var certFactory = CreateObject( "java", "java.security.cert.CertificateFactory" ).getInstance( "X.509" );
-		var cert        = certFactory.generateCertificate( idpMeta );
+		var x509Cert        = "-----BEGIN CERTIFICATE-----" & Chr( 10 ) & Trim( new SamlMetadata( arguments.idpMeta ).getX509Certificate() ) & "-----END CERTIFICATE-----";
+		var byteArrayOfCert = CreateObject( "java", "java.io.ByteArrayInputStream" ).init( x509Cert.getBytes() );
+		var certFactory     = CreateObject( "java", "java.security.cert.CertificateFactory" ).getInstance( "X.509" );
+		var cert            = certFactory.generateCertificate( byteArrayOfCert );
+		var credential      = _create( "org.opensaml.xml.security.x509.BasicX509Credential" );
 
-		var credential = _create( "org.opensaml.xml.security.x509.BasicX509Credential" );
 		credential.setEntityCertificate( cert );
 
 		return credential;
@@ -141,7 +140,7 @@ component {
 			// javaloader for some reason depends on application.applicationName
 			application.applicationName = application.applicationName ?: ( application.name ?: Hash( ExpandPath( "/" ) ) );
 
-			server._saml2Jl = new javaloader.JavaLoader( loadPaths=libs )
+			server._saml2Jl = new javaloader.JavaLoader( loadPaths=libs );
 		}
 	}
 
