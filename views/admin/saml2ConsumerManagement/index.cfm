@@ -30,8 +30,8 @@
 							#translateResource( "saml2:consumer.idp.useFor.admin" )#
 						</cfif>
 					</dd>
-					<cfif IsTrue( provider.admin ) and IsTrue( provider.enabled ?: "" )>
-						<cfset link = event.buildLink( saml2AdminIdpProvider=provider.id ) />
+					<cfif IsTrue( provider.enabled ?: "" )>
+						<cfset link = event.buildLink( saml2IdpProvider=provider.id ) />
 						<dt>#translateResource( "saml2:consumer.idp.login.url" )#:</dt>
 						<dd><a href="#link#">#link#</a></dd>
 					</cfif>

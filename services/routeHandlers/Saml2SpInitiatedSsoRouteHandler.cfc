@@ -4,14 +4,9 @@
 component  {
 
 	/**
-	 * @adminPath.inject           coldbox:setting:preside_admin_path
 	 * @configuredProviders.inject coldbox:setting:saml2.identityProviders
 	 */
-	public any function init(
-		  required string adminPath
-		, required struct configuredProviders
-	) {
-		_setAdminPath( arguments.adminPath );
+	public any function init( required struct configuredProviders ) {
 		_setConfiguredProviders( arguments.configuredProviders.keyArray() );
 	}
 
@@ -24,15 +19,15 @@ component  {
 		var providerSlug = arguments.path.reReplaceNoCase( _getPathRegex(), "\1" );
 
 		event.setValue( "providerSlug", providerSlug );
-		event.setValue( "event", "admin.saml2.login" );
+		event.setValue( "event", "saml2.spSso" );
 	}
 
 	public boolean function reverseMatch( required struct buildArgs, required any event ) {
-		return arguments.buildArgs.keyExists( "saml2AdminIdpProvider" );
+		return arguments.buildArgs.keyExists( "saml2IdpProvider" );
 	}
 
 	public string function build( required struct buildArgs, required any event ) {
-		var link = "/#_getAdminPath()#/saml2login/#buildArgs.saml2AdminIdpProvider#/";
+		var link = "/saml2/login/#buildArgs.saml2IdpProvider#/";
 
 		if ( Len( Trim( buildArgs.queryString ?: "" ) ) ) {
 			link &= "?" & buildArgs.queryString;
@@ -43,7 +38,7 @@ component  {
 
 // PRIVATE HELPERS
 	private string function _getPathRegex() {
-		return "^/#_getAdminPath()#/saml2login/(#_getConfiguredProviders().toList('|')#)/";
+		return "^/saml2/login/(#_getConfiguredProviders().toList('|')#)/";
 	}
 
 // GETTERS AND SETTERS

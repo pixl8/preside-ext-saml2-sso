@@ -61,6 +61,10 @@ component {
 					provider.append( pr, false );
 				}
 
+				var md = new SamlMetaData( provider.metadata );
+
+				provider.ssoLocation = md.getIdpSsoLocation();
+
 				return provider;
 			}
 		}

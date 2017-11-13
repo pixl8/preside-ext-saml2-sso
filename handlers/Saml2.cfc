@@ -4,8 +4,10 @@ component {
 	property name="samlResponseParser"           inject="samlResponseParser";
 	property name="samlAttributesService"        inject="samlAttributesService";
 	property name="samlResponseBuilder"          inject="samlResponseBuilder";
+	property name="samlRequestBuilder"           inject="samlRequestBuilder";
 	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
 	property name="samlEntityPool"               inject="samlEntityPool";
+	property name="identityProviderService"      inject="identityProviderService";
 	property name="rulesEngineWebRequestService" inject="rulesEngineWebRequestService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
 
@@ -81,7 +83,7 @@ component {
 		} );
 	}
 
-	public any function idpsso( event, rc, prc ) {
+	public any function idpSso( event, rc, prc ) {
 		var slug              = rc.providerSlug ?: "";
 		var totallyBadRequest = !slug.len() > 0;
 
@@ -176,6 +178,29 @@ component {
 			, lastName    = ListRest( userDetails.display_name ?: "", " " )
 			, id          = userDetails.id ?: getLoggedInUserId()
 		};
+	}
+
+	public string function spSso( event, rc, prc ) {
+		var providerSlug = rc.providerSlug ?: "";
+		var idp          = identityProviderService.getProvider( providerSlug );
+
+		if ( idp.isEmpty() ) {
+			event.notFound();
+		}
+
+		var samlRequest = samlRequestBuilder.buildAuthenticationRequest(
+			  idpMetaData        = idp.metaData ?: ""
+			, responseHandlerUrl = event.buildLink( linkto="saml2.response" )
+			, spIssuer           = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
+			, spName             = getSystemSetting( "saml2Provider", "organisation_short_name" )
+		);
+
+		return renderView( view="/saml2/ssoRequestForm", args={
+			  samlRequest      = samlRequest
+			, samlRelayState   = rc.relayState ?: ""
+			, redirectLocation = idp.ssoLocation
+			, serviceName	   = idp.title
+		} );
 	}
 
 	public void function response( event, rc, prc ) {

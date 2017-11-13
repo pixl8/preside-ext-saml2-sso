@@ -5,6 +5,9 @@ component extends="AbstractSamlObject" {
 		return {
 			  id                             = getEntityId()
 			, serviceProviderSsoRequirements = getServiceProviderSSORequirements()
+			, x509Certificate                = getX509Certificate()
+			, idpNameIdFormat                = getIdpNameIdFormat()
+			, idpSsoLocation                 = getIdpSsoLocation()
 		};
 	}
 
@@ -61,6 +64,18 @@ component extends="AbstractSamlObject" {
 		reqs.x509Certificate = Trim( keyDescriptors[1][ "ds:KeyInfo" ][ "ds:X509Data" ][ "ds:X509Certificate" ].xmlText ?: "" );
 
 		return reqs;
+	}
+
+	public string function getIdpNameIdFormat() {
+		var rootEl = getRootNode();
+
+		return rootEl[ "md:IDPSSODescriptor"][ "md:NameIDFormat" ].xmlText ?: "";
+	}
+
+	public string function getIdpSsoLocation() {
+		var rootEl = getRootNode();
+
+		return rootEl[ "md:IDPSSODescriptor"][ "md:SingleSignOnService" ].xmlAttributes.location ?: "";
 	}
 
 	public string function getX509Certificate() {
