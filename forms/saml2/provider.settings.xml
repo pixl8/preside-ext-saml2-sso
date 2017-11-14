@@ -2,7 +2,9 @@
 <form i18nBaseUri="saml2:provider.settingsform.">
 	<tab id="default" sortorder="10">
 		<fieldset id="endpoint" sortorder="10">
-			<field name="sso_endpoint_root" sortorder="10" control="textinput" required="true" />
+			<field name="service_name"        sortorder="10" control="textinput" required="true" />
+			<field name="sso_endpoint_root"   sortorder="20" control="textinput" required="true" />
+			<field name="service_description" sortorder="30" control="textarea"  required="true" />
 		</fieldset>
 		<fieldset id="organisation" sortorder="20">
 			<field name="organisation_short_name" sortorder="10" control="textinput" required="true" />

@@ -1,0 +1,28 @@
+<md:EntityDescriptor entityID="http://ilm.example.com" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
+    <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:KeyDescriptor>
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>
+${x509}
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
+        <md:AssertionConsumerService isDefault="true" index="0" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="${ssolocation}" />
+        <md:AttributeConsumingService isDefault="true" index="0">
+            <md:ServiceName xml:lang="en">${servicename}</md:ServiceName>
+            <md:ServiceDescription xml:lang="en">${servicedescription}</md:ServiceDescription>
+        </md:AttributeConsumingService>
+    </md:SPSSODescriptor>
+    <md:Organization>
+        <md:OrganizationName xml:lang="en">${orgshortname}</md:OrganizationName>
+        <md:OrganizationDisplayName xml:lang="en">${orgfullname}</md:OrganizationDisplayName>
+        <md:OrganizationURL xml:lang="en">${orgurl}</md:OrganizationURL>
+    </md:Organization>
+    <md:ContactPerson contactType="technical">
+        <md:SurName>${supportcontact}</md:SurName>
+        <md:EmailAddress>mailto:${supportemail}</md:EmailAddress>
+    </md:ContactPerson>
+</md:EntityDescriptor>
