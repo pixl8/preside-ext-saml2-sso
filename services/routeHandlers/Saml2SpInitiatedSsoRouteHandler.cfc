@@ -4,19 +4,27 @@
 component  {
 
 	/**
-	 * @configuredProviders.inject coldbox:setting:saml2.identityProviders
+	 * @samlIdentityProviderService.inject delayedInjector:samlIdentityProviderService
 	 */
-	public any function init( required struct configuredProviders ) {
-		_setConfiguredProviders( arguments.configuredProviders.keyArray() );
+	public any function init( required struct samlIdentityProviderService ) {
+		_setSamlIdentityProviderService( arguments.samlIdentityProviderService );
 	}
 
 // route handler methods
 	public boolean function match( required string path, required any event ) {
-		return ReFindNoCase( _getPathRegex(), arguments.path );
+		return _getSsoPaths().findNoCase( arguments.path );
 	}
 
 	public void function translate( required string path, required any event ) {
-		var providerSlug = arguments.path.reReplaceNoCase( _getPathRegex(), "\1" );
+		var providers    = _getSamlIdentityProviderService().listProviders();
+		var providerSlug = "";
+
+		for( var provider in providers ) {
+			if ( provider.loginUrl == arguments.path ) {
+				providerSlug = provider.slug;
+				break;
+			}
+		}
 
 		event.setValue( "providerSlug", providerSlug );
 		event.setValue( "event", "saml2.spSso" );
@@ -27,7 +35,14 @@ component  {
 	}
 
 	public string function build( required struct buildArgs, required any event ) {
-		var link = "/saml2/login/#buildArgs.saml2IdpProvider#/";
+		var providers    = _getSamlIdentityProviderService().listProviders();
+		var link         = "";
+
+		for( var provider in providers ) {
+			if ( provider.slug == buildArgs.saml2IdpProvider ) {
+				link = provider.loginUrl;
+			}
+		}
 
 		if ( Len( Trim( buildArgs.queryString ?: "" ) ) ) {
 			link &= "?" & buildArgs.queryString;
@@ -37,22 +52,27 @@ component  {
 	}
 
 // PRIVATE HELPERS
-	private string function _getPathRegex() {
-		return "^/saml2/login/(#_getConfiguredProviders().toList('|')#)/";
+	private array function _getSsoPaths() {
+		if ( variables.keyExists( "_cachedPaths" ) ) {
+			return _cachedPaths;
+		}
+		var providers = _getSamlIdentityProviderService().listProviders();
+
+		variables._cachedPaths = [];
+
+		for( var provider in providers ) {
+			_cachedPaths.append( provider.loginUrl );
+		}
+
+
+		return _cachedPaths;
 	}
 
 // GETTERS AND SETTERS
-	private string function _getAdminPath() {
-		return _adminPath;
+	private any function _getSamlIdentityProviderService() {
+		return _samlIdentityProviderService;
 	}
-	private void function _setAdminPath( required string adminPath ) {
-		_adminPath = arguments.adminPath;
-	}
-
-	private array function _getConfiguredProviders() {
-		return _configuredProviders;
-	}
-	private void function _setConfiguredProviders( required array configuredProviders ) {
-		_configuredProviders = arguments.configuredProviders;
+	private void function _setSamlIdentityProviderService( required any samlIdentityProviderService ) {
+		_samlIdentityProviderService = arguments.samlIdentityProviderService;
 	}
 }

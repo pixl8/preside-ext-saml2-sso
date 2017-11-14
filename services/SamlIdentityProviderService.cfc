@@ -37,7 +37,7 @@ component {
 				, web             = providers[ providerId ].web             ?: false
 				, autoRegister    = providers[ providerId ].autoRegister    ?: true
 				, postAuthHandler = providers[ providerId ].postAuthHandler ?: ""
-				, shortUrl        = providers[ providerId ].shortUrl        ?: "/saml2/login/#providerId#/"
+				, loginUrl        = providers[ providerId ].loginUrl        ?: "/saml2/login/#providerId#/"
 				, title           = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId )
 				, description     = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         )
 			} );
@@ -65,6 +65,8 @@ component {
 				var md = new SamlMetaData( provider.metadata );
 
 				provider.ssoLocation = md.getIdpSsoLocation();
+				provider.title       = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId );
+				provider.description = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         );
 
 				return provider;
 			}
