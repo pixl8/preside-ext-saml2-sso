@@ -15,7 +15,8 @@ component extends="preside.system.base.AdminHandler" {
 
 		prc.pageTitle    = translateResource( "saml2:admin.page.title" );
 		prc.pageSubTitle = translateResource( "saml2:admin.page.subtitle" );
-		prc.pageIcon = "fa-key";
+		prc.pageIcon     = "fa-key";
+
 		event.addAdminBreadCrumb(
 			  title = translateResource( "saml2:provider.breadcrumb.title" )
 			, link  = event.buildAdminLink( linkto="saml2Admin" )

@@ -3,6 +3,12 @@
 </cfscript>
 <cfoutput>
 	<cfsavecontent variable="body">
+		<cfif not providers.len()>
+			<p class="alert alert-warning">
+				<i class="fa fa-exclamation-circle"></i>
+				#translateResource( "saml2:no.providers.message" )#
+			</p>
+		</cfif>
 		<cfloop array="#providers#" item="provider" index="i">
 			<div class="well">
 				<h3 class="blue">
