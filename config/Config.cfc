@@ -21,21 +21,31 @@ component {
 			, lastName    = { friendlyName="LastName"   , samlUrn="urn:oid:2.5.4.4"                  , samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" }
 		};
 
+		settings.saml2.identityProviders = settings.saml2.identityProviders ?: {};
+
 
 		settings.features.samlSsoProvider = { enabled=true, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.samlSsoConsumer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 
+		settings.adminPermissions.saml2 = [ "navigate", "manage", "deleteConsumer" ];
+
 		settings.adminPermissions.saml2 = {
-			  provider = [ "navigate", "manage", "deleteConsumer" ]
+			  general  = [ "navigate" ]
+			, provider = [ "navigate", "manage", "deleteConsumer" ]
 			, consumer = [ "navigate", "manage" ]
 		};
-		settings.adminRoles.sysadmin.append( "saml2.*" );
-		settings.adminRoles.sysadmin.append( "!saml2.provider.deleteConsumer" );
+		settings.adminRoles.sysadmin.append( "saml2.general.navigate" );
+		settings.adminRoles.sysadmin.append( "saml2.provider.navigate" );
+		settings.adminRoles.sysadmin.append( "saml2.provider.manage" );
 
-		settings.adminSideBarItems.insertAt( settings.adminSideBarItems.findNoCase( "websiteUserManager" )+1, "saml2" );
+		settings.adminConfigurationMenuItems.insertAt( settings.adminConfigurationMenuItems.findNoCase( "usermanager" )+1, "saml2" );
 
 		settings.validationProviders.append( "samlMetaDataValidator" );
 
 		settings.enum.samlSsoType = [ "sp", "idp" ];
+		settings.enum.samlIdpType = [ "admin", "web" ];
+
+		settings.multilingual.ignoredUrlPatterns = settings.multilingual.ignoredUrlPatterns ?: [];
+		settings.multilingual.ignoredUrlPatterns.append( "^/saml2/" );
 	}
 }

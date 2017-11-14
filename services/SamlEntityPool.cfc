@@ -6,17 +6,23 @@
 component {
 
 // CONSTRUCTOR
-	public any function init() {
+	/**
+	 * @samlIdentityProviderService.inject samlIdentityProviderService
+	 *
+	 */
+	public any function init( required any samlIdentityProviderService ) {
+		_setSamlIdentityProviderService( arguments.samlIdentityProviderService );
+
 		return this;
 	}
 
 // PUBLIC API METHODS
-	public array function listEntities() {
-		var consumers = $getPresideObject( "saml2_consumer" ).selectData( selectFields=[ "metadata" ] );
+	public array function listEntities( string entityType="sp" ) {
+		var records = $getPresideObject( arguments.entityType == "sp" ? "saml2_consumer" : "saml2_identity_provider" ).selectData( selectFields=[ "metadata" ] );
 		var entities  = [];
 
-		for( var consumer in consumers ) {
-			var entity   = _getEntityFromMetadata( consumer.metadata );
+		for( var record in records ) {
+			var entity   = _getEntityFromMetadata( record.metadata );
 			var entityId = entity.getEntityId();
 
 			if ( entityId.len() ) {
@@ -31,14 +37,26 @@ component {
 		return listEntities().findNoCase( arguments.entityId );
 	}
 
-	public struct function getEntity( required string entityId ) {
-		var consumers = $getPresideObject( "saml2_consumer" ).selectData();
+	public struct function getEntity( required string entityId, string entityType="sp" ) {
+		var sourceObject = "saml2_consumer";
+		var entityKey    = "consumerRecord";
 
-		for( var consumer in consumers ) {
-			var entity        = _getEntityFromMetadata( consumer.metadata ).getMemento();
+		if ( arguments.entityType == "idp" ) {
+			sourceObject = "saml2_identity_provider";
+			entityKey    = "idpRecord";
+		}
+
+		var records = $getPresideObject( sourceObject ).selectData();
+
+		for( var record in records ) {
+			var entity        = _getEntityFromMetadata( record.metadata ).getMemento();
 			var savedEntityId = entity.id;
 			if ( savedEntityId.len() && arguments.entityId == savedEntityId ) {
-				entity.consumerRecord = consumer;
+				if ( arguments.entityType == "idp" ) {
+					entity[ entityKey ] = _getSamlIdentityProviderService().getProvider( record.slug );
+				} else {
+					entity[ entityKey ] = record;
+				}
 
 				return entity;
 			}
@@ -50,14 +68,22 @@ component {
 		);
 	}
 
-	public struct function getEntityBySlug( required string slug ) {
-		var consumer = $getPresideObject( "saml2_consumer" ).selectData( filter={ slug=arguments.slug } );
+	public struct function getEntityBySlug( required string slug, string entityType="sp" ) {
+		var sourceObject = "saml2_consumer";
+		var entityKey    = "consumerRecord";
 
-		for( var c in consumer ) {
-			var entity        = _getEntityFromMetadata( c.metadata ).getMemento();
+		if ( arguments.entityType == "idp" ) {
+			sourceObject = "saml2_identity_provider";
+			entityKey    = "idpRecord";
+		}
+
+		var record = $getPresideObject( sourceObject ).selectData( filter={ slug=arguments.slug } );
+
+		for( var r in record ) {
+			var entity        = _getEntityFromMetadata( r.metadata ).getMemento();
 			var savedEntityId = entity.id;
 
-			entity.consumerRecord = c;
+			entity[ entityKey ] = r;
 			return entity;
 		}
 
@@ -74,5 +100,12 @@ component {
 		} catch ( any e ) {
 			return new SamlMetadata( ToString( XmlNew() ) );
 		}
+	}
+
+	private any function _getSamlIdentityProviderService() {
+		return _samlIdentityProviderService;
+	}
+	private void function _setSamlIdentityProviderService( required any samlIdentityProviderService ) {
+		_samlIdentityProviderService = arguments.samlIdentityProviderService;
 	}
 }

@@ -1,11 +1,13 @@
 component {
 
 	property name="samlRequestParser"            inject="samlRequestParser";
+	property name="samlResponseParser"           inject="samlResponseParser";
 	property name="samlAttributesService"        inject="samlAttributesService";
 	property name="samlResponseBuilder"          inject="samlResponseBuilder";
+	property name="samlRequestBuilder"           inject="samlRequestBuilder";
 	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
 	property name="samlEntityPool"               inject="samlEntityPool";
-	property name="rulesEngineWebRequestService" inject="rulesEngineWebRequestService";
+	property name="samlIdentityProviderService"  inject="samlIdentityProviderService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
 
 
@@ -80,7 +82,7 @@ component {
 		} );
 	}
 
-	public any function idpsso( event, rc, prc ) {
+	public any function idpSso( event, rc, prc ) {
 		var slug              = rc.providerSlug ?: "";
 		var totallyBadRequest = !slug.len() > 0;
 
@@ -153,7 +155,7 @@ component {
 		if ( isFeatureEnabled( "rulesengine" ) ) {
 			var rulesEngineCondition = samlRequest.issuerEntity.consumerRecord.access_condition ?: "";
 
-			if ( Len( Trim( rulesEngineCondition ) ) && !rulesEngineWebRequestService.evaluateCondition( rulesEngineCondition ) ) {
+			if ( Len( Trim( rulesEngineCondition ) ) && !getModel( "rulesEngineWebRequestService" ).evaluateCondition( rulesEngineCondition ) ) {
 				event.accessDenied(
 					  reason              = "INSUFFICIENT_PRIVILEGES"
 					, accessDeniedMessage = ( samlRequest.issuerEntity.consumerRecord.access_denied_message ?: "" )
@@ -175,6 +177,66 @@ component {
 			, lastName    = ListRest( userDetails.display_name ?: "", " " )
 			, id          = userDetails.id ?: getLoggedInUserId()
 		};
+	}
+
+	public string function spSso( event, rc, prc ) {
+		var providerSlug = rc.providerSlug ?: "";
+		var idp          = samlIdentityProviderService.getProvider( providerSlug );
+
+		if ( idp.isEmpty() ) {
+			event.notFound();
+		}
+
+		var samlRequest = samlRequestBuilder.buildAuthenticationRequest(
+			  idpMetaData        = idp.metaData ?: ""
+			, responseHandlerUrl = event.buildLink( linkto="saml2.response" )
+			, spIssuer           = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
+			, spName             = getSystemSetting( "saml2Provider", "organisation_short_name" )
+		);
+
+		return renderView( view="/saml2/ssoRequestForm", args={
+			  samlRequest      = samlRequest
+			, samlRelayState   = rc.relayState ?: ""
+			, redirectLocation = idp.ssoLocation
+			, serviceName	   = idp.title
+		} );
+	}
+
+	public void function response( event, rc, prc ) {
+		try {
+			var samlResponse      = samlResponseParser.parse();
+			var totallyBadRequest = !IsStruct( samlResponse ) || samlResponse.keyExists( "error" ) ||  !( samlResponse.samlResponse.type ?: "" ).len() || !samlResponse.keyExists( "issuerentity" ) || samlResponse.issuerEntity.isEmpty();
+		} catch( any e ) {
+			logError( e );
+			totallyBadRequest = true;
+		}
+
+		if ( totallyBadRequest ) {
+			event.setHTTPHeader( statusCode="400" );
+			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
+			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
+
+			rc.body = renderView(
+				  view          = "/page-types/samlSsoBadRequest/index"
+				, presideobject = "samlSsoBadRequest"
+				, id            = event.getCurrentPageId()
+				, args          = {}
+			);
+
+			event.setView( "/core/simpleBodyRenderer" );
+			return;
+		}
+
+		if ( !samlResponse.issuerEntity.idpRecord.postAuthHandler.len() ) {
+			throw( type="saml2.method.not.supported", message="Currently, the SAML2 extension does not support auto login as a result of a SAML assertion response. Instead, you are required to provide a custom postAuthHandler for each IDP to process their response" );
+		}
+
+		runEvent(
+			  event          = samlResponse.issuerEntity.idpRecord.postAuthHandler
+			, eventArguments = samlResponse
+			, private        = true
+			, prePostExempt  = true
+		);
 	}
 
 // HELPERS

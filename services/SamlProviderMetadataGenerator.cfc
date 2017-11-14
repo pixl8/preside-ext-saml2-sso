@@ -24,18 +24,35 @@ component {
 	}
 
 // PUBLIC API METHODS
-	public string function generateMetadata() {
-		var template         = FileRead( "resources/metadata.template.xml" );
-		var providerSettings = $getPresideCategorySettings( "saml2Provider" );
+	public string function generateIdpMetadata() {
+		var template = FileRead( "resources/idp.metadata.template.xml" );
+		var settings = $getPresideCategorySettings( "saml2Provider" );
 
-		template = template.replace( "${x509}"          , _getX509Cert()                                                                 , "all" );
-		template = template.replace( "${attribs}"       , _getSupportedAttributesXml()                                                   , "all" );
-		template = template.replace( "${ssolocation}"   , ( providerSettings.sso_endpoint_root       ?: "" ) & "/saml2/sso/"             , "all" );
-		template = template.replace( "${orgshortname}"  , ( providerSettings.organisation_short_name ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${orgfullname}"   , ( providerSettings.organisation_full_name  ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${orgurl}"        , ( providerSettings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${supportcontact}", ( providerSettings.support_person          ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${supportemail}"  , ( providerSettings.support_email           ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${x509}"          , _getX509Cert()                                                         , "all" );
+		template = template.replace( "${attribs}"       , _getSupportedAttributesXml()                                           , "all" );
+		template = template.replace( "${ssolocation}"   , ( settings.sso_endpoint_root       ?: "" ) & "/saml2/sso/"             , "all" );
+		template = template.replace( "${orgshortname}"  , ( settings.organisation_short_name ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${orgfullname}"   , ( settings.organisation_full_name  ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${orgurl}"        , ( settings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${supportcontact}", ( settings.support_person          ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${supportemail}"  , ( settings.support_email           ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+
+		return template;
+	}
+
+	public string function generateSpMetadata() {
+		var template = FileRead( "resources/sp.metadata.template.xml" );
+		var settings = $getPresideCategorySettings( "saml2Provider" );
+
+		template = template.replace( "${x509}"              , _getX509Cert()                                                         , "all" );
+		template = template.replace( "${ssolocation}"       , ( settings.sso_endpoint_root       ?: "" ) & "/saml2/response/"        , "all" );
+		template = template.replace( "${orgshortname}"      , ( settings.organisation_short_name ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${orgfullname}"       , ( settings.organisation_full_name  ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${orgurl}"            , ( settings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${supportcontact}"    , ( settings.support_person          ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${supportemail}"      , ( settings.support_email           ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${servicename}"       , ( settings.service_name            ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		template = template.replace( "${servicedescription}", ( settings.service_description     ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 
 		return template;
 	}
