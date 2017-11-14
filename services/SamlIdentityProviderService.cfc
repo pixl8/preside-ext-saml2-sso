@@ -37,6 +37,7 @@ component {
 				, web             = providers[ providerId ].web             ?: false
 				, autoRegister    = providers[ providerId ].autoRegister    ?: true
 				, postAuthHandler = providers[ providerId ].postAuthHandler ?: ""
+				, shortUrl        = providers[ providerId ].shortUrl        ?: "/saml2/login/#providerId#/"
 				, title           = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId )
 				, description     = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         )
 			} );
