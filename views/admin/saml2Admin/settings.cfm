@@ -5,7 +5,7 @@
 </cfscript>
 <cfoutput>
 	<cfsavecontent variable="body">
-		<form id="#formId#" method="post" action="#event.buildAdminLink( linkTo='saml2ProviderManagement.saveSettingsAction' )#" data-auto-focus-form="true" data-dirty-form="protect" class="form-horizontal">
+		<form id="#formId#" method="post" action="#event.buildAdminLink( linkTo='saml2Admin.saveSettingsAction' )#" data-auto-focus-form="true" data-dirty-form="protect" class="form-horizontal">
 			#renderForm(
 				  formName          = "saml2.provider.settings"
 				, context           = "admin"
@@ -26,7 +26,7 @@
 	</cfsavecontent>
 
 	#renderView(
-		  view = "/admin/saml2ProviderManagement/_samlProviderManagementTabs"
+		  view = "/admin/saml2Admin/_samlAdminTabs"
 		, args = { body=body, tab="settings" }
 	)#
 </cfoutput>

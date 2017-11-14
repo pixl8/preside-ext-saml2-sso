@@ -5,12 +5,12 @@
 	canDelete = hasCmsPermission( "saml2.provider.deleteConsumer" );
 
 	if ( canEdit ) {
-		editLink = event.buildAdminLink( linkto="saml2ProviderManagement.editConsumer", queryString="id=" & args.id );
+		editLink = event.buildAdminLink( linkto="saml2Admin.editConsumer", queryString="id=" & args.id );
 		editTitle = HtmlEditFormat( translateResource( uri="saml2:provider.edit.consumer.link.title", data=[ args.name ] ) );
 	}
 
 	if ( canDelete ) {
-		deleteLink = event.buildAdminLink( linkto="saml2ProviderManagement.deleteConsumerAction", queryString="id=" & args.id );
+		deleteLink = event.buildAdminLink( linkto="saml2Admin.deleteConsumerAction", queryString="id=" & args.id );
 		deleteTitle = HtmlEditFormat( translateResource( uri="saml2:provider.delete.consumer.link.title", data=[ args.name ] ) );
 
 	}
