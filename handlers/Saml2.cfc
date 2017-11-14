@@ -7,8 +7,7 @@ component {
 	property name="samlRequestBuilder"           inject="samlRequestBuilder";
 	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
 	property name="samlEntityPool"               inject="samlEntityPool";
-	property name="samlIdentityProviderService"      inject="samlIdentityProviderService";
-	property name="rulesEngineWebRequestService" inject="rulesEngineWebRequestService";
+	property name="samlIdentityProviderService"  inject="samlIdentityProviderService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
 
 
@@ -156,7 +155,7 @@ component {
 		if ( isFeatureEnabled( "rulesengine" ) ) {
 			var rulesEngineCondition = samlRequest.issuerEntity.consumerRecord.access_condition ?: "";
 
-			if ( Len( Trim( rulesEngineCondition ) ) && !rulesEngineWebRequestService.evaluateCondition( rulesEngineCondition ) ) {
+			if ( Len( Trim( rulesEngineCondition ) ) && !getModel( "rulesEngineWebRequestService" ).evaluateCondition( rulesEngineCondition ) ) {
 				event.accessDenied(
 					  reason              = "INSUFFICIENT_PRIVILEGES"
 					, accessDeniedMessage = ( samlRequest.issuerEntity.consumerRecord.access_denied_message ?: "" )
