@@ -6,7 +6,7 @@
 		<cfloop array="#providers#" item="provider" index="i">
 			<div class="well">
 				<h3 class="blue">
-					<a href="#event.buildAdminLink( linkto='saml2ConsumerManagement.editProvider', queryString='id=' & provider.id )#">#provider.title#</a>
+					<a href="#event.buildAdminLink( linkto='saml2Admin.editProvider', queryString='id=' & provider.id )#">#provider.title#</a>
 				</h3>
 				<cfif provider.description.len()>
 					<p>#provider.description#</p>
@@ -41,7 +41,7 @@
 	</cfsavecontent>
 
 	#renderView(
-		  view = "/admin/saml2ConsumerManagement/_samlConsumerManagementTabs"
+		  view = "/admin/saml2Admin/_samlAdminTabs"
 		, args = { body=body, tab="providers" }
 	)#
 </cfoutput>

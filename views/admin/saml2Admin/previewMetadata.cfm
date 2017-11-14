@@ -19,7 +19,7 @@
 	</cfsavecontent>
 
 	#renderView(
-		  view = "/admin/saml2Admin/_samlProviderManagementTabs"
+		  view = "/admin/saml2Admin/_samlAdminTabs"
 		, args = { body=body, tab="meta" }
 	)#
 </cfoutput>

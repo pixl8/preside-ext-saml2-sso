@@ -27,12 +27,16 @@ component {
 		settings.features.samlSsoProvider = { enabled=true, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.samlSsoConsumer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 
+		settings.adminPermissions.saml2 = [ "navigate", "manage", "deleteConsumer" ];
+
 		settings.adminPermissions.saml2 = {
-			  provider = [ "navigate", "manage", "deleteConsumer" ]
+			  general  = [ "navigate" ]
+			, provider = [ "navigate", "manage", "deleteConsumer" ]
 			, consumer = [ "navigate", "manage" ]
 		};
-		settings.adminRoles.sysadmin.append( "saml2.*" );
-		settings.adminRoles.sysadmin.append( "!saml2.provider.deleteConsumer" );
+		settings.adminRoles.sysadmin.append( "saml2.general.navigate" );
+		settings.adminRoles.sysadmin.append( "saml2.provider.navigate" );
+		settings.adminRoles.sysadmin.append( "saml2.provider.manage" );
 
 		settings.adminConfigurationMenuItems.insertAt( settings.adminConfigurationMenuItems.findNoCase( "usermanager" )+1, "saml2" );
 

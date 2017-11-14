@@ -2,15 +2,26 @@
 <cfparam name="args.tab"  default="consumers" />
 
 <cfscript>
-	tabs       = [];
+	tabs = [];
 
-	tabs.append({
-		  id     = "consumers"
-		, icon   = "fa-globe green"
-		, title  = translateResource( "saml2:provider.tabs.consumers" )
-		, active = ( args.tab == "consumers" )
-		, link   = ( args.tab == "consumers" ) ? "" : event.buildAdminLink( linkTo="saml2Admin" )
-	});
+	if ( IsFeatureEnabled( "samlSsoProvider" ) && hasCmsPermission( "saml2.provider.navigate" ) ) {
+		tabs.append({
+			  id     = "consumers"
+			, icon   = "fa-globe green"
+			, title  = translateResource( "saml2:provider.tabs.consumers" )
+			, active = ( args.tab == "consumers" )
+			, link   = ( args.tab == "consumers" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.consumers" )
+		});
+	}
+	if ( IsFeatureEnabled( "samlSsoConsumer" ) && hasCmsPermission( "saml2.consumer.navigate" )) {
+		tabs.append({
+			  id     = "providers"
+			, icon   = "fa-key orange"
+			, title  = translateResource( "saml2:consumer.tabs.providers" )
+			, active = ( args.tab == "providers" )
+			, link   = ( args.tab == "providers" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.providers" )
+		});
+	}
 	tabs.append({
 		  id     = "settings"
 		, icon   = "fa-cogs grey"
