@@ -7,7 +7,7 @@ component {
 	property name="samlRequestBuilder"           inject="samlRequestBuilder";
 	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
 	property name="samlEntityPool"               inject="samlEntityPool";
-	property name="identityProviderService"      inject="identityProviderService";
+	property name="samlIdentityProviderService"      inject="samlIdentityProviderService";
 	property name="rulesEngineWebRequestService" inject="rulesEngineWebRequestService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
 
@@ -182,7 +182,7 @@ component {
 
 	public string function spSso( event, rc, prc ) {
 		var providerSlug = rc.providerSlug ?: "";
-		var idp          = identityProviderService.getProvider( providerSlug );
+		var idp          = samlIdentityProviderService.getProvider( providerSlug );
 
 		if ( idp.isEmpty() ) {
 			event.notFound();

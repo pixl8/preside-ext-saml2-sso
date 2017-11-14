@@ -2,7 +2,7 @@ component extends="preside.system.base.AdminHandler" {
 
 	property name="consumerDao"                   inject="presidecms:object:saml2_consumer";
 	property name="samlProviderMetadataGenerator" inject="samlProviderMetadataGenerator";
-	property name="identityProviderService"       inject="identityProviderService";
+	property name="samlIdentityProviderService"       inject="samlIdentityProviderService";
 	property name="systemConfigurationService"    inject="systemConfigurationService";
 	property name="messageBox"                    inject="coldbox:plugin:messageBox";
 
@@ -236,7 +236,7 @@ component extends="preside.system.base.AdminHandler" {
 	}
 
 	public void function providers( event, rc, prc ) {
-		prc.providers = identityProviderService.listProviders();
+		prc.providers = samlIdentityProviderService.listProviders();
 	}
 
 	public void function editProvider( event, rc, prc ) {
@@ -246,7 +246,7 @@ component extends="preside.system.base.AdminHandler" {
 
 		var providerId = rc.id ?: "";
 
-		prc.provider = identityProviderService.getProvider( providerId );
+		prc.provider = samlIdentityProviderService.getProvider( providerId );
 		if ( !prc.provider.count() ) {
 			event.notFound();
 		}
@@ -265,7 +265,7 @@ component extends="preside.system.base.AdminHandler" {
 			event.adminAccessDenied();
 		}
 
-		rc.id = identityProviderService.getIdpIdBySlug( rc.id ?: "" );
+		rc.id = samlIdentityProviderService.getIdpIdBySlug( rc.id ?: "" );
 
 		runEvent(
 			  event          = "admin.DataManager._editRecordAction"

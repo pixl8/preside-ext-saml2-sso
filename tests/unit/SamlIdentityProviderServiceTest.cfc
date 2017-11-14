@@ -52,7 +52,7 @@ component extends="testbox.system.BaseSpec" {
 	}
 
 	private any function _getService( struct configuredProviders=_defaultConfiguredProviders() ) {
-		var svc = CreateObject( "app.extensions.preside-ext-saml2-sso.services.IdentityProviderService" );
+		var svc = CreateObject( "app.extensions.preside-ext-saml2-sso.services.SamlIdentityProviderService" );
 
 		mockProviderDao = CreateStub();
 

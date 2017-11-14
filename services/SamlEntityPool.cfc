@@ -7,11 +7,11 @@ component {
 
 // CONSTRUCTOR
 	/**
-	 * @identityProviderService.inject identityProviderService
+	 * @samlIdentityProviderService.inject samlIdentityProviderService
 	 *
 	 */
-	public any function init( required any identityProviderService ) {
-		_setIdentityProviderService( arguments.identityProviderService );
+	public any function init( required any samlIdentityProviderService ) {
+		_setSamlIdentityProviderService( arguments.samlIdentityProviderService );
 
 		return this;
 	}
@@ -53,7 +53,7 @@ component {
 			var savedEntityId = entity.id;
 			if ( savedEntityId.len() && arguments.entityId == savedEntityId ) {
 				if ( arguments.entityType == "idp" ) {
-					entity[ entityKey ] = _getIdentityProviderService().getProvider( record.slug );
+					entity[ entityKey ] = _getSamlIdentityProviderService().getProvider( record.slug );
 				} else {
 					entity[ entityKey ] = record;
 				}
@@ -102,10 +102,10 @@ component {
 		}
 	}
 
-	private any function _getIdentityProviderService() {
-		return _identityProviderService;
+	private any function _getSamlIdentityProviderService() {
+		return _samlIdentityProviderService;
 	}
-	private void function _setIdentityProviderService( required any identityProviderService ) {
-		_identityProviderService = arguments.identityProviderService;
+	private void function _setSamlIdentityProviderService( required any samlIdentityProviderService ) {
+		_samlIdentityProviderService = arguments.samlIdentityProviderService;
 	}
 }
