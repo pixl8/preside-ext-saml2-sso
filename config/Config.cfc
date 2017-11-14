@@ -44,5 +44,8 @@ component {
 
 		settings.enum.samlSsoType = [ "sp", "idp" ];
 		settings.enum.samlIdpType = [ "admin", "web" ];
+
+		settings.multilingual.ignoredUrlPatterns = settings.multilingual.ignoredUrlPatterns ?: [];
+		settings.multilingual.ignoredUrlPatterns.append( "^/saml2/" );
 	}
 }
