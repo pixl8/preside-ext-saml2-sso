@@ -37,8 +37,8 @@ component {
 				, web             = providers[ providerId ].web             ?: false
 				, autoRegister    = providers[ providerId ].autoRegister    ?: true
 				, postAuthHandler = providers[ providerId ].postAuthHandler ?: ""
-				, title           = providers[ providerId ].title           ?: providerId
-				, description     = providers[ providerId ].description     ?: ""
+				, title           = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId )
+				, description     = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         )
 			} );
 
 			list.append( provider );

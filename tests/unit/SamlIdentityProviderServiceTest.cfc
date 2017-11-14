@@ -17,22 +17,28 @@ component extends="testbox.system.BaseSpec" {
 				var expected  = [];
 
 				mockProviderDao.$( "selectData", dbProviders );
+				service.$( "$translateResource" ).$args( uri="saml2.identityProviders:jumpCloud.title"      , defaultValue="jumpCloud" ).$results( "jumpCloud title"       );
+				service.$( "$translateResource" ).$args( uri="saml2.identityProviders:jumpCloud.description", defaultValue=""          ).$results( "jumpCloud description" );
+				service.$( "$translateResource" ).$args( uri="saml2.identityProviders:google.title"         , defaultValue="google"    ).$results( "google title"          );
+				service.$( "$translateResource" ).$args( uri="saml2.identityProviders:google.description"   , defaultValue=""          ).$results( "google description"    );
 
 				providers.jumpCloud.append( {
 					  admin           = true
 					, web             = false
 					, autoRegister    = true
 					, postAuthHandler = ""
-					, title           = "jumpCloud"
-					, description     = ""
+					, title           = "jumpCloud title"
+					, description     = "jumpCloud description"
 					, slug            = dbProviders.slug[1]
 					, enabled         = dbProviders.enabled[1]
 					, metadata        = dbProviders.metadata[1]
 				} );
 				providers.google.append( {
-					  slug     = dbProviders.slug[2]
-					, enabled  = dbProviders.enabled[2]
-					, metadata = dbProviders.metadata[2]
+					  slug        = dbProviders.slug[2]
+					, enabled     = dbProviders.enabled[2]
+					, metadata    = dbProviders.metadata[2]
+					, title       = "google title"
+					, description = "google description"
 				} );
 
 				for( var p in providers ) {
@@ -59,6 +65,7 @@ component extends="testbox.system.BaseSpec" {
 		svc = CreateMock( object=svc );
 		svc.$( "_ensureProvidersExistInDb" );
 		svc.$( "$getPresideObject" ).$args( "saml2_identity_provider" ).$results( mockProviderDao );
+		svc.$( "$translateResource", "" );
 
 		svc.init(
 			argumentCollection = arguments
@@ -75,8 +82,6 @@ component extends="testbox.system.BaseSpec" {
 				, web             = true
 				, autoRegister    = false
 				, postAuthHandler = "some.handler"
-				, title           = "Google, init!"
-				, description     = "So, this is nice..."
 			},
 			"JumpCloud" : {}
 		};
