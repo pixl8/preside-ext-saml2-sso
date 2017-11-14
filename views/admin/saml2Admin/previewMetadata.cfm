@@ -9,7 +9,7 @@
 				#translateResource( "saml2:provider.previewMetadata.explanation" )#
 			</p>
 			<p class="text-center">
-				<a href="#event.buildAdminLink( 'saml2ProviderManagement.downloadMetadata' )#" class="btn btn-sm btn-info">
+				<a href="#event.buildAdminLink( 'saml2Admin.downloadMetadata' )#" class="btn btn-sm btn-info">
 					<i class="fa fa-fw fa-download"></i>
 					#translateResource( "saml2:provider.previewMetadata.download.btn" )#
 				</a>
@@ -19,7 +19,7 @@
 	</cfsavecontent>
 
 	#renderView(
-		  view = "/admin/saml2ProviderManagement/_samlProviderManagementTabs"
+		  view = "/admin/saml2Admin/_samlProviderManagementTabs"
 		, args = { body=body, tab="meta" }
 	)#
 </cfoutput>

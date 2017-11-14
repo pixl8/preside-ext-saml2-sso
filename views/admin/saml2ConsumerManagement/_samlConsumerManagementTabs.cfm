@@ -22,7 +22,7 @@
 		, icon   = "fa-code blue"
 		, title  = translateResource( "saml2:consumer.tabs.meta" )
 		, active = ( args.tab == "meta" )
-		, link   = ( args.tab == "meta" ) ? "" : event.buildAdminLink( linkTo="saml2ProviderManagement.previewMetadata" )
+		, link   = ( args.tab == "meta" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.previewMetadata" )
 	});
 </cfscript>
 

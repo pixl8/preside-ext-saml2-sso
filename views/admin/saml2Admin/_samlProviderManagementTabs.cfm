@@ -9,21 +9,21 @@
 		, icon   = "fa-globe green"
 		, title  = translateResource( "saml2:provider.tabs.consumers" )
 		, active = ( args.tab == "consumers" )
-		, link   = ( args.tab == "consumers" ) ? "" : event.buildAdminLink( linkTo="saml2ProviderManagement" )
+		, link   = ( args.tab == "consumers" ) ? "" : event.buildAdminLink( linkTo="saml2Admin" )
 	});
 	tabs.append({
 		  id     = "settings"
 		, icon   = "fa-cogs grey"
 		, title  = translateResource( "saml2:provider.tabs.settings" )
 		, active = ( args.tab == "settings" )
-		, link   = ( args.tab == "settings" ) ? "" : event.buildAdminLink( linkTo="saml2ProviderManagement.settings" )
+		, link   = ( args.tab == "settings" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.settings" )
 	});
 	tabs.append({
 		  id     = "meta"
 		, icon   = "fa-code blue"
 		, title  = translateResource( "saml2:provider.tabs.meta" )
 		, active = ( args.tab == "meta" )
-		, link   = ( args.tab == "meta" ) ? "" : event.buildAdminLink( linkTo="saml2ProviderManagement.previewMetadata" )
+		, link   = ( args.tab == "meta" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.previewMetadata" )
 	});
 </cfscript>
 

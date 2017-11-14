@@ -15,7 +15,7 @@ component extends="preside.system.base.AdminHandler" {
 		prc.pageIcon = "fa-key";
 		event.addAdminBreadCrumb(
 			  title = translateResource( "saml2:provider.breadcrumb.title" )
-			, link  = event.buildAdminLink( linkto="saml2ProviderManagement" )
+			, link  = event.buildAdminLink( linkto="saml2Admin" )
 		);
 	}
 
@@ -25,7 +25,7 @@ component extends="preside.system.base.AdminHandler" {
 
 		prc.consumersExist  = consumerDao.dataExists();
 		prc.canAdd          = hasCmsPermission( "saml2.provider.manage" )
-		prc.addConsumerLink = prc.canAdd ? event.buildAdminLink( "saml2ProviderManagement.addConsumer" ) : "";
+		prc.addConsumerLink = prc.canAdd ? event.buildAdminLink( "saml2Admin.addConsumer" ) : "";
 	}
 
 	public void function getConsumersForAjaxDataTables( event, rc, prc ) {
@@ -36,7 +36,7 @@ component extends="preside.system.base.AdminHandler" {
 			, eventArguments = {
 				  object      = "saml2_consumer"
 				, gridFields  = "name,sso_type,sso_link"
-				, actionsView = "/admin/saml2ProviderManagement/_consumerGridActions"
+				, actionsView = "/admin/saml2Admin/_consumerGridActions"
 			}
 		);
 	}
@@ -51,7 +51,7 @@ component extends="preside.system.base.AdminHandler" {
 
 		event.addAdminBreadCrumb(
 			  title = translateResource( "saml2:provider.addconsumer.breadcrumb.title" )
-			, link  = event.buildAdminLink( linkto="saml2ProviderManagement.addconsumer" )
+			, link  = event.buildAdminLink( linkto="saml2Admin.addconsumer" )
 		);
 	}
 
@@ -66,9 +66,9 @@ component extends="preside.system.base.AdminHandler" {
 			, private        = true
 			, eventArguments = {
 				  object            = "saml2_consumer"
-				, errorAction       = "saml2ProviderManagement.addConsumer"
-				, viewRecordAction  = "saml2ProviderManagement.editConsumer"
-				, successAction     = "saml2ProviderManagement"
+				, errorAction       = "saml2Admin.addConsumer"
+				, viewRecordAction  = "saml2Admin.editConsumer"
+				, successAction     = "saml2Admin"
 				, redirectOnSuccess = true
 				, audit             = true
 				, auditType         = "saml2providerconsumer"
@@ -96,7 +96,7 @@ component extends="preside.system.base.AdminHandler" {
 
 		event.addAdminBreadCrumb(
 			  title = translateResource( uri="saml2:provider.editConsumer.breadcrumb.title", data=[ prc.consumer.name ] )
-			, link  = event.buildAdminLink( linkto="saml2ProviderManagement.editConsumer", queryString="id=" & consumerId )
+			, link  = event.buildAdminLink( linkto="saml2Admin.editConsumer", queryString="id=" & consumerId )
 		);
 	}
 
@@ -111,8 +111,8 @@ component extends="preside.system.base.AdminHandler" {
 			, prePostExempt  = true
 			, eventArguments = {
 				  object            = "saml2_consumer"
-				, errorUrl          = event.buildAdminLink( linkto="saml2ProviderManagement.editConsumer", querystring="id=" & ( rc.id ?: "" )  )
-				, successUrl        = event.buildAdminLink( linkto="saml2ProviderManagement" )
+				, errorUrl          = event.buildAdminLink( linkto="saml2Admin.editConsumer", querystring="id=" & ( rc.id ?: "" )  )
+				, successUrl        = event.buildAdminLink( linkto="saml2Admin" )
 				, redirectOnSuccess = true
 				, audit             = true
 				, auditType         = "saml2providerconsumer"
@@ -133,7 +133,7 @@ component extends="preside.system.base.AdminHandler" {
 			, prePostExempt  = true
 			, eventArguments = {
 				  object      = "saml2_consumer"
-				, postAction  = "saml2ProviderManagement"
+				, postAction  = "saml2Admin"
 				, audit       = true
 				, auditType   = "saml2providerconsumer"
 				, auditAction = "edit_consumer"
@@ -153,7 +153,7 @@ component extends="preside.system.base.AdminHandler" {
 
 		event.addAdminBreadCrumb(
 			  title = translateResource( uri="saml2:provider.settings.breadcrumb.title" )
-			, link  = event.buildAdminLink( linkto="saml2ProviderManagement.settings" )
+			, link  = event.buildAdminLink( linkto="saml2Admin.settings" )
 		);
 	}
 
@@ -169,7 +169,7 @@ component extends="preside.system.base.AdminHandler" {
 		if ( !validationResult.validated() ) {
 			messageBox.error( translateResource( uri="saml2:provider.settings.error" ) );
 			formData.validationResult = validationResult;
-			setNextEvent( url=event.buildAdminLink( linkTo="saml2ProviderManagement.settings" ), persistStruct=formData );
+			setNextEvent( url=event.buildAdminLink( linkTo="saml2Admin.settings" ), persistStruct=formData );
 
 		}
 
@@ -188,7 +188,7 @@ component extends="preside.system.base.AdminHandler" {
 		);
 		messageBox.info( translateResource( uri="saml2:provider.settings.saved" ) );
 
-		setNextEvent( url=event.buildAdminLink( linkTo="saml2ProviderManagement" ) );
+		setNextEvent( url=event.buildAdminLink( linkTo="saml2Admin" ) );
 
 	}
 
@@ -200,7 +200,7 @@ component extends="preside.system.base.AdminHandler" {
 
 		event.addAdminBreadCrumb(
 			  title = translateResource( uri="saml2:provider.previewMetadata.breadcrumb.title" )
-			, link  = event.buildAdminLink( linkto="saml2ProviderManagement.previewMetadata" )
+			, link  = event.buildAdminLink( linkto="saml2Admin.previewMetadata" )
 		);
 	}
 

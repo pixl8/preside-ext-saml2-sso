@@ -9,7 +9,7 @@
 			#renderView( view="/admin/datamanager/_objectDataTable", args={
 				  objectName      = "saml2_consumer"
 				, useMultiActions = false
-				, datasourceUrl   = event.buildAdminLink( linkTo="saml2ProviderManagement.getConsumersForAjaxDataTables" )
+				, datasourceUrl   = event.buildAdminLink( linkTo="saml2Admin.getConsumersForAjaxDataTables" )
 				, gridFields      = [ "name", "sso_type", "sso_link" ]
 			} )#
 		<cfelse>
@@ -40,7 +40,7 @@
 	</cfif>
 
 	#renderView(
-		  view = "/admin/saml2ProviderManagement/_samlProviderManagementTabs"
+		  view = "/admin/saml2Admin/_samlProviderManagementTabs"
 		, args = { body=body, tab="consumers" }
 	)#
 </cfoutput>

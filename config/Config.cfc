@@ -34,7 +34,7 @@ component {
 		settings.adminRoles.sysadmin.append( "saml2.*" );
 		settings.adminRoles.sysadmin.append( "!saml2.provider.deleteConsumer" );
 
-		settings.adminSideBarItems.insertAt( settings.adminSideBarItems.findNoCase( "websiteUserManager" )+1, "saml2" );
+		settings.adminConfigurationMenuItems.insertAt( settings.adminConfigurationMenuItems.findNoCase( "usermanager" )+1, "saml2" );
 
 		settings.validationProviders.append( "samlMetaDataValidator" );
 
