@@ -137,6 +137,16 @@ component {
 		if ( !StructKeyExists( server, "_saml2Jl" ) ) {
 			var libs = DirectoryList( ExpandPath( "/app/extensions/preside-ext-saml2-sso/services/lib" ), false, "path", "*.jar" );
 
+			try {
+				CreateObject( "java", "org.slf4j.LoggerFactory" );
+				// if we get here slf4j is present and even using JavaLoader we get clashes, remove the lib
+				for( var lib in libs ) {
+					if ( lib.endsWith( "slf4j-api-1.7.5.jar") ) {
+						libs.delete( lib );
+						break;
+					}
+				}
+			} catch( any e ){}
 			// javaloader for some reason depends on application.applicationName
 			application.applicationName = application.applicationName ?: ( application.name ?: Hash( ExpandPath( "/" ) ) );
 
