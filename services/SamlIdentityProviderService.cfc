@@ -62,9 +62,14 @@ component {
 					provider.append( pr, false );
 				}
 
-				var md = new SamlMetaData( provider.metadata );
+				if ( provider.metadata.len() ) {
+					var md = new SamlMetaData( provider.metadata );
 
-				provider.ssoLocation = md.getIdpSsoLocation();
+					provider.ssoLocation = md.getIdpSsoLocation();
+				} else {
+					provider.ssoLocation = "";
+				}
+
 				provider.title       = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId );
 				provider.description = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         );
 
