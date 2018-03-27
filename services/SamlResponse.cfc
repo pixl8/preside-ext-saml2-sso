@@ -57,12 +57,12 @@ component extends="AbstractSamlObject" {
 		var notBefore = rootEl[ "saml2:Assertion" ][ "saml2:Conditions" ].xmlAttributes[ "NotBefore" ] ?: "";
 
 		if ( IsDate( notBefore ) ) {
-			return notBefore;
+			return ReReplace( notBefore, "Z$", "" );
 		}
 
 		notBefore = DateConvert( "local2utc", Now() );
 
-		return DateFormat( notBefore, "yyyy-mm-dd" ) & "T" & TimeFormat( notBefore, "HH:mm:ss.l" ) & "Z";
+		return DateFormat( notBefore, "yyyy-mm-dd" ) & "T" & TimeFormat( notBefore, "HH:mm:ss.l" );
 	}
 
 	public date function getNotAfter() {
@@ -70,12 +70,12 @@ component extends="AbstractSamlObject" {
 		var notAfter = rootEl[ "saml2:Assertion" ][ "saml2:Conditions" ].xmlAttributes[ "NotOnOrAfter" ] ?: "";
 
 		if ( IsDate( notAfter ) ) {
-			return notAfter;
+			return ReReplace( notAfter, "Z$", "" );
 		}
 
 		notAfter = DateConvert( "local2utc", DateAdd( "n", 20, Now() ) );
 
-		return DateFormat( notAfter, "yyyy-mm-dd" ) & "T" & TimeFormat( notAfter, "HH:mm:ss.l" ) & "Z";
+		return DateFormat( notAfter, "yyyy-mm-dd" ) & "T" & TimeFormat( notAfter, "HH:mm:ss.l" );
 	}
 
 	public struct function getAttributes() {
