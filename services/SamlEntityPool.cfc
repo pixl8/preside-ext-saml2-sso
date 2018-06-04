@@ -51,7 +51,7 @@ component {
 		for( var record in records ) {
 			var entity        = _getEntityFromMetadata( record.metadata ).getMemento();
 			var savedEntityId = entity.id;
-			if ( savedEntityId.len() && arguments.entityId == savedEntityId ) {
+			if ( savedEntityId.len() && ( arguments.entityId == savedEntityId || arguments.entityId == savedEntityId.reReplace( "/$", "" ) & "/saml2/sso/" ) ) {
 				if ( arguments.entityType == "idp" ) {
 					entity[ entityKey ] = _getSamlIdentityProviderService().getProvider( record.slug );
 				} else {
