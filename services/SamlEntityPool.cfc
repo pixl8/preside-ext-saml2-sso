@@ -49,6 +49,10 @@ component {
 		var records = $getPresideObject( sourceObject ).selectData();
 
 		for( var record in records ) {
+			if ( !Len( Trim( record.metadata ) ) ) {
+				continue;
+			}
+
 			var entity        = _getEntityFromMetadata( record.metadata ).getMemento();
 			var savedEntityId = entity.id;
 			if ( savedEntityId.len() && ( arguments.entityId == savedEntityId || arguments.entityId == savedEntityId.reReplace( "/$", "" ) & "/saml2/sso/" ) ) {
