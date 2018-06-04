@@ -56,7 +56,7 @@ component {
 		for( var providerId in providers ) {
 			if ( providerId == arguments.id ) {
 				var provider = providers[ providerId ].copy();
-				var providerRecord = $getPresideObject( "saml2_identity_provider" ).selectData( slug=arguments.id );
+				var providerRecord = $getPresideObject( "saml2_identity_provider" ).selectData( filter={ slug=arguments.id } );
 
 				for ( var pr in providerRecord ) {
 					provider.append( pr, false );
