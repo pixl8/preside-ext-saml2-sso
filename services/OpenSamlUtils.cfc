@@ -122,7 +122,7 @@ component {
 	}
 
 	private any function _getCredentialFromMetadata( required string idpMeta ) {
-		var x509Cert        = "-----BEGIN CERTIFICATE-----" & Chr( 10 ) & Trim( new SamlMetadata( arguments.idpMeta ).getX509Certificate() ) & "-----END CERTIFICATE-----";
+		var x509Cert        = _ensureCertWrappedInHeaderAndFooter( Trim( new SamlMetadata( arguments.idpMeta ).getX509Certificate() ) );
 		var byteArrayOfCert = CreateObject( "java", "java.io.ByteArrayInputStream" ).init( x509Cert.getBytes() );
 		var certFactory     = CreateObject( "java", "java.security.cert.CertificateFactory" ).getInstance( "X.509" );
 		var cert            = certFactory.generateCertificate( byteArrayOfCert );
@@ -141,6 +141,14 @@ component {
 
 			server._saml2Jl = new javaloader.JavaLoader( loadPaths=libs, loadColdFusionClassPath=true );
 		}
+	}
+
+	private string function _ensureCertWrappedInHeaderAndFooter( required string cert ) {
+		if ( !arguments.cert.startsWith( "-----BEGIN CERTIFICATE-----" ) ) {
+			return "-----BEGIN CERTIFICATE-----" & Chr( 10 ) & arguments.cert & "-----END CERTIFICATE-----"
+		}
+
+		return arguments.cert;
 	}
 
 // GETTERS AND SETTERS
