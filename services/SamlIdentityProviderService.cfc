@@ -81,7 +81,11 @@ component {
 	}
 
 	public string function getIdpIdBySlug( required string slug ) {
-		var providerRecord = $getPresideObject( "saml2_identity_provider" ).selectData( slug=arguments.slug, selectFields=[ "id" ] );
+		var providerRecord = $getPresideObject( "saml2_identity_provider" ).selectData(
+			  filter       = { slug=arguments.slug }
+			, selectFields = [ "id" ]
+		);
+
 		return providerRecord.id ?: "";
 	}
 

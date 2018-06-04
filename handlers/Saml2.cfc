@@ -60,7 +60,7 @@ component {
 			var attributeConfig = _getAttributeConfig( samlRequest.issuerEntity.consumerRecord );
 
 			samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
-				  issuer          = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() ) & "/saml2/sso/"
+				  issuer          = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() ).reReplace( "/$", "" ) & "/saml2/sso/"
 				, inResponseTo    = samlRequest.samlRequest.id
 				, recipientUrl    = redirectLocation
 				, nameIdFormat    = "urn:oasis:names:tc:SAML:2.0:nameid-format:#attributeConfig.idFormat#"
