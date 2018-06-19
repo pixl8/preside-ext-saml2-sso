@@ -85,13 +85,13 @@ component extends="AbstractSamlObject" {
 
 		for( var attribEl in attribEls ) {
 			if ( attribEl.xmlName == "saml2:Attribute" ) {
-				var name = attribEl.xmlAttributes.name ?: "";
+				var name = attribEl.xmlAttributes.friendlyName ?: ( attribEl.xmlAttributes.name ?: "" );
 
 				if ( name.len() ) {
 					attribs[ name ] = attribEl[ "saml2:AttributeValue" ].xmlText;
 				}
 			} else if ( attribEl.xmlName == "saml:Attribute" ) {
-				var name = attribEl.xmlAttributes.name ?: "";
+				var name = attribEl.xmlAttributes.friendlyName ?: ( attribEl.xmlAttributes.name ?: "" );
 
 				if ( name.len() ) {
 					attribs[ name ] = attribEl[ "saml:AttributeValue" ].xmlText;

@@ -2,6 +2,6 @@
 	  "id"        : "preside-ext-saml2-sso"
 	, "title"     : "SAML2 Single Sign On for Preside"
 	, "author"    : "Pixl8 Interactive"
-	, "version"   : "3.0.7"
+	, "version"   : "3.0.8"
 	, "changelog" : ""
 }
