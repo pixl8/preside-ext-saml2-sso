@@ -183,12 +183,12 @@ component {
 		var providerSlug = rc.providerSlug ?: "";
 		var idp          = samlIdentityProviderService.getProvider( providerSlug );
 
-		if ( idp.isEmpty() ) {
+		if ( idp.isEmpty() || !Len( idp.metaData ?: "" ) ) {
 			event.notFound();
 		}
 
 		var samlRequest = samlRequestBuilder.buildAuthenticationRequest(
-			  idpMetaData        = idp.metaData ?: ""
+			  idpMetaData        = idp.metaData
 			, responseHandlerUrl = event.buildLink( linkto="saml2.response" )
 			, spIssuer           = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
 			, spName             = getSystemSetting( "saml2Provider", "organisation_short_name" )
