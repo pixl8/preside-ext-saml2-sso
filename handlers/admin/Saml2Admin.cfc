@@ -189,11 +189,16 @@ component extends="preside.system.base.AdminHandler" {
 			);
 		}
 
-		event.audit(
-			  action = "saml2provider"
-			, type   = "save_settings"
-			, detail = formData
-		);
+		try {
+			event.audit(
+				  action = "saml2provider"
+				, type   = "save_settings"
+				, detail = formData
+			);
+		} catch ( any e ) {
+			logError( e );
+		}
+
 		messageBox.info( translateResource( uri="saml2:provider.settings.saved" ) );
 
 		setNextEvent( url=event.buildAdminLink( linkTo="saml2Admin" ) );
