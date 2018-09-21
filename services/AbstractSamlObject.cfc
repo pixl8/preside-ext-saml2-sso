@@ -2,7 +2,7 @@ component {
 
 // CONSTRUCTOR
 	public any function init( required string xml ) {
-		_setXmlObject( XmlParse( arguments.xml ) );
+		_setXmlObject( XmlParse( _stripNameSpaces( arguments.xml ) ) );
 
 		return this;
 	}
@@ -22,6 +22,40 @@ component {
 
 		return formatter.parse( dateMinusOptionalMilliseconds );
 	}
+
+// PRIVATE HELPERS
+	private string function _stripNameSpaces( required string sourceXml ) {
+		var namespaces = _getNamespaces( arguments.sourceXml );
+		var strippedXml = arguments.sourceXml;
+
+		for( var namespace in namespaces ) {
+			strippedXml = replaceNoCase( strippedXml, "<#namespace#:", "<", "all" );
+			strippedXml = replaceNoCase( strippedXml, "</#namespace#:", "</", "all" );
+			strippedXml = replaceNoCase( strippedXml, "xmlns:#namespace#=", "xmlns=", "all" );
+		}
+
+		return strippedXml;
+	}
+
+	private array function _getNamespaces( required string sourceXml ) {
+		var match      = "";
+		var pos        = 0;
+		var matched    = false;
+		var namespaces = [];
+
+		do {
+			match = ReFind( "xmlns:([a-zA-Z0-9]+)=", arguments.sourceXml, pos, true );
+			matched = IsArray( match.match ?: "" ) && match.match.len() == 2;
+			if( matched ) {
+				pos = match.pos[ 1 ] + match.len[ 1 ];
+				namespaces.append( Mid( arguments.sourceXml, match.pos[ 2 ], match.len[ 2 ] ) );
+			}
+		} while ( matched );
+
+		return namespaces;
+	}
+
+
 
 // GETTERS AND SETTERS
 	private xml function _getXmlObject() {

@@ -29,7 +29,7 @@ component extends="AbstractSamlObject" {
 	public string function getIssuer() {
 		var rootEl = getRootNode();
 
-		return Trim( rootEl[ "saml:Issuer" ].xmlText ?: "" );
+		return Trim( rootEl[ "Issuer" ].xmlText ?: "" );
 	}
 
 	public date function getIssueInstant() {
@@ -52,7 +52,7 @@ component extends="AbstractSamlObject" {
 
 	public struct function getNameIdPolicy() {
 		var rootEl = getRootNode();
-		var policyNode = rootEl[ "samlp:NameIDPolicy" ] ?: NullValue();
+		var policyNode = rootEl[ "NameIDPolicy" ] ?: NullValue();
 
 		if ( !IsNull( policyNode ) ) {
 			return {
