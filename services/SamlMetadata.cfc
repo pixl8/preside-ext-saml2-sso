@@ -22,7 +22,7 @@ component extends="AbstractSamlObject" {
 		// TODO: create an SSOReqs. object for this that exposes methods for getting
 		// at its data, etc.
 
-		var spSSONode = XmlSearch( _getXmlObject(), "/md:EntityDescriptor/md:SPSSODescriptor" );
+		var spSSONode = XmlSearch( _getXmlObject(), "/EntityDescriptor/SPSSODescriptor" );
 
 		if ( !spSSONode.len() ) {
 			return {};
@@ -34,12 +34,12 @@ component extends="AbstractSamlObject" {
 		reqs.wantAssertionsSigned = spSSONode.xmlAttributes.wantAssertionsSigned ?: true;
 		reqs.nameIdFormats        = [];
 
-		var formats = XmlSearch( _getXmlObject(), "/md:EntityDescriptor/md:SPSSODescriptor/md:NameIDFormat" );
+		var formats = XmlSearch( _getXmlObject(), "/EntityDescriptor/SPSSODescriptor/NameIDFormat" );
 		for( var format in formats ) {
 			reqs.nameIdFormats.append( format.xmlText );
 		}
 
-		var assertionConsumer = XmlSearch( _getXmlObject(), "/md:EntityDescriptor/md:SPSSODescriptor/md:AssertionConsumerService" );
+		var assertionConsumer = XmlSearch( _getXmlObject(), "/EntityDescriptor/SPSSODescriptor/AssertionConsumerService" );
 		if ( assertionConsumer.len() ) {
 			reqs.defaultAssertionConsumer = {
 				  index    = assertionConsumer[1].xmlAttributes.index    ?: 0
@@ -49,7 +49,7 @@ component extends="AbstractSamlObject" {
 		}
 
 		reqs.requestAttributes = [];
-		var attributes = XmlSearch( _getXmlObject(), "/md:EntityDescriptor/md:SPSSODescriptor/md:AttributeConsumingService[@isDefault='true']/md:RequestedAttribute" );
+		var attributes = XmlSearch( _getXmlObject(), "/EntityDescriptor/SPSSODescriptor/AttributeConsumingService[@isDefault='true']/RequestedAttribute" );
 		for( var attrib in attributes ) {
 			reqs.requestAttributes.append( {
 				  friendlyName = attrib.xmlAttributes.friendlyName ?: ""
@@ -60,8 +60,8 @@ component extends="AbstractSamlObject" {
 		}
 
 		// absurdly brutal:
-		var keyDescriptors = XmlSearch( _getXmlObject(), "/md:EntityDescriptor/md:SPSSODescriptor/md:KeyDescriptor" );
-		reqs.x509Certificate = Trim( keyDescriptors[1][ "ds:KeyInfo" ][ "ds:X509Data" ][ "ds:X509Certificate" ].xmlText ?: "" );
+		var keyDescriptors = XmlSearch( _getXmlObject(), "/EntityDescriptor/SPSSODescriptor/KeyDescriptor" );
+		reqs.x509Certificate = Trim( keyDescriptors[1][ "KeyInfo" ][ "X509Data" ][ "X509Certificate" ].xmlText ?: "" );
 
 		return reqs;
 	}
@@ -69,18 +69,18 @@ component extends="AbstractSamlObject" {
 	public string function getIdpNameIdFormat() {
 		var rootEl = getRootNode();
 
-		return rootEl[ "md:IDPSSODescriptor"][ "md:NameIDFormat" ].xmlText ?: "";
+		return rootEl[ "IDPSSODescriptor"][ "NameIDFormat" ].xmlText ?: "";
 	}
 
 	public string function getIdpSsoLocation() {
 		var rootEl = getRootNode();
 
-		return rootEl[ "md:IDPSSODescriptor"][ "md:SingleSignOnService" ].xmlAttributes.location ?: "";
+		return rootEl[ "IDPSSODescriptor"][ "SingleSignOnService" ].xmlAttributes.location ?: "";
 	}
 
 	public string function getX509Certificate() {
 		var rootEl = getRootNode();
 
-		return rootEl[ "md:IDPSSODescriptor" ][ "md:KeyDescriptor" ][ "ds:KeyInfo" ][ "ds:X509Data" ][ "ds:X509Certificate" ].xmlText ?: "";
+		return rootEl[ "IDPSSODescriptor" ][ "KeyDescriptor" ][ "KeyInfo" ][ "X509Data" ][ "X509Certificate" ].xmlText ?: "";
 	}
 }

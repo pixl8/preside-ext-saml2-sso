@@ -33,7 +33,7 @@ component extends="AbstractSamlObject" {
 	public string function getIssuer() {
 		var rootEl = getRootNode();
 
-		return Trim( rootEl[ "saml2:Issuer" ].xmlText ?: ( rootEl[ "saml:Issuer" ].xmlText ?: "" ) );
+		return Trim( rootEl.Issuer.xmlText ?: "" );
 	}
 
 	public date function getIssueInstant() {
@@ -49,12 +49,12 @@ component extends="AbstractSamlObject" {
 
 	public string function getNameId() {
 		var rootEl = getRootNode();
-        return rootEl[ "saml2:Assertion" ][ "saml2:Subject" ][ "saml2:NameID" ].xmlText ?: ( rootEl[ "saml:Assertion" ][ "saml:Subject" ][ "saml:NameID" ].xmlText ?: "" );
+        return rootEl.Assertion.Subject.NameID.xmlText ?: "";
 	}
 
 	public date function getNotBefore() {
 		var rootEl = getRootNode();
-		var notBefore = rootEl[ "saml2:Assertion" ][ "saml2:Conditions" ].xmlAttributes[ "NotBefore" ] ?: ( rootEl[ "saml:Assertion" ][ "saml:Conditions" ].xmlAttributes[ "NotBefore" ] ?: "" );
+		var notBefore = rootEl.Assertion.Conditions.xmlAttributes[ "NotBefore" ] ?: "";
 
 		if ( IsDate( notBefore ) ) {
 			return ReReplace( notBefore, "Z$", "" );
@@ -67,7 +67,7 @@ component extends="AbstractSamlObject" {
 
 	public date function getNotAfter() {
 		var rootEl   = getRootNode();
-		var notAfter = rootEl[ "saml2:Assertion" ][ "saml2:Conditions" ].xmlAttributes[ "NotOnOrAfter" ] ?: ( rootEl[ "saml:Assertion" ][ "saml:Conditions" ].xmlAttributes[ "NotOnOrAfter" ] ?: "" );
+		var notAfter = rootEl.Assertion.Conditions.xmlAttributes[ "NotOnOrAfter" ] ?: "";
 
 		if ( IsDate( notAfter ) ) {
 			return ReReplace( notAfter, "Z$", "" );
@@ -81,23 +81,14 @@ component extends="AbstractSamlObject" {
 	public struct function getAttributes() {
 		var attribs = {};
 		var rootEl = getRootNode();
-		var attribEls = rootEl[ "saml2:Assertion" ][ "saml2:AttributeStatement" ].xmlChildren ?: ( rootEl[ "saml:Assertion" ][ "saml:AttributeStatement" ].xmlChildren ?: [] );
+		var attribEls = rootEl.AttributeStatement.xmlChildren ?: [];
 
 		for( var attribEl in attribEls ) {
-			if ( attribEl.xmlName == "saml2:Attribute" ) {
-				var name = attribEl.xmlAttributes.friendlyName ?: ( attribEl.xmlAttributes.name ?: "" );
+			var name = attribEl.xmlAttributes.friendlyName ?: ( attribEl.xmlAttributes.name ?: "" );
 
-				if ( name.len() ) {
-					attribs[ name ] = attribEl[ "saml2:AttributeValue" ].xmlText;
-				}
-			} else if ( attribEl.xmlName == "saml:Attribute" ) {
-				var name = attribEl.xmlAttributes.friendlyName ?: ( attribEl.xmlAttributes.name ?: "" );
-
-				if ( name.len() ) {
-					attribs[ name ] = attribEl[ "saml:AttributeValue" ].xmlText;
-				}
+			if ( name.len() ) {
+				attribs[ name ] = attribEl.AttributeValue.xmlText ?: "";
 			}
-
 		}
 
 		return attribs;
@@ -106,7 +97,7 @@ component extends="AbstractSamlObject" {
 	public boolean function getAssertionIsSigned() {
 		var rootEl = getRootNode();
 
-		return Len( rootEl[ "saml2:Assertion" ][ "ds:Signature" ][ "ds:SignatureValue" ].xmlText ?: ( rootEl[ "saml:Assertion" ][ "ds:Signature" ][ "ds:SignatureValue" ].xmlText ?: "" ) ) > 0;
+		return Len( rootEl.Assertion.Signature.SignatureValue.xmlText ?: "" ) > 0
 	}
 
 // AUTHENTICATION REQUEST METHODS
@@ -118,7 +109,7 @@ component extends="AbstractSamlObject" {
 
 	public struct function getNameIdPolicy() {
 		var rootEl = getRootNode();
-		var policyNode = rootEl[ "samlp:NameIDPolicy" ] ?: NullValue();
+		var policyNode = rootEl.NameIDPolicy ?: NullValue();
 
 		if ( !IsNull( policyNode ) ) {
 			return {
