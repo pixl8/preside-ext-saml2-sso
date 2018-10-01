@@ -31,7 +31,7 @@ component {
 		for( var namespace in namespaces ) {
 			strippedXml = replaceNoCase( strippedXml, "<#namespace#:", "<", "all" );
 			strippedXml = replaceNoCase( strippedXml, "</#namespace#:", "</", "all" );
-			strippedXml = replaceNoCase( strippedXml, "xmlns:#namespace#=", "xmlns=", "all" );
+			strippedXml = replaceNoCase( strippedXml, 'xmlns:#namespace#=".*?"', "", "all" );
 		}
 
 		return strippedXml;
@@ -45,7 +45,8 @@ component {
 
 		do {
 			match = ReFind( "xmlns:([a-zA-Z0-9]+)=", arguments.sourceXml, pos, true );
-			matched = IsArray( match.match ?: "" ) && match.match.len() == 2;
+
+			matched = IsArray( match.pos ?: "" ) && match.pos.len() == 2;
 			if( matched ) {
 				pos = match.pos[ 1 ] + match.len[ 1 ];
 				namespaces.append( Mid( arguments.sourceXml, match.pos[ 2 ], match.len[ 2 ] ) );
