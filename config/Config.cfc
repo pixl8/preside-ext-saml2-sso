@@ -47,5 +47,18 @@ component {
 
 		settings.multilingual.ignoredUrlPatterns = settings.multilingual.ignoredUrlPatterns ?: [];
 		settings.multilingual.ignoredUrlPatterns.append( "^/saml2/" );
+
+		_workaroundEsapiDefaultClassIssue();
+	}
+
+	private void function _workaroundEsapiDefaultClassIssue() {
+		var esapiSysPropKey = "org.owasp.esapi.SecurityConfiguration";
+		var sys             = CreateObject( "java", "java.lang.System" );
+		var defaultVal      = CreateObject( "java", "org.owasp.esapi.reference.DefaultSecurityConfiguration" ).getClass().getName();
+		var configuredVal   = sys.getProperty( esapiSysPropKey );
+
+		if ( IsNull( configuredVal ) ) {
+			sys.setProperty( esapiSysPropKey, defaultVal );
+		}
 	}
 }
