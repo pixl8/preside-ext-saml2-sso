@@ -81,7 +81,7 @@ component extends="AbstractSamlObject" {
 	public struct function getAttributes() {
 		var attribs = {};
 		var rootEl = getRootNode();
-		var attribEls = rootEl.AttributeStatement.xmlChildren ?: [];
+		var attribEls = rootEl.Assertion.AttributeStatement.xmlChildren ?: [];
 
 		for( var attribEl in attribEls ) {
 			var name = attribEl.xmlAttributes.friendlyName ?: ( attribEl.xmlAttributes.name ?: "" );
