@@ -1,11 +1,15 @@
 #!/bin/bash
 
-cd `dirname $0`/tests
-CWD="`pwd`"
+cd `dirname $0`
+exitcode=0
 
-box "$CWD/runtests.cfm"
+if [ ! -d "`dirname $0`/tests/testbox" ]; then
+  box install
+fi
 
-exitcode=$(<.exitcode)
-rm -f .exitcode
+box stop name="samltests"
+box start directory="./tests/" serverConfigFile="./server-samltests.json"
+box testbox run verbose=false || exitcode=1
+box stop name="samltests"
 
 exit $exitcode
