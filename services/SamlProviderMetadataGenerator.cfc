@@ -54,10 +54,14 @@ component {
 		return template;
 	}
 
+	public string function getFormattedX509Cert() {
+		return _getX509Cert( multiline=true );
+	}
+
 // PRIVATE HELPERS
-	private string function _getX509Cert() {
+	private string function _getX509Cert( boolean multiline=false ) {
 		try {
-			return _getSamlKeyStore().getFormattedX509Certificate();
+			return _getSamlKeyStore().getFormattedX509Certificate( multiline=arguments.multiline );
 		} catch( any e ) {
 			return "=====ERROR READING X509 CERT. SEE SAML2 EXTENSION DOCUMENTATION FOR SETUP HELP=====";
 		}
