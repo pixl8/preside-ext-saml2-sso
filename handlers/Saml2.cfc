@@ -60,7 +60,7 @@ component {
 			var attributeConfig = _getAttributeConfig( samlRequest.issuerEntity.consumerRecord );
 			var issuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
 
-			if ( $isFeatureEnabled( "saml2SSOUrlAsIssuer" ) ) {
+			if ( isFeatureEnabled( "saml2SSOUrlAsIssuer" ) ) {
 				issuer = issuer.reReplace( "/$", "" ) & "/saml2/sso/";
 			}
 
