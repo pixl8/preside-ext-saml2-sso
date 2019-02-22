@@ -24,8 +24,9 @@ component {
 		settings.saml2.identityProviders = settings.saml2.identityProviders ?: {};
 
 
-		settings.features.samlSsoProvider = { enabled=true, siteTemplates=[ "*" ], widgets=[] };
-		settings.features.samlSsoConsumer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
+		settings.features.samlSsoProvider     = { enabled=true, siteTemplates=[ "*" ], widgets=[] };
+		settings.features.samlSsoConsumer     = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
+		settings.features.saml2SSOUrlAsIssuer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 
 		settings.adminPermissions.saml2 = [ "navigate", "manage", "deleteConsumer" ];
 
