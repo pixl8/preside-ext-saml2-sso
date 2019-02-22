@@ -208,7 +208,6 @@ component extends="preside.system.base.AdminHandler" {
 	public void function previewMetadata( event, rc, prc ) {
 		prc.providerEnabled = IsFeatureEnabled( "samlSsoProvider" ) && hasCmsPermission( "saml2.provider.navigate" );
 		prc.consumerEnabled = IsFeatureEnabled( "samlSsoConsumer" ) && hasCmsPermission( "saml2.consumer.navigate" );
-		prc.tabsRequired     =  prc.providerEnabled && prc.consumerEnabled;
 
 		if ( prc.providerEnabled ) {
 			prc.idpMetadata = samlProviderMetadataGenerator.generateIdpMetadata();
@@ -216,6 +215,7 @@ component extends="preside.system.base.AdminHandler" {
 		if ( prc.consumerEnabled ) {
 			prc.spMetadata = samlProviderMetadataGenerator.generateSpMetadata();
 		}
+		prc.x509Cert = samlProviderMetadataGenerator.getFormattedX509Cert();
 
 		event.addAdminBreadCrumb(
 			  title = translateResource( uri="saml2:provider.previewMetadata.breadcrumb.title" )

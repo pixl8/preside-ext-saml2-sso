@@ -8,16 +8,13 @@ component {
 	/**
 	 * @samlAttributesService.inject samlAttributesService
 	 * @samlKeyStore.inject          samlKeyStore
-	 * @certificateAlias.inject      coldbox:setting:saml2.keystore.certAlias
 	 *
 	 */
 	public any function init(
 		  required any    samlAttributesService
 		, required any    samlKeyStore
-		, required string certificateAlias
 	) {
 		_setSamlAttributesService( arguments.samlAttributesService );
-		_setCertificateAlias( arguments.certificateAlias );
 		_setSamlKeyStore( arguments.samlKeyStore );
 
 		return this;
@@ -31,6 +28,7 @@ component {
 		template = template.replace( "${x509}"          , _getX509Cert()                                                         , "all" );
 		template = template.replace( "${attribs}"       , _getSupportedAttributesXml()                                           , "all" );
 		template = template.replace( "${ssolocation}"   , ( settings.sso_endpoint_root       ?: "" ) & "/saml2/sso/"             , "all" );
+		template = template.replace( "${entityid}"      , ( settings.sso_endpoint_root       ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgshortname}"  , ( settings.organisation_short_name ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgfullname}"   , ( settings.organisation_full_name  ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgurl}"        , ( settings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" ), "all" );
@@ -46,6 +44,7 @@ component {
 
 		template = template.replace( "${x509}"              , _getX509Cert()                                                         , "all" );
 		template = template.replace( "${ssolocation}"       , ( settings.sso_endpoint_root       ?: "" ) & "/saml2/response/"        , "all" );
+		template = template.replace( "${entityid}"          , ( settings.sso_endpoint_root       ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgshortname}"      , ( settings.organisation_short_name ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgfullname}"       , ( settings.organisation_full_name  ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgurl}"            , ( settings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" ), "all" );
@@ -57,10 +56,14 @@ component {
 		return template;
 	}
 
+	public string function getFormattedX509Cert() {
+		return _getX509Cert( multiline=true );
+	}
+
 // PRIVATE HELPERS
-	private string function _getX509Cert() {
-			return _getSamlKeyStore().getFormattedX509Certificate( _getCertificateAlias() );
+	private string function _getX509Cert( boolean multiline=false ) {
 		try {
+			return _getSamlKeyStore().getFormattedX509Certificate( multiline=arguments.multiline );
 		} catch( any e ) {
 			return "=====ERROR READING X509 CERT. SEE SAML2 EXTENSION DOCUMENTATION FOR SETUP HELP=====";
 		}
@@ -98,13 +101,5 @@ component {
 	private void function _setSamlKeyStore( required any samlKeyStore ) {
 		_samlKeyStore = arguments.samlKeyStore;
 	}
-
-	private string function _getCertificateAlias() {
-		return _certificateAlias;
-	}
-	private void function _setCertificateAlias( required string certificateAlias ) {
-		_certificateAlias = arguments.certificateAlias;
-	}
-
 
 }

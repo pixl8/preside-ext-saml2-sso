@@ -28,7 +28,10 @@
         "cbjavaloader":"1.3.3+25"
     },
     "installPaths":{
-        "testbox":"tests/testbox",
-        "cbjavaloader":"tests/cbjavaloader"
+        "testbox":"tests/testbox/",
+        "cbjavaloader":"tests/cbjavaloader/"
+    },
+    "testbox":{
+        "runner":"http://127.0.0.1:4664/runtests.cfm"
     }
 }

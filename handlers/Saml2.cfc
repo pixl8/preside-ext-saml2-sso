@@ -58,9 +58,14 @@ component {
 			);
 
 			var attributeConfig = _getAttributeConfig( samlRequest.issuerEntity.consumerRecord );
+			var issuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
+
+			if ( $isFeatureEnabled( "saml2SSOUrlAsIssuer" ) ) {
+				issuer = issuer.reReplace( "/$", "" ) & "/saml2/sso/";
+			}
 
 			samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
-				  issuer          = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() ).reReplace( "/$", "" ) & "/saml2/sso/"
+				  issuer          = issuer
 				, inResponseTo    = samlRequest.samlRequest.id
 				, recipientUrl    = redirectLocation
 				, nameIdFormat    = "urn:oasis:names:tc:SAML:2.0:nameid-format:#attributeConfig.idFormat#"

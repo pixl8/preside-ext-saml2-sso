@@ -40,8 +40,13 @@ component {
 		return getKeyStore().getCertificate( _getCertAlias() );
 	}
 
-	public string function getFormattedX509Certificate() {
-		var raw      = ToBase64( getCert( _getCertAlias() ).getEncoded() );
+	public string function getFormattedX509Certificate( boolean multiline=false ) {
+		var raw = ToBase64( getCert( _getCertAlias() ).getEncoded() );
+
+		if ( !arguments.multiline ) {
+			return raw;
+		}
+
 		var x509cert = "-----BEGIN CERTIFICATE-----" & Chr( 10 );
 
 		for( var i=1; i <= raw.len(); i++ ) {

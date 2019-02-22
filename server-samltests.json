@@ -1,0 +1,15 @@
+{
+    "name":"samltests",
+    "openbrowser":false,
+    "trayEnable":false,
+    "web":{
+        "webroot":"tests//",
+        "http":{
+            "port":"4664"
+        }
+    },
+    "JVM":{
+        "heapSize":"1024",
+        "minHeapSize":"512"
+    }
+}
