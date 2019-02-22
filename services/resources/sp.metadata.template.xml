@@ -1,11 +1,9 @@
-<md:EntityDescriptor entityID="${orgurl}" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
+<md:EntityDescriptor entityID="${entityid}" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
     <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
         <md:KeyDescriptor>
             <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
                 <ds:X509Data>
-                    <ds:X509Certificate>
-${x509}
-                    </ds:X509Certificate>
+                    <ds:X509Certificate>${x509}</ds:X509Certificate>
                 </ds:X509Data>
             </ds:KeyInfo>
         </md:KeyDescriptor>

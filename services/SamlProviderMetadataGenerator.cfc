@@ -28,6 +28,7 @@ component {
 		template = template.replace( "${x509}"          , _getX509Cert()                                                         , "all" );
 		template = template.replace( "${attribs}"       , _getSupportedAttributesXml()                                           , "all" );
 		template = template.replace( "${ssolocation}"   , ( settings.sso_endpoint_root       ?: "" ) & "/saml2/sso/"             , "all" );
+		template = template.replace( "${entityid}"      , ( settings.sso_endpoint_root       ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgshortname}"  , ( settings.organisation_short_name ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgfullname}"   , ( settings.organisation_full_name  ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgurl}"        , ( settings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" ), "all" );
@@ -43,6 +44,7 @@ component {
 
 		template = template.replace( "${x509}"              , _getX509Cert()                                                         , "all" );
 		template = template.replace( "${ssolocation}"       , ( settings.sso_endpoint_root       ?: "" ) & "/saml2/response/"        , "all" );
+		template = template.replace( "${entityid}"          , ( settings.sso_endpoint_root       ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgshortname}"      , ( settings.organisation_short_name ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgfullname}"       , ( settings.organisation_full_name  ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${orgurl}"            , ( settings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" ), "all" );
