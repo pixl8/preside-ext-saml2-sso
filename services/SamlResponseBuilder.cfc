@@ -148,7 +148,7 @@ component {
 
 		if ( arguments.inResponseTo.len() ) {
 		    xml &= '<saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">';
-		    xml &= '<saml:SubjectConfirmationData InResponseTo="#arguments.inResponseTo#" Recipient="#arguments.recipientUrl#" NotOnOrAfter="#_dateTimeFormat( DateAdd( 'n', -2, instant ) )#" />';
+		    xml &= '<saml:SubjectConfirmationData InResponseTo="#arguments.inResponseTo#" Recipient="#arguments.recipientUrl#" NotOnOrAfter="#_dateTimeFormat( DateAdd( 'n', 2, instant ) )#" />';
 		    xml &= '</saml:SubjectConfirmation>';
 		}
 		    xml &= '</saml:Subject>';
