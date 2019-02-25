@@ -127,9 +127,14 @@ component {
 		);
 
 		var attributeConfig = _getAttributeConfig( entity.consumerRecord );
+		var issuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
+
+		if ( isFeatureEnabled( "saml2SSOUrlAsIssuer" ) ) {
+ 			issuer = event.getSiteUrl( includePath=false, includeLanguageSlug=false ).reReplace( "/$", "" ) & "/saml2/idpsso/#slug#/";
+ 		}
 
 		samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
-			  issuer          = event.getSiteUrl( includePath=false, includeLanguageSlug=false ).reReplace( "/$", "" ) & "/saml2/idpsso/#slug#/"
+			  issuer          = issuer
 			, inResponseTo    = ""
 			, recipientUrl    = redirectLocation
 			, nameIdFormat    = "urn:oasis:names:tc:SAML:2.0:nameid-format:#attributeConfig.idFormat#"
