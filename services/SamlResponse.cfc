@@ -10,6 +10,7 @@ component extends="AbstractSamlObject" {
 			, attributes        = getAttributes()
 			, notBefore         = getNotBefore()
 			, notAfter          = getNotAfter()
+			, audience          = getAudience()
 			, assertionIsSigned = getAssertionIsSigned()
 		};
 
@@ -76,6 +77,12 @@ component extends="AbstractSamlObject" {
 		notAfter = DateConvert( "local2utc", DateAdd( "n", 20, Now() ) );
 
 		return DateFormat( notAfter, "yyyy-mm-dd" ) & "T" & TimeFormat( notAfter, "HH:mm:ss.l" );
+	}
+
+	public string function getAudience() {
+		var rootEl = getRootNode();
+
+		return rootEl.Assertion.Conditions.AudienceRestriction.Audience.xmlText ?: "";
 	}
 
 	public struct function getAttributes() {

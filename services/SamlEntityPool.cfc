@@ -37,9 +37,10 @@ component {
 		return listEntities().findNoCase( arguments.entityId );
 	}
 
-	public struct function getEntity( required string entityId, string entityType="sp" ) {
-		var sourceObject = "saml2_consumer";
-		var entityKey    = "consumerRecord";
+	public struct function getEntity( required string entityId, string entityType="sp", string audience="" ) {
+		var sourceObject     = "saml2_consumer";
+		var entityKey        = "consumerRecord";
+		var matchingEntities = StructNew( "linked" );
 
 		if ( arguments.entityType == "idp" ) {
 			sourceObject = "saml2_identity_provider";
@@ -58,12 +59,31 @@ component {
 			if ( savedEntityId.len() && ( arguments.entityId == savedEntityId || arguments.entityId == savedEntityId.reReplace( "/$", "" ) & "/saml2/sso/" ) ) {
 				if ( arguments.entityType == "idp" ) {
 					entity[ entityKey ] = _getSamlIdentityProviderService().getProvider( record.slug );
+					matchingEntities[ entity[ entityKey ].slug ] = entity;
 				} else {
 					entity[ entityKey ] = record;
+					matchingEntities[ entity[ entityKey ].id ] = entity;
 				}
 
-				return entity;
 			}
+		}
+
+		if ( StructCount( matchingEntities ) > 1 )  {
+			var requestedIdp = "";
+
+			if ( arguments.audience.len() ) {
+				requestedIdp = _getSamlIdentityProviderService().getIdpByResponseAudience( arguments.audience );
+			}
+			if ( !Len( Trim( requestedIdp ) ) ) {
+				requestedIdp = $getRequestContext().getValue( "idp", "" );
+			}
+
+			if ( Len( Trim( requestedIdp ) ) && StructKeyExists( matchingEntities, requestedIdp ) ) {
+				return matchingEntities[ requestedIdp ];
+			}
+			return matchingEntities[ StructKeyArray( matchingEntities )[ 1 ] ];
+		} else if ( StructCount( matchingEntities ) == 1 )  {
+			return matchingEntities[ StructKeyList( matchingEntities ) ];
 		}
 
 		throw(

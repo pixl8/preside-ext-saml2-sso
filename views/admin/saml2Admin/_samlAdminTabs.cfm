@@ -29,13 +29,15 @@
 		, active = ( args.tab == "settings" )
 		, link   = ( args.tab == "settings" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.settings" )
 	});
-	tabs.append({
-		  id     = "meta"
-		, icon   = "fa-code blue"
-		, title  = translateResource( "saml2:provider.tabs.meta" )
-		, active = ( args.tab == "meta" )
-		, link   = ( args.tab == "meta" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.previewMetadata" )
-	});
+	if ( IsFeatureEnabled( "samlSsoProvider" ) && hasCmsPermission( "saml2.provider.navigate" ) ) {
+		tabs.append({
+			  id     = "meta"
+			, icon   = "fa-code blue"
+			, title  = translateResource( "saml2:provider.tabs.meta" )
+			, active = ( args.tab == "meta" )
+			, link   = ( args.tab == "meta" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.previewMetadata" )
+		});
+	}
 </cfscript>
 
 <cfoutput>

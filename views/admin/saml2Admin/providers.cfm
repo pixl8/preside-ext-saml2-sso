@@ -10,9 +10,13 @@
 			</p>
 		</cfif>
 		<cfloop array="#providers#" item="provider" index="i">
+			<cfset downloadMetaLink = event.buildAdminLink( linkto="saml2admin.downloadSpMetadata", queryString="id=" & provider.id ) />
 			<div class="well">
 				<h3 class="blue">
-					<a href="#event.buildAdminLink( linkto='saml2Admin.editProvider', queryString='id=' & provider.id )#">#provider.title#</a>
+					<a href="#event.buildAdminLink( linkto='saml2Admin.editProvider', queryString='id=' & provider.id )#">
+						#provider.title#
+						<sup><i class="fa fa-fw fa-pencil"></i></sup>
+					</a>
 				</h3>
 				<cfif provider.description.len()>
 					<p>#provider.description#</p>
@@ -35,6 +39,13 @@
 						<cfelse>
 							#translateResource( "saml2:consumer.idp.useFor.admin" )#
 						</cfif>
+					</dd>
+					<dt>#translateResource( "saml2:consumer.idp.download.meta" )#:</dt>
+					<dd>
+						<a href="#downloadMetaLink#"><i class="fa fa-fw fa-download"></i></a>&nbsp;
+						<a href="#downloadMetaLink#">
+							#provider.id#-sp-metadata.xml
+						</a>
 					</dd>
 					<cfif IsTrue( provider.enabled ?: "" )>
 						<cfset link = event.buildLink( saml2IdpProvider=provider.id ) />
