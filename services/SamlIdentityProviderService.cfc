@@ -38,6 +38,7 @@ component {
 				, autoRegister    = providers[ providerId ].autoRegister    ?: true
 				, postAuthHandler = providers[ providerId ].postAuthHandler ?: ""
 				, loginUrl        = providers[ providerId ].loginUrl        ?: "/saml2/login/#providerId#/"
+				, entityIdSuffix  = providers[ providerId ].entityIdSuffix  ?: ""
 				, title           = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId )
 				, description     = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         )
 			} );
@@ -87,6 +88,21 @@ component {
 		);
 
 		return providerRecord.id ?: "";
+	}
+
+	public string function getIdpByResponseAudience( required string responseAudience ) {
+		var settings = $getPresideCategorySettings( "saml2Provider" );
+		var baseUrl = settings.sso_endpoint_root ?: "";
+
+		if ( !Len( Trim( baseUrl ) ) || baseUrl == arguments.responseAudience ) {
+			return "";
+		}
+
+		for( var idp in listProviders() ) {
+			if ( baseUrl & idp.entityIdSuffix == arguments.responseAudience ) {
+				return idp.id;
+			}
+		}
 	}
 
 // PRIVATE HELPERS

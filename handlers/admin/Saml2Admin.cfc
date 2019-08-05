@@ -207,14 +207,12 @@ component extends="preside.system.base.AdminHandler" {
 
 	public void function previewMetadata( event, rc, prc ) {
 		prc.providerEnabled = IsFeatureEnabled( "samlSsoProvider" ) && hasCmsPermission( "saml2.provider.navigate" );
-		prc.consumerEnabled = IsFeatureEnabled( "samlSsoConsumer" ) && hasCmsPermission( "saml2.consumer.navigate" );
 
-		if ( prc.providerEnabled ) {
-			prc.idpMetadata = samlProviderMetadataGenerator.generateIdpMetadata();
+		if ( !prc.providerEnabled ) {
+			event.notFound();
 		}
-		if ( prc.consumerEnabled ) {
-			prc.spMetadata = samlProviderMetadataGenerator.generateSpMetadata();
-		}
+
+		prc.idpMetadata = samlProviderMetadataGenerator.generateIdpMetadata();
 		prc.x509Cert = samlProviderMetadataGenerator.getFormattedX509Cert();
 
 		event.addAdminBreadCrumb(
@@ -224,17 +222,22 @@ component extends="preside.system.base.AdminHandler" {
 	}
 
 	public void function downloadMetadata( event, rc, prc ) {
-		var downloadType = rc.type ?: "idp";
-		var metadata     = "";
-		var fileName     = "";
+		var metadata = samlProviderMetadataGenerator.generateIdpMetadata();
+		var fileName = "IDPMetaData.xml";
 
-		if ( downloadType == "sp" ) {
-			fileName = "SPMetaData.xml";
-			metadata = samlProviderMetadataGenerator.generateSpMetadata();
-		} else {
-			fileName = "IDPMetaData.xml";
-			metadata = samlProviderMetadataGenerator.generateIdpMetadata();
+		header name="Content-Disposition" value="attachment; filename=""#fileName#""";
+		content reset=true type="application/xml";WriteOutput( metadata );abort;
+	}
+
+	public void function downloadSpMetadata( event, rc, prc ) {
+		var idp      = rc.id ?: "";
+		var metadata = samlProviderMetadataGenerator.generateSpMetadata( idp );
+
+		if ( !Len( Trim( metadata ) ) ) {
+			event.notFound();
 		}
+
+		var fileName = "#idp#-sp-metadata.xml";
 
 		header name="Content-Disposition" value="attachment; filename=""#fileName#""";
 		content reset=true type="application/xml";WriteOutput( metadata );abort;

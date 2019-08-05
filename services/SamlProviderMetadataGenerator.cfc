@@ -8,14 +8,17 @@ component {
 	/**
 	 * @samlAttributesService.inject samlAttributesService
 	 * @samlKeyStore.inject          samlKeyStore
+	 * @samlIdpService.inject        samlIdentityProviderService
 	 *
 	 */
 	public any function init(
 		  required any    samlAttributesService
 		, required any    samlKeyStore
+		, required any    samlIdpService
 	) {
 		_setSamlAttributesService( arguments.samlAttributesService );
 		_setSamlKeyStore( arguments.samlKeyStore );
+		_setSamlIdpService( arguments.samlIdpService );
 
 		return this;
 	}
@@ -38,20 +41,39 @@ component {
 		return template;
 	}
 
-	public string function generateSpMetadata() {
+	public string function generateSpMetadata( required string idpId ) {
 		var template = FileRead( "resources/sp.metadata.template.xml" );
 		var settings = $getPresideCategorySettings( "saml2Provider" );
+		var idpSettings = _getSamlIdpService().getProvider( arguments.idpId );
 
-		template = template.replace( "${x509}"              , _getX509Cert()                                                         , "all" );
-		template = template.replace( "${ssolocation}"       , ( settings.sso_endpoint_root       ?: "" ) & "/saml2/response/"        , "all" );
-		template = template.replace( "${entityid}"          , ( settings.sso_endpoint_root       ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${orgshortname}"      , ( settings.organisation_short_name ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${orgfullname}"       , ( settings.organisation_full_name  ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${orgurl}"            , ( settings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${supportcontact}"    , ( settings.support_person          ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${supportemail}"      , ( settings.support_email           ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${servicename}"       , ( settings.service_name            ?: "----ERROR: NOT CONFIGURED----" ), "all" );
-		template = template.replace( "${servicedescription}", ( settings.service_description     ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+		if ( !idpSettings.count() ) {
+			return "";
+		}
+
+		var ssoLocation        = ( settings.sso_endpoint_root ?: "" ) & "/saml2/response/?idp=#idpId#";
+		var entityId           = ( settings.sso_endpoint_root       ?: "----ERROR: NOT CONFIGURED----" )
+		var orgShortName       = ( settings.organisation_short_name ?: "----ERROR: NOT CONFIGURED----" )
+		var orgFullName        = ( settings.organisation_full_name  ?: "----ERROR: NOT CONFIGURED----" )
+		var orgUrl             = ( settings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" )
+		var supportPerson      = ( settings.support_person          ?: "----ERROR: NOT CONFIGURED----" )
+		var supportEmail       = ( settings.support_email           ?: "----ERROR: NOT CONFIGURED----" )
+		var serviceName        = ( settings.service_name            ?: "----ERROR: NOT CONFIGURED----" )
+		var serviceDescription = ( settings.service_description     ?: "----ERROR: NOT CONFIGURED----" )
+
+		if ( Len( Trim( idpSettings.entityIdSuffix ?: "" ) ) ) {
+			entityId &= idpSettings.entityIdSuffix;
+		}
+
+		template = template.replace( "${x509}"              , _getX509Cert()    , "all" );
+		template = template.replace( "${ssolocation}"       , ssoLocation       , "all" );
+		template = template.replace( "${entityid}"          , entityId          , "all" );
+		template = template.replace( "${orgshortname}"      , orgShortName      , "all" );
+		template = template.replace( "${orgfullname}"       , orgFullName       , "all" );
+		template = template.replace( "${orgurl}"            , orgUrl            , "all" );
+		template = template.replace( "${supportcontact}"    , supportPerson     , "all" );
+		template = template.replace( "${supportemail}"      , supportEmail      , "all" );
+		template = template.replace( "${servicename}"       , serviceName       , "all" );
+		template = template.replace( "${servicedescription}", serviceDescription, "all" );
 
 		return template;
 	}
@@ -100,6 +122,13 @@ component {
 	}
 	private void function _setSamlKeyStore( required any samlKeyStore ) {
 		_samlKeyStore = arguments.samlKeyStore;
+	}
+
+	private any function _getSamlIdpService() {
+	    return _samlIdpService;
+	}
+	private void function _setSamlIdpService( required any samlIdpService ) {
+	    _samlIdpService = arguments.samlIdpService;
 	}
 
 }

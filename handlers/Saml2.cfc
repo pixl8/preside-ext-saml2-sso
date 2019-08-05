@@ -197,11 +197,18 @@ component {
 			event.notFound();
 		}
 
+		var spIssuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
+		var spName   = getSystemSetting( "saml2Provider", "organisation_short_name" );
+
+		if ( Len( Trim( idp.entityIdSuffix ?: "" ) ) ) {
+			spIssuer &= idp.entityIdSuffix;
+		}
+
 		var samlRequest = samlRequestBuilder.buildAuthenticationRequest(
 			  idpMetaData        = idp.metaData
-			, responseHandlerUrl = event.buildLink( linkto="saml2.response" )
-			, spIssuer           = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
-			, spName             = getSystemSetting( "saml2Provider", "organisation_short_name" )
+			, responseHandlerUrl = event.buildLink( linkto="saml2.response", queryString="idp=" & idp.id )
+			, spIssuer           = spIssuer
+			, spName             = spName
 		);
 
 		return renderView( view="/saml2/ssoRequestForm", args={

@@ -31,6 +31,7 @@ component {
 				parsedResponse.issuerEntity = _getSamlEntityPool().getEntity(
 					  entityId   = parsedResponse.samlResponse.issuer
 					, entityType = "idp"
+					, audience   = parsedResponse.samlResponse.audience
 				);
 
 				if ( !IsBoolean( parsedResponse.issuerEntity.idpRecord.enabled ?: "" ) || ! parsedResponse.issuerEntity.idpRecord.enabled ) {

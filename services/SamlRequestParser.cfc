@@ -29,7 +29,6 @@ component {
 		}
 
 		var parsedRequest = ( _isPostRequest() ? _getHttpPostRequestBindingParser() : _getHttpRedirectRequestBindinParser() ).parse();
-
 		parsedRequest.samlRequest = parsedRequest.samlRequest.getMemento()
 
 		if ( Len( Trim( parsedRequest.samlRequest.issuer ?: "" ) ) ) {

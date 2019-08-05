@@ -2,9 +2,7 @@
 	metadata = prc.metadata ?: "";
 
 	providerEnabled = IsTrue( prc.providerEnabled ?: "" );
-	consumerEnabled = IsTrue( prc.consumerEnabled ?: "" );
 	idpMetadata     = prc.idpMetadata ?: "";
-	spMetadata      = prc.spMetadata  ?: "";
 	x509Cert        = prc.x509Cert    ?: "";
 </cfscript>
 <cfoutput>
@@ -16,14 +14,6 @@
 						<a data-toggle="tab" href="##tab-idp">
 							<i class="fa fa-fw fa-code"></i>&nbsp;
 							Identity Provider MetaData
-						</a>
-					</li>
-				</cfif>
-				<cfif Len( Trim( spMetadata ) )>
-					<li<cfif !Len( Trim( idpMetadata ) )> class="active"</cfif>>
-						<a data-toggle="tab" href="##tab-sp">
-							<i class="fa fa-fw fa-code"></i>&nbsp;
-							Service Provider MetaData
 						</a>
 					</li>
 				</cfif>
@@ -54,23 +44,6 @@
 							</p>
 						</div>
 						<pre>#XmlFormat( Trim( idpMetadata ) )#</pre>
-					</div>
-				</cfif>
-				<cfif consumerEnabled>
-					<div id="tab-sp" class="tab-pane<cfif !providerEnabled> active</cfif>">
-						<div class="alert alert-info">
-							<p>
-								<i class="fa fa-fw fa-info-circle"></i>
-								#translateResource( "saml2:consumer.previewMetadata.explanation" )#
-							</p>
-							<p class="text-center">
-								<a href="#event.buildAdminLink( linkto='saml2Admin.downloadMetadata', queryString='type=sp' )#" class="btn btn-sm btn-info">
-									<i class="fa fa-fw fa-download"></i>
-									#translateResource( "saml2:provider.previewMetadata.download.btn" )#
-								</a>
-							</p>
-						</div>
-						<pre>#XmlFormat( Trim( spMetadata ) )#</pre>
 					</div>
 				</cfif>
 				<cfif Len( Trim( x509Cert ) )>
