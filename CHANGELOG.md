@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.1.1
+
+* Fix tests
+
 ## v4.1.0
 
 * Add ability to download IDP-specific service provider metadata for each registered IDP when Preside is being used as a service Provider

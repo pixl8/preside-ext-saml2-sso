@@ -33,6 +33,7 @@ component extends="testbox.system.BaseSpec" {
 					, enabled         = dbProviders.enabled[1]
 					, metadata        = dbProviders.metadata[1]
 					, loginUrl        = "/saml2/login/jumpcloud/"
+					, entityIdSuffix  = ""
 				} );
 				providers.google.append( {
 					  slug        = dbProviders.slug[2]
@@ -83,6 +84,7 @@ component extends="testbox.system.BaseSpec" {
 				, web             = true
 				, autoRegister    = false
 				, postAuthHandler = "some.handler"
+				, entityIdSuffix  = ""
 				, loginUrl        = "/test/"
 			},
 			"JumpCloud" : {}
