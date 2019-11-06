@@ -94,14 +94,15 @@ component extends="AbstractSamlObject" {
 			var name = attribEl.xmlAttributes.friendlyName ?: ( attribEl.xmlAttributes.name ?: "" );
 
 			if ( name.len() ) {
-				var values = "";
+				var values = [];
 				for ( var attribVal in attribEl.xmlChildren ?: [] ) {
-					values = listAppend( values, attribVal.xmlText ?: "" );
+					ArrayAppend( values, attribVal.xmlText ?: "" );
 				}
 
-				attribs[ name ] = values;
-				if ( listLen( values ) > 1 ) {
-					attribs[ name ] = listToArray( values );
+				if ( ArrayLen( values ) == 1 ) {
+					attribs[ name ] = values[ 1 ];
+				} else {
+					attribs[ name ] = values;
 				}
 			}
 		}
