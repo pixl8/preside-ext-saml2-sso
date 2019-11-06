@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.1.2
+
+* Return multiple values of SamlResponse attributes if found
+
 ## v4.1.1
 
 * Fix tests
