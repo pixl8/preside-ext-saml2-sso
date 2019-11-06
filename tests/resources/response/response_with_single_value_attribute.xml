@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<saml2p:Response Destination="https://mysite.com/saml2/response/?idp=ssoForAdmin" ID="id17743851592338314493643927" InResponseTo="a42fb1335f60842bba91e608ceacfcb2d" IssueInstant="2019-11-06T13:13:29.580Z" Version="2.0" xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion">http://www.ssoidp.com/exk308r3dvLuLz7hs0i7</saml2:Issuer>
+	<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+		<ds:SignedInfo>
+			<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+			<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+			<ds:Reference URI="#id17743851592338314493643927">
+				<ds:Transforms>
+					<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+					<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+						<ec:InclusiveNamespaces PrefixList="xs" xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+					</ds:Transform>
+				</ds:Transforms>
+				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+				<ds:DigestValue>7qmX1hpedB1mtiQR5gCC39JYqs5CaqpYmvtA/3WH6CE=</ds:DigestValue>
+			</ds:Reference>
+		</ds:SignedInfo>
+		<ds:SignatureValue>oyrdUcyXLBCcV3zpd+LZBzjZbaELnzdYJqDgZOABeHoDPxei8YF11nF0ZwDZ4To17sq4gS+JDFSIlC+W3Lfo7pV2D8wgYI50oYYRj/7YkfTk3KNCypx/ttSpKGhlUlhODLlq+bE7oJtVwKlF3BvC2/sVYhxtfeGCtf+f6/86eP0=</ds:SignatureValue>
+		<ds:KeyInfo>
+			<ds:X509Data>
+				<ds:X509Certificate>MIICajCCAdOgAwIBAgIBADANBgkqhkiG9w0BAQ0FADBSMQswCQYDVQQGEwJ1czETMBEGA1UECAwKQ2FsaWZvcm5pYTEVMBMGA1UECgwMT25lbG9naW4gSW5jMRcwFQYDVQQDDA5zcC5leGFtcGxlLmNvbTAeFw0xNDA3MTcxNDEyNTZaFw0xNTA3MTcxNDEyNTZaMFIxCzAJBgNVBAYTAnVzMRMwEQYDVQQIDApDYWxpZm9ybmlhMRUwEwYDVQQKDAxPbmVsb2dpbiBJbmMxFzAVBgNVBAMMDnNwLmV4YW1wbGUuY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZx+ON4IUoIWxgukTb1tOiX3bMYzYQiwWPUNMp+Fq82xoNogso2bykZG0yiJm5o8zv/sd6pGouayMgkx/2FSOdc36T0jGbCHuRSbtia0PEzNIRtmViMrt3AeoWBidRXmZsxCNLwgIV6dn2WpuE5Az0bHgpZnQxTKFek0BMKU/d8wIDAQABo1AwTjAdBgNVHQ4EFgQUGHxYqZYyX7cTxKVODVgZwSTdCnwwHwYDVR0jBBgwFoAUGHxYqZYyX7cTxKVODVgZwSTdCnwwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQ0FAAOBgQByFOl+hMFICbd3DJfnp2Rgd/dqttsZG/tyhILWvErbio/DEe98mXpowhTkC04ENprOyXi7ZbUqiicF89uAGyt1oqgTUCD1VsLahqIcmrzgumNyTwLGWo17WDAa1/usDhetWAMhgzF/Cnf5ek0nK00m0YZGyc4LzgD0CROMASTWNg==</ds:X509Certificate>
+			</ds:X509Data>
+		</ds:KeyInfo>
+	</ds:Signature>
+	<saml2p:Status xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol">
+		<saml2p:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
+	</saml2p:Status>
+	<saml2:Assertion ID="id177438515924316141520665692" IssueInstant="2019-11-06T13:13:29.580Z" Version="2.0" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+		<saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion">http://www.ssoidp.com/exk308r3dvLuLz7hs0i7</saml2:Issuer>
+		<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+			<ds:SignedInfo>
+				<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+				<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+				<ds:Reference URI="#id177438515924316141520665692">
+					<ds:Transforms>
+						<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+						<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+							<ec:InclusiveNamespaces PrefixList="xs" xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+						</ds:Transform>
+					</ds:Transforms>
+					<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+					<ds:DigestValue>4l/zDFL5R7sOae7oswGzeXYG2HDwSnJX0EYgl/504uc=</ds:DigestValue>
+				</ds:Reference>
+			</ds:SignedInfo>
+			<ds:SignatureValue>oyrdUcyXLBCcV3zpd+LZBzjZbaELnzdYJqDgZOABeHoDPxei8YF11nF0ZwDZ4To17sq4gS+JDFSIlC+W3Lfo7pV2D8wgYI50oYYRj/7YkfTk3KNCypx/ttSpKGhlUlhODLlq+bE7oJtVwKlF3BvC2/sVYhxtfeGCtf+f6/86eP0=</ds:SignatureValue>
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate>MIICajCCAdOgAwIBAgIBADANBgkqhkiG9w0BAQ0FADBSMQswCQYDVQQGEwJ1czETMBEGA1UECAwKQ2FsaWZvcm5pYTEVMBMGA1UECgwMT25lbG9naW4gSW5jMRcwFQYDVQQDDA5zcC5leGFtcGxlLmNvbTAeFw0xNDA3MTcxNDEyNTZaFw0xNTA3MTcxNDEyNTZaMFIxCzAJBgNVBAYTAnVzMRMwEQYDVQQIDApDYWxpZm9ybmlhMRUwEwYDVQQKDAxPbmVsb2dpbiBJbmMxFzAVBgNVBAMMDnNwLmV4YW1wbGUuY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZx+ON4IUoIWxgukTb1tOiX3bMYzYQiwWPUNMp+Fq82xoNogso2bykZG0yiJm5o8zv/sd6pGouayMgkx/2FSOdc36T0jGbCHuRSbtia0PEzNIRtmViMrt3AeoWBidRXmZsxCNLwgIV6dn2WpuE5Az0bHgpZnQxTKFek0BMKU/d8wIDAQABo1AwTjAdBgNVHQ4EFgQUGHxYqZYyX7cTxKVODVgZwSTdCnwwHwYDVR0jBBgwFoAUGHxYqZYyX7cTxKVODVgZwSTdCnwwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQ0FAAOBgQByFOl+hMFICbd3DJfnp2Rgd/dqttsZG/tyhILWvErbio/DEe98mXpowhTkC04ENprOyXi7ZbUqiicF89uAGyt1oqgTUCD1VsLahqIcmrzgumNyTwLGWo17WDAa1/usDhetWAMhgzF/Cnf5ek0nK00m0YZGyc4LzgD0CROMASTWNg==</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</ds:Signature>
+		<saml2:Subject xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion">
+			<saml2:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">AdminUser1@mysite.com</saml2:NameID>
+			<saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+				<saml2:SubjectConfirmationData InResponseTo="a42fb1335f60842bba91e608ceacfcb2d" NotOnOrAfter="2019-11-06T13:18:29.581Z" Recipient="https://mysite.com/saml2/response/?idp=ssoForAdmin"/>
+			</saml2:SubjectConfirmation>
+		</saml2:Subject>
+		<saml2:Conditions NotBefore="2019-11-06T13:08:29.581Z" NotOnOrAfter="2019-11-06T13:18:29.581Z" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion">
+			<saml2:AudienceRestriction>
+				<saml2:Audience>https://mysite.com/admin</saml2:Audience>
+			</saml2:AudienceRestriction>
+		</saml2:Conditions>
+		<saml2:AuthnStatement AuthnInstant="2019-11-06T13:13:28.801Z" SessionIndex="a42fb1335f60842bba91e608ceacfcb2d" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion">
+			<saml2:AuthnContext>
+				<saml2:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml2:AuthnContextClassRef>
+			</saml2:AuthnContext>
+		</saml2:AuthnStatement>
+		<saml2:AttributeStatement xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion">
+			<saml2:Attribute Name="Groups" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+				<saml2:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Staff</saml2:AttributeValue>
+			</saml2:Attribute>
+			<saml2:Attribute Name="Roles" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+				<saml2:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">super-duper-role</saml2:AttributeValue>
+				<saml2:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">better-role</saml2:AttributeValue>
+			</saml2:Attribute>
+		</saml2:AttributeStatement>
+	</saml2:Assertion>
+</saml2p:Response>
