@@ -90,11 +90,19 @@ component extends="AbstractSamlObject" {
 		var rootEl = getRootNode();
 		var attribEls = rootEl.Assertion.AttributeStatement.xmlChildren ?: [];
 
-		for( var attribEl in attribEls ) {
+		for ( var attribEl in attribEls ) {
 			var name = attribEl.xmlAttributes.friendlyName ?: ( attribEl.xmlAttributes.name ?: "" );
 
 			if ( name.len() ) {
-				attribs[ name ] = attribEl.AttributeValue.xmlText ?: "";
+				var values = "";
+				for ( var attribVal in attribEl.xmlChildren ?: [] ) {
+					values = listAppend( values, attribVal.xmlText ?: "" );
+				}
+
+				attribs[ name ] = values;
+				if ( listLen( values ) > 1 ) {
+					attribs[ name ] = listToArray( values );
+				}
 			}
 		}
 
