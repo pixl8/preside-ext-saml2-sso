@@ -7,6 +7,7 @@ component {
 	property name="samlRequestBuilder"           inject="samlRequestBuilder";
 	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
 	property name="samlEntityPool"               inject="samlEntityPool";
+	property name="sessionStorage"               inject="sessionStorage";
 	property name="samlIdentityProviderService"  inject="samlIdentityProviderService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
 
@@ -72,7 +73,7 @@ component {
 				, nameIdValue     = attributeConfig.idValue
 				, audience        = samlRequest.issuerEntity.id
 				, sessionTimeout  = 40
-				, sessionIndex    = session.sessionid
+				, sessionIndex    = sessionStorage.getVar( "sessionid", CreateUUId() )
 				, attributes      = attributeConfig.attributes
 			);
 		}
@@ -141,7 +142,7 @@ component {
 			, nameIdValue     = attributeConfig.idValue
 			, audience        = entity.id
 			, sessionTimeout  = 40
-			, sessionIndex    = session.sessionid
+			, sessionIndex    = sessionStorage.getVar( "sessionid", CreateUUId() )
 			, attributes      = attributeConfig.attributes
 		);
 
