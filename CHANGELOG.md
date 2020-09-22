@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.1.3
+
+* Do not refer to the session scope directly. Use sessionStorage abstraction instead.
+
 ## v4.1.2
 
 * Return multiple values of SamlResponse attributes if found
