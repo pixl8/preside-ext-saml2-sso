@@ -30,7 +30,7 @@ component {
 	}
 
 	private boolean function _isGetRequest() {
-		var req = getHTTPRequestData();
+		var req = getHTTPRequestData( false );
 
 		return ( req.method ?: "" ) == "GET";
 	}

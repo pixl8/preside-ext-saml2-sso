@@ -35,7 +35,7 @@ component {
 	}
 
 	private boolean function _isPostRequest() {
-		var req = getHTTPRequestData();
+		var req = getHTTPRequestData( false );
 
 		return ( req.method ?: "GET" ) == "POST";
 	}
