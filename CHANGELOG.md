@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.1.4
+
+* Do not read HTTP request body every time we want to check the request method
+
 ## v4.1.3
 
 * Do not refer to the session scope directly. Use sessionStorage abstraction instead.
