@@ -3,6 +3,7 @@
 ## v4.1.5
 
 * Hopeful fix, and more useful error information, for "Invalid signature" failures on apparently valid SAML responses.
+* Convert to GH actions flow
 
 ## v4.1.4
 
