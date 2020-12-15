@@ -48,7 +48,11 @@ component {
 					, idpMeta      = parsedResponse.issuerEntity.idpRecord.metadata ?: ""
 				);
 				if ( !signaturesValid ) {
-					throw( type="saml2responseparser.invalid.signature", message="The assertion response failed signature validation." );
+					throw(
+						  type    = "saml2responseparser.invalid.signature"
+						, message = "The assertion response failed signature validation."
+						, detail  = parsedResponse.samlXml
+					);
 				}
 			} catch ( "entitypool.missingentity" e ) {
 				parsedResponse.issuerEntity = {};

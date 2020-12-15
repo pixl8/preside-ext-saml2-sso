@@ -23,7 +23,7 @@ component {
 		var parserPool  = _create( "org.opensaml.xml.parse.BasicParserPool" ).init();
 			parserPool.setNamespaceAware( true );
 
-		var inputStream = CreateObject( "java", "java.io.ByteArrayInputStream" ).init( arguments.xml.getBytes() );
+		var inputStream = CreateObject( "java", "java.io.ByteArrayInputStream" ).init( arguments.xml.getBytes( "utf-8" ) );
 		var DOM         = parserPool.parse( inputStream ).getDocumentElement();
 
 		var unmarshallerFactory = _create( "org.opensaml.Configuration" ).getUnmarshallerFactory();
