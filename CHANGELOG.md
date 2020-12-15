@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.1.5
+
+* Hopeful fix, and more useful error information, for "Invalid signature" failures on apparently valid SAML responses.
+
 ## v4.1.4
 
 * Do not read HTTP request body every time we want to check the request method
