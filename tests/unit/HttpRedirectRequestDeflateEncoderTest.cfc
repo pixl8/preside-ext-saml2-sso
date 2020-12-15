@@ -15,8 +15,8 @@ component extends="testbox.system.BaseSpec" {
 	}
 
 	private string function _decode( required string encoded ) {
-		var Decoder        = CreateObject( "Java", "sun.misc.BASE64Decoder" ).init();
-		var SamlByte       = Decoder.decodeBuffer( arguments.encoded );
+		var Decoder        = CreateObject( "java", "java.util.Base64" ).getMimeDecoder();
+		var SamlByte       = Decoder.decode( arguments.encoded.getBytes( "utf-8" ) );
 		var ByteClass      = CreateObject( "Java", "java.lang.Byte" ).TYPE;
 		var ByteArray      = CreateObject( "Java", "java.lang.reflect.Array" ).NewInstance( ByteClass, 1024 );
 		var ByteIn         = CreateObject( "Java", "java.io.ByteArrayInputStream" ).init( SamlByte );
