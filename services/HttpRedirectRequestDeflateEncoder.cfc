@@ -11,12 +11,14 @@ component {
 		var deflaterClass = CreateObject( "java", "java.util.zip.Deflater" );
         var deflater      = deflaterClass.init( deflaterClass.DEFAULT_COMPRESSION, true );
         var deflaterOutputStream = CreateObject( "java", "java.util.zip.DeflaterOutputStream" ).init( os, deflater );
+        var utf8 = CreateObject( "java", "java.nio.charset.StandardCharsets" ).UTF_8;
 
         deflaterOutputStream.write( arguments.samlXml.getBytes( "UTF-8" ) );
         deflaterOutputStream.close();
         os.close();
 
-        var base64 = CreateObject( "java", "sun.misc.BASE64Encoder" ).encodeBuffer( os.toByteArray() );
+        var encoded = CreateObject( "java", "java.util.Base64" ).getMimeEncoder().encode( os.toByteArray() );
+        var base64 = CreateObject( "java", "java.lang.String" ).init( encoded, utf8 );
 
         return CreateObject( "java", "java.net.URLEncoder" ).encode( base64, "UTF-8" );
     }

@@ -4,6 +4,7 @@
 
 * Hopeful fix, and more useful error information, for "Invalid signature" failures on apparently valid SAML responses.
 * Convert to GH actions flow
+* Fix for later versions of JAVA that drop support for sun.misc.BASE64Encoder
 
 ## v4.1.4
 
