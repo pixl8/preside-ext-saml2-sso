@@ -1,9 +1,5 @@
 # Changelog
 
-## v4.1.7
-
-* Fix for lack of cascading delete on user tokens when a user is deleted.
-
 ## v4.1.5
 
 * Hopeful fix, and more useful error information, for "Invalid signature" failures on apparently valid SAML responses.
