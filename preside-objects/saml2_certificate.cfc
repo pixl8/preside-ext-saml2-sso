@@ -3,6 +3,7 @@
  * @versioned                       false
  * @datamanagerEnabled              true
  * @datamanagerDisallowedOperations batchedit,batchdelete,clone
+ * @datamanagerGridFields           label,datecreated
  */
 component {
 	property name="label" uniqueindexes="label";
