@@ -46,7 +46,8 @@ component extends="testbox.system.BaseSpec" {
 
 	private any function _getBuilder() {
 		var testKeyStore = new samlIdProvider.SamlKeyStore( ExpandPath( "/tests/resources/keystore/teststore" ), "teststorepass", "testkey", "testkeypass" );
-		var xmlSigner    = new samlIdProvider.SamlXmlSigner( testKeyStore );
+		var certService  = CreateStub();
+		var xmlSigner    = new samlIdProvider.SamlXmlSigner( testKeyStore, certService );
 
 		return getMockBox().createMock( object = new samlIdProvider.SamlResponseBuilder( xmlSigner=xmlSigner ) );
 	}
