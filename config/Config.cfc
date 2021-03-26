@@ -27,6 +27,7 @@ component {
 		settings.features.samlSsoProvider     = { enabled=true, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.samlSsoConsumer     = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.saml2SSOUrlAsIssuer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
+		settings.features.saml2CertificateManager = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 
 		settings.adminPermissions.saml2 = [ "navigate", "manage", "deleteConsumer" ];
 

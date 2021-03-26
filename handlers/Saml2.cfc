@@ -206,10 +206,11 @@ component {
 		}
 
 		var samlRequest = samlRequestBuilder.buildAuthenticationRequest(
-			  idpMetaData        = idp.metaData
-			, responseHandlerUrl = event.buildLink( linkto="saml2.response", queryString="idp=" & idp.id )
-			, spIssuer           = spIssuer
-			, spName             = spName
+			  idpMetaData         = idp.metaData
+			, responseHandlerUrl  = event.buildLink( linkto="saml2.response", queryString="idp=" & idp.id )
+			, spIssuer            = spIssuer
+			, spName              = spName
+			, signWithCertificate = ( idp.certificate ?: "" )
 		);
 
 		return renderView( view="/saml2/ssoRequestForm", args={

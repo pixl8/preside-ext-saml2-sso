@@ -3,22 +3,37 @@ component {
 // CONSTRUCTOR
 	/**
 	 * @keyStore.inject samlKeyStore
+	 * @samlUploadedCertificateService.inject samlUploadedCertificateService
 	 *
 	 */
-	public any function init( required any keyStore ) {
+	public any function init(
+		  required any keyStore
+		, required any samlUploadedCertificateService
+	) {
 		_setKeyStore( arguments.keyStore );
+		_setSamlUploadedCertificateService( arguments.samlUploadedCertificateService );
 		_setOpenSamlUtils( new OpenSamlUtils() );
+
+
 
 		return this;
 	}
 
 // PUBLIC API METHODS
-	public string function sign( required string xmlToSign ) {
+	public string function sign( required string xmlToSign, string certificate="" ) {
 		var osUtils    = _getOpenSamlUtils();
 		var assertion  = osUtils.xmlToOpenSamlObject( arguments.xmlToSign );
-		var credential = _getOpenSamlCredentialFromKeyStore();
-		var signature  = osUtils.createAndPrepareOpenSamlSignature( credential );
+		var credential = "";
+		var signature  = "";
 		var signedXml  = "";
+
+		if ( Len( arguments.certificate ) ) {
+			credential = _getOpenSamlCredentialFromUploadedCertificate( arguments.certificate );
+		} else {
+			credential = _getOpenSamlCredentialFromKeyStore();
+		}
+
+		signature = osUtils.createAndPrepareOpenSamlSignature( credential );
 
 		assertion.setSignature( signature );
 
@@ -42,6 +57,15 @@ component {
 		return _getOpenSamlUtils().getOpenSamlCredential(
 			  privateKey  = keystore.getPrivateKey()
 			, certificate = keystore.getCert()
+		);
+	}
+
+	private any function _getOpenSamlCredentialFromUploadedCertificate( required string certificateId ) {
+		var keypair = _getSamlUploadedCertificateService().getKeyPairForSigningCredential( arguments.certificateId );
+
+		return _getOpenSamlUtils().getOpenSamlCredential(
+			  privateKey  = keypair.privateKey
+			, certificate = keypair.publicCertificate
 		);
 	}
 
@@ -87,5 +111,12 @@ component {
 	}
 	private void function _setOpenSamlUtils( required any openSamlUtils ) {
 		_openSamlUtils = arguments.openSamlUtils;
+	}
+
+	private any function _getSamlUploadedCertificateService() {
+	    return _samlUploadedCertificateService;
+	}
+	private void function _setSamlUploadedCertificateService( required any samlUploadedCertificateService ) {
+	    _samlUploadedCertificateService = arguments.samlUploadedCertificateService;
 	}
 }

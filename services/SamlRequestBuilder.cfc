@@ -20,6 +20,7 @@ component {
 		, required string responseHandlerUrl
 		, required string spIssuer
 		, required string spName
+		, required string signWithCertificate
 	) {
 		var idpMeta = new SamlMetadata( arguments.idpMetaData );
 		var nowish  = getInstant();
@@ -39,7 +40,7 @@ component {
 				xml &= '</samlp:RequestedAuthnContext>';
 			xml &= '</samlp:AuthnRequest>';
 
-		xml = _getXmlSigner().sign( xml );
+		xml = _getXmlSigner().sign( xml, signWithCertificate );
 
 		return xml;
 	}

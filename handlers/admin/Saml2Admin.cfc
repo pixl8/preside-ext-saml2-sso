@@ -290,4 +290,14 @@ component extends="preside.system.base.AdminHandler" {
 			}
 		);
 	}
+
+	public void function certificates( event, rc, prc ) {
+		if ( !isFeatureEnabled( "saml2CertificateManager" ) ) {
+			event.notFound();
+		}
+
+		if ( !hasCmsPermission( "saml2.certificates.navigate" ) ) {
+			event.adminAccessDenied();
+		}
+	}
 }

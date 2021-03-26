@@ -29,6 +29,15 @@
 		, active = ( args.tab == "settings" )
 		, link   = ( args.tab == "settings" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.settings" )
 	});
+	if ( IsFeatureEnabled( "saml2CertificateManager" ) && hasCmsPermission( "saml2.certificates.navigate" )) {
+		tabs.append({
+			  id     = "certificates"
+			, icon   = "fa-certificate purple"
+			, title  = translateResource( "saml2:consumer.tabs.certificates" )
+			, active = ( args.tab == "certificates" )
+			, link   = ( args.tab == "certificates" ) ? "" : event.buildAdminLink( linkTo="saml2Admin.certificates" )
+		});
+	}
 	if ( IsFeatureEnabled( "samlSsoProvider" ) && hasCmsPermission( "saml2.provider.navigate" ) ) {
 		tabs.append({
 			  id     = "meta"
