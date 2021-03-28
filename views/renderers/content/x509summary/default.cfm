@@ -21,6 +21,12 @@
 					<th style="vertical-align:top">#translateResource( "preside-objects.saml2_certificate:info.table.subject.th")#</th>
 					<td style="vertical-align:top">#args.certInfo.subject#</td>
 				</tr>
+				<tr>
+					<th style="vertical-align:top" colspan="2">#translateResource( "preside-objects.saml2_certificate:info.table.certificate.th")#</th>
+				</tr>
+				<tr>
+					<td style="vertical-align:top" colspan="2"><pre><code>#args.data#</code></pre></td>
+				</tr>
 			</tbody>
 		</table>
 	</div>
