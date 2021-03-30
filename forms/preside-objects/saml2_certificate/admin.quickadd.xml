@@ -3,8 +3,12 @@
 	<tab id="default">
 		<fieldset id="default" sortorder="10">
 			<field binding="saml2_certificate.label"       control="textinput" />
-			<field binding="saml2_certificate.private_key" control="textarea"  />
-			<field binding="saml2_certificate.public_cert" control="textarea"  />
+			<field binding="saml2_certificate.private_key" control="textarea">
+				<rule validator="rsaPrivateKey" />
+			</field>
+			<field binding="saml2_certificate.public_cert" control="textarea">
+				<rule validator="x509Cert" />
+			</field>
 		</fieldset>
 	</tab>
 </form>
