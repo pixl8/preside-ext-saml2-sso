@@ -191,6 +191,8 @@ component {
 	}
 
 	public string function spSso( event, rc, prc ) {
+		event.cachePage( false );
+
 		var providerSlug = rc.providerSlug ?: "";
 		var idp          = samlIdentityProviderService.getProvider( providerSlug );
 
