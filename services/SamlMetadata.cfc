@@ -28,6 +28,8 @@ component extends="AbstractSamlObject" {
 			return {};
 		}
 
+		spSSONode = spSSONode[ 1 ];
+
 		var reqs = {};
 
 		reqs.requestsWillBeSigned = spSSONode.xmlAttributes.authnRequestsSigned ?: false;

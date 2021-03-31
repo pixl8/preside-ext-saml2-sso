@@ -19,6 +19,8 @@ component {
 		_setSamlEntityPool( arguments.samlEntityPool );
 		_setWorkflowService( arguments.workflowService );
 
+		_setOpenSamlUtils( new OpenSamlUtils() );
+
 		return this;
 	}
 
@@ -36,6 +38,25 @@ component {
 				parsedRequest.issuerEntity = _getSamlEntityPool().getEntity( parsedRequest.samlRequest.issuer );
 			} catch ( "entitypool.missingentity" e ) {
 				parsedRequest.issuerEntity = {};
+			}
+
+			if ( StructCount( parsedRequest.issuerEntity ) ) {
+				var expectSigned = parsedRequest.issuerEntity.serviceProviderSsoRequirements.requestsWillBeSigned ?: "";
+				    expectSigned = IsBoolean( expectSigned ) && expectSigned;
+
+				if ( expectSigned ) {
+					var sigValid = _getOpenSamlUtils().validateRequestSignature(
+						  samlRequest = parsedRequest.samlXml
+						, signingCert = parsedRequest.issuerEntity.serviceProviderSsoRequirements.x509Certificate
+					);
+					if ( !sigValid ) {
+						throw(
+							  type    = "saml2requestparser.invalid.signature"
+							, message = "The SAML request failed signature validation."
+							, detail  = parsedRequest.samlXml
+						);
+					}
+				}
 			}
 
 		} else {
@@ -78,5 +99,12 @@ component {
 	}
 	private void function _setWorkflowService( required any workflowService ) {
 		_workflowService = arguments.workflowService;
+	}
+
+	private any function _getOpenSamlUtils() {
+	    return _openSamlUtils;
+	}
+	private void function _setOpenSamlUtils( required any openSamlUtils ) {
+	    _openSamlUtils = arguments.openSamlUtils;
 	}
 }
