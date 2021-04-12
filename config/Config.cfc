@@ -29,10 +29,8 @@ component {
 		settings.features.saml2SSOUrlAsIssuer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.saml2CertificateManager = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 
-		settings.adminPermissions.saml2 = [ "navigate", "manage", "deleteConsumer" ];
-
 		settings.adminPermissions.saml2 = {
-			  general  = [ "navigate" ]
+			  general  = [ "navigate", "manage" ]
 			, provider = [ "navigate", "manage", "deleteConsumer" ]
 			, consumer = [ "navigate", "manage" ]
 		};
