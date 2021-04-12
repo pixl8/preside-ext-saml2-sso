@@ -9,7 +9,7 @@ component extends="preside.system.base.AdminHandler" {
 	public void function preHandler( event ) {
 		super.preHandler( argumentCollection=arguments );
 
-		if ( !hasCmsPermission( "saml2.navigate" ) ) {
+		if ( !hasCmsPermission( "saml2.general.navigate" ) ) {
 			event.adminAccessDenied();
 		}
 
@@ -35,7 +35,7 @@ component extends="preside.system.base.AdminHandler" {
 
 	public void function consumers( event, rc, prc ) {
 		prc.consumersExist  = consumerDao.dataExists();
-		prc.canAdd          = hasCmsPermission( "saml2.manage" )
+		prc.canAdd          = hasCmsPermission( "saml2.consumer.manage" )
 		prc.addConsumerLink = prc.canAdd ? event.buildAdminLink( "saml2Admin.addConsumer" ) : "";
 	}
 
@@ -53,7 +53,7 @@ component extends="preside.system.base.AdminHandler" {
 	}
 
 	public void function addConsumer( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.manage" ) ) {
+		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
 			event.adminAccessDenied();
 		}
 
@@ -67,7 +67,7 @@ component extends="preside.system.base.AdminHandler" {
 	}
 
 	public void function addConsumerAction( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.manage" ) ) {
+		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
 			event.adminAccessDenied();
 		}
 
@@ -89,7 +89,7 @@ component extends="preside.system.base.AdminHandler" {
 	}
 
 	public void function editConsumer( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.manage" ) ) {
+		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
 			event.adminAccessDenied();
 		}
 
@@ -112,7 +112,7 @@ component extends="preside.system.base.AdminHandler" {
 	}
 
 	public void function editConsumerAction( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.manage" ) ) {
+		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
 			event.adminAccessDenied();
 		}
 
@@ -134,7 +134,7 @@ component extends="preside.system.base.AdminHandler" {
 	}
 
 	public void function deleteConsumerAction( event, rc, prc ) {
-		if( !hasCmsPermission( "saml2.deleteConsumer" ) ) {
+		if( !hasCmsPermission( "saml2.consumer.deleteConsumer" ) ) {
 			event.adminAccessDenied();
 		}
 
@@ -153,7 +153,7 @@ component extends="preside.system.base.AdminHandler" {
 	}
 
 	public void function settings( event, rc, prc ) {
-		if( !hasCmsPermission( "saml2.manage" ) ) {
+		if( !hasCmsPermission( "saml2.general.manage" ) ) {
 			event.adminAccessDenied();
 		}
 
@@ -166,7 +166,7 @@ component extends="preside.system.base.AdminHandler" {
 	}
 
 	public void function saveSettingsAction( event, rc, prc ) {
-		if( !hasCmsPermission( "saml2.manage" ) ) {
+		if( !hasCmsPermission( "saml2.general.manage" ) ) {
 			event.adminAccessDenied();
 		}
 
