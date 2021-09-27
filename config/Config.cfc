@@ -25,6 +25,7 @@ component {
 
 
 		settings.features.samlSsoProvider     = { enabled=true, siteTemplates=[ "*" ], widgets=[] };
+		settings.features.samlSsoProviderSlo  = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.samlSsoConsumer     = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.saml2SSOUrlAsIssuer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 
