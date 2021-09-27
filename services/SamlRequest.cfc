@@ -14,6 +14,8 @@ component extends="AbstractSamlObject" {
 				  forceAuthentication = mustForceAuthentication()
 				, nameIdPolicy        = getNameIdPolicy()
 			});
+		} else if ( memento.type == "logoutRequest" ) {
+			memento.append({ nameId = getNameId() });
 		}
 
 		return memento;
@@ -63,5 +65,11 @@ component extends="AbstractSamlObject" {
 		}
 
 		return {};
+	}
+
+	public string function getNameId() {
+		var rootEl = getRootNode();
+
+		return rootEl[ "NameID" ].xmlText ?: "";
 	}
 }

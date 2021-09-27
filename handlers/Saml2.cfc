@@ -10,7 +10,7 @@ component {
 	property name="sessionStorage"               inject="sessionStorage";
 	property name="samlIdentityProviderService"  inject="samlIdentityProviderService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
-
+	property name="websiteLoginService"          inject="websiteLoginService";
 
 	public string function sso( event, rc, prc ) {
 		try {
@@ -86,6 +86,69 @@ component {
 			, redirectLocation = redirectLocation
 			, serviceName	   = ( samlRequest.issuerEntity.consumerRecord.name ?: "" )
 		} );
+	}
+
+	public string function slo( event, rc, prc ) {
+		if ( !isFeatureEnabled( "samlSsoProviderSlo" ) ) {
+			event.notFound();
+		}
+
+		// 1. Parse the request, check it is generally valid
+		try {
+			var samlRequest       = samlRequestParser.parse();
+			var totallyBadRequest = !IsStruct( samlRequest ) || samlRequest.keyExists( "error" ) ||  !( samlRequest.samlRequest.type ?: "" ).len() || !samlRequest.keyExists( "issuerentity" ) || samlRequest.issuerEntity.isEmpty();
+		} catch( any e ) {
+			logError( e );
+			totallyBadRequest = true;
+		}
+
+		if ( totallyBadRequest ) {
+			event.setHTTPHeader( statusCode="400" );
+			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
+			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
+
+			rc.body = renderView(
+				  view          = "/page-types/samlSsoBadRequest/index"
+				, presideobject = "samlSsoBadRequest"
+				, id            = event.getCurrentPageId()
+				, args          = {}
+			);
+
+			event.setView( "/core/simpleBodyRenderer" );
+			return;
+		}
+
+		// 2. Finer detail validation
+		var isWrongRequestType = samlRequest.samlRequest.type != "LogoutRequest";
+		var samlResponse       = "";
+
+		if ( isWrongRequestType ) {
+			samlResponse = samlResponseBuilder.buildErrorResponse(
+				  statusCode          = "urn:oasis:names:tc:SAML:2.0:status:Responder"
+				, subStatusCode       = "urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"
+				, statusMessage       = "Operation unsupported"
+				, issuer              = samlRequest.samlRequest.issuer
+				, inResponseTo        = samlRequest.samlRequest.id
+				, recipientUrl        = redirectLocation
+			);
+
+			return renderView( view="/saml2/ssoResponseForm", args={
+				  samlResponse     = samlResponse
+				, samlRelayState   = samlRequest.relayState ?: ""
+				, redirectLocation = redirectLocation
+				, serviceName	   = ( samlRequest.issuerEntity.consumerRecord.name ?: "" )
+			} );
+		}
+
+		// 3. Log current user out
+		if ( isLoggedIn() ) {
+			websiteLoginService.logout();
+		}
+
+		// 3. Time to respond with logout request
+		var loginSessionId = samlRequest.samleRequest.nameId ?: "";
+
+		WriteDump( "TODO: perform logout for [#loginSessionId#]" ); abort;
 	}
 
 	public any function idpSso( event, rc, prc ) {
