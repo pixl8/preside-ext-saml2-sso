@@ -51,7 +51,7 @@ component {
 				, recipientUrl        = redirectLocation
 			);
 		} else {
-			runEvent(
+			var userId = runEvent(
 					event          = authCheckHandler // default, saml2.authenticationCheck (below)
 				  , eventArguments = { samlRequest = samlRequest }
 				  , private        = true
@@ -59,11 +59,18 @@ component {
 			);
 
 			var attributeConfig = _getAttributeConfig( samlRequest.issuerEntity.consumerRecord );
+			var sessionIndex    = sessionStorage.getVar( "sessionid", CreateUUId() );
 			var issuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
 
 			if ( isFeatureEnabled( "saml2SSOUrlAsIssuer" ) ) {
 				issuer = issuer.reReplace( "/$", "" ) & "/saml2/sso/";
 			}
+
+			samlSsoWorkflowService.recordLoginSession(
+				  sessionIndex = sessionIndex
+				, userId       = userId
+				, issuerId     = samlRequest.issuerEntity.id
+			);
 
 			samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
 				  issuer          = issuer
@@ -73,7 +80,7 @@ component {
 				, nameIdValue     = attributeConfig.idValue
 				, audience        = samlRequest.issuerEntity.id
 				, sessionTimeout  = 40
-				, sessionIndex    = sessionStorage.getVar( "sessionid", CreateUUId() )
+				, sessionIndex    = sessionIndex
 				, attributes      = attributeConfig.attributes
 			);
 		}
@@ -217,7 +224,7 @@ component {
 		} );
 	}
 
-	private void function authenticationCheck( event, rc, prc, samlRequest={} ) {
+	private string function authenticationCheck( event, rc, prc, samlRequest={} ) {
 		if ( !isLoggedIn() ) {
 			setNextEvent( url=event.buildLink( page="login" ), persistStruct={
 				  samlRequest     = samlRequest
@@ -237,7 +244,7 @@ component {
 			}
 		}
 
-		return;
+		return getLoggedInUserId();
 	}
 
 	private struct function retrieveAttributes( event, rc, prc, supportedAttributes={} ) {
