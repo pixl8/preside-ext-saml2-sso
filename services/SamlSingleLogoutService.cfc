@@ -34,9 +34,9 @@ component {
 
 		if ( $getColdbox().handlerExists( "saml2.getUserIdFrom#nameIdField#" ) ) {
 			var userId = $runEvent(
-				  event = customEvent
-				, private = true
-				, prepostexempt = true
+				  event          = customEvent
+				, private        = true
+				, prepostexempt  = true
 				, eventArguments = { args={ value=arguments.nameId } }
 			);
 
