@@ -330,6 +330,17 @@ component {
 		);
 	}
 
+// Custom attributes for NameID:
+// Methods for getting the userId based on custom attribute field
+	private string function getUserIdFromEmail( event, rc, prc, args={} ) {
+		var emailAddress = args.value ?: "";
+
+		return getPresideObject( "website_user" ).selectData( selectFields=[ "id" ], filter={
+			  email_address = emailAddress
+			, active        = true
+		} ).id;
+	}
+
 // HELPERS
 	private struct function _getSamlRequest( event, rc, prc ) {
 
