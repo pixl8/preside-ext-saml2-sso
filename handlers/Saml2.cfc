@@ -11,6 +11,7 @@ component {
 	property name="samlIdentityProviderService"  inject="samlIdentityProviderService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
 	property name="websiteLoginService"          inject="websiteLoginService";
+	property name="samlSingleLogoutService"      inject="samlSingleLogoutService";
 
 	public string function sso( event, rc, prc ) {
 		try {
@@ -66,11 +67,13 @@ component {
 				issuer = issuer.reReplace( "/$", "" ) & "/saml2/sso/";
 			}
 
-			samlSsoWorkflowService.recordLoginSession(
-				  sessionIndex = sessionIndex
-				, userId       = userId
-				, issuerId     = samlRequest.issuerEntity.id
-			);
+			if ( isFeatureEnabled( "samlSsoProviderSlo" ) ) {
+				samlSingleLogoutService.recordLoginSession(
+					  sessionIndex = sessionIndex
+					, userId       = userId
+					, issuerId     = samlRequest.issuerEntity.id
+				);
+			}
 
 			samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
 				  issuer          = issuer

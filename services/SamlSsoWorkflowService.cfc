@@ -56,26 +56,6 @@ component {
 		_getWorkflowService().complete( argumentCollection=_getWorkflowStateArgs() );
 	}
 
-	public void function recordLoginSession(
-		  required string sessionIndex
-		, required string userId
-		, required string issuerId
-	) {
-		if ( $isFeatureEnabled( "samlSsoProviderSlo" ) ) {
-			$getPresideObject( "saml2_login_session" ).deleteData( filter={
-				  owner  = arguments.userId
-				, issuer = arguments.issuerId
-			});
-
-			$getPresideObject( "saml2_login_session" ).insertData({
-				  owner         = arguments.ownerId
-				, session_index = arguments.sessionIndex
-				, issuer        = arguments.issuerId
-			});
-		}
-	}
-
-
 // PRIVATE HELPERS
 	private struct function _getWorkflowStateArgs() {
 		var stateArgs = { workflow = "saml2sso", reference="saml2sso" };
