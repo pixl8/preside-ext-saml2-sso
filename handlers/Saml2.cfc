@@ -156,9 +156,13 @@ component {
 		}
 
 		// 3. Time to respond with logout request
-		var loginSessionId = samlRequest.samleRequest.nameId ?: "";
+		var nameId = samlRequest.samleRequest.nameId ?: "";
+		var userId = samleSingleLogoutService.getUserIdFromNameID(
+			  nameId   = nameId
+			, issuerId = samleRequest.issuerEntity.id
+		);
 
-		WriteDump( "TODO: perform logout for [#loginSessionId#]" ); abort;
+		WriteDump( "TODO: perform logout for [#userId#]" ); abort;
 	}
 
 	public any function idpSso( event, rc, prc ) {
