@@ -76,6 +76,47 @@ component {
 		}
 	}
 
+	/**
+	 * /saml2/slo/idpresponse/
+	 *
+	 * Initiates a response to an SP logout request
+	 * In our current implementation, this will be triggered from an embedded iframe
+	 * in the logout page
+	 */
+	public void function spresponse( event, rc, prc ) {
+		var issuerId       = rc.issuer ?: "";
+		var inResponseTo   = rc.inResponseTo ?: ""
+		var spIssuer       = entityPool.getEntityById( issuerId );
+		var logoutEndpoint = spIssuer.serviceProviderSsoRequirements.logoutService.location ?: "";
+		var logoutBinding  = spIssuer.serviceProviderSsoRequirements.logoutService.binding ?: "";
+
+		if ( isEmptyString( logoutEndpoint ) || isEmptyString( inResponseTo ) ) {
+			event.notFound();
+		}
+
+		var logoutResponse = buildLogoutResponse(
+			  issuer       = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
+			, inResponseTo = inResponseTo
+			, destination  = logoutEndpoint
+		);
+
+		if ( logoutBinding contains "POST" ) {
+			// POST BINDING, javascript form to post request to redirect location
+			return renderView( view="/saml2/ssoRequestForm", args={
+				  samlResponse     = logoutResponse
+				, redirectLocation = logoutEndpoint
+				, serviceName	   = ( spIssuer.consumerRecord.name ?: "" )
+				, noRelayState     = true
+			} );
+		} else {
+			// REDIRECT BINDING, zip up xml to send in URL
+			var qs    = "samlRequest=" & deflateEncoder.encode( logoutResponse );
+			var delim = Find( logoutEndpoint, "?" ) ? "&" : "?";
+
+			setNextEvent( url=( logoutEndpoint & delim & qs ) );
+		}
+	}
+
 // PAGE TYPE VIEWLET
 	private string function logoutPage( event, rc, prc, args={} ) {
 		var nameId       = rc.nameId       ?: "";
