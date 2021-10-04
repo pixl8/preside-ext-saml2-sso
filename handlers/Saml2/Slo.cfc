@@ -76,6 +76,23 @@ component {
 		}
 	}
 
+// PAGE TYPE VIEWLET
+	private string function logoutPage( event, rc, prc, args={} ) {
+		var nameId       = rc.nameId       ?: "";
+		var spIssuerId   = rc.spIssuerId   ?: "";
+		var sessionIndex = rc.sessionIndex ?: "";
+		var requestId    = rc.requestId    ?: "";
+
+		if ( isEmptyString( nameId ) || isEmptyString( spIssuerId ) ) {
+			event.notFound();
+		}
+
+		var userId = samlSessionService.getUserIdFromNameId( nameId, spIssuerId );
+		var sessionsToLogout = samlSessionService.getSessions( userId, sessionIndex );
+
+		WriteDump( sessionsToLogout ); abort;
+	}
+
 // HELPERS
 	private void function _respondToSloRequest( event, rc, prc ) {
 		// 1. Parse the request, check it is generally valid
@@ -130,18 +147,18 @@ component {
 			websiteLoginService.logout();
 		}
 
-		// 4. Get external sessions to logout
-		var nameId       = samlRequest.samlRequest.nameId ?: "";
-		var userId       = samlSessionService.getUserIdFromNameId( nameId, samleRequest.issuerEntity.id );
+		// 4. Redirect to logged out page (with variables to help output iframes to do followout logout requests with SPs)
 		var sessionIndex = samlRequest.samlRequest.sessionIndex ?: "";
 		if ( isEmptyString( sessionIndex ) ) {
 			sessionIndex = samlSessionService.getSessionId();
 		}
 
-		var sessionsToLogout = samlSessionService.getSessions( userId, sessionIndex );
-
-		// TODO: all the things...
-		WriteDump( sessionsToLogout ); abort;
+		setNextEvent( url=event.buildLink( page="saml_slo_page" ), persistStruct={
+			  nameId       = samlRequest.samlRequest.nameId ?: ""
+			, requestId    = samlRequest.samlRequest.id ?: ""
+			, spIssuerId   = samlRequest.issuerEntity.id
+			, sessionIndex = sessionIndex
+		} );
 	}
 
 	private void function _processSloResponse() {
