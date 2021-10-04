@@ -26,6 +26,14 @@ component {
 		return sessionId;
 	}
 
+	public void function clearSession( string sessionId=getSessionId() ) {
+		cookieService.deleteVar( samlSessionCookieName );
+
+		$getPresideObject( "saml2_login_session" ).deleteData( filter={
+			session_index = arguments.sessionId
+		} );
+	}
+
 	public void function recordLoginSession(
 		  required string sessionIndex
 		, required string userId

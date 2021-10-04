@@ -124,14 +124,37 @@ component {
 		var sessionIndex = rc.sessionIndex ?: "";
 		var requestId    = rc.requestId    ?: "";
 
-		if ( isEmptyString( nameId ) || isEmptyString( spIssuerId ) ) {
-			event.notFound();
+		if ( !isEmptyString( nameId ) && !isEmptyString( spIssuerId ) ) {
+			var userId = samlSessionService.getUserIdFromNameId( nameId, spIssuerId );
+			var sessionsToLogout = samlSessionService.getSessions( userId, sessionIndex );
+
+			// URL for a logout response to original
+			// SP requester
+			if ( Len( Trim( requestId ) ) ) {
+				args.spResponseUrl = event.buildLink(
+					  linkto      = "saml2.slo.spresponse"
+					, queryString = "issuer=#spIssuerId#&inResponseTo=#requestId#"
+				);
+			}
+
+			// URLs for additional SPs to request logout from
+			args.spRequestUrls = [];
+			for( var s in sessionsToLogout ) {
+				ArrayAppend( args.spRequestUrls, event.buildLink(
+					  linkto      = "saml2.slo.sprequest"
+					, queryString = "sid=#s#"
+				) );
+			}
+
+			samlSessionService.clearSession( sessionIndex );
 		}
 
-		var userId = samlSessionService.getUserIdFromNameId( nameId, spIssuerId );
-		var sessionsToLogout = samlSessionService.getSessions( userId, sessionIndex );
-
-		WriteDump( sessionsToLogout ); abort;
+		return renderView(
+			  view          = "/page-types/saml_slo_page/index"
+			, presideObject = "saml_slo_page"
+			, id            = event.getCurrentPageId()
+			, args          = args
+		);
 	}
 
 // HELPERS
