@@ -20,6 +20,64 @@ component {
 			event.notFound();
 		}
 
+		var isResponse = StructKeyExists( rc, "samlResponse" );
+
+		if ( isResponse ) {
+			_processSloResponse( argumentCollection=arguments );
+		} else {
+			_respondToSloRequest( argumentCollection=arguments );
+		}
+	}
+
+	/**
+	 * /saml2/slo/sprequest/
+	 *
+	 * Initiates an SLO request to a Service Provider from this IdP.
+	 * In our current implementation, this will be triggered from an embedded iframe
+	 * in the logout page
+	 */
+	public void function sprequest( event, rc, prc ) {
+		var samlSessionId = rc.sid ?: "";
+		var sessionDetail = samlSessionService.getSessionDetail( samlSessionId );
+		var sessionIndex  = sessionDetail.sessionIndex ?: "";
+
+		if ( sessionIndex != samlSessionService.getSessionId() ) {
+			event.notFound();
+		}
+
+		var ssoReqs          = sessionDetail.issuerMetadata.getServiceProviderSSORequirements();
+		var redirectLocation = ssoReqs.logoutService.location ?: "";
+		var binding          = ssoReqs.logoutService.binding ?: "";
+		if ( isEmptyString( ssoReqs.logoutService.location ?: "" ) ) {
+			event.notFound();
+		}
+
+		var samlSpLogoutRequest = samlRequestBuilder.buildSloRequest(
+			  issuer       = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
+			, sloEndpoint  = redirectLocation
+			, nameIdValue  = sessionDetail.nameId
+			, sessionIndex = sessionDetail.sessionIndex
+		);
+
+		if ( binding contains "POST" ) {
+			// POST BINDING, javascript form to post request to redirect location
+			return renderView( view="/saml2/ssoRequestForm", args={
+				  samlResponse     = samlSpLogoutRequest
+				, redirectLocation = redirectLocation
+				, serviceName	   = ( samlRequest.issuerEntity.consumerRecord.name ?: "" )
+				, noRelayState     = true
+			} );
+		} else {
+			// REDIRECT BINDING, zip up xml to send in URL
+			var qs    = "samlRequest=" & deflateEncoder.encode( samlSpLogoutRequest );
+			var delim = Find( redirectLocation, "?" ) ? "&" : "?";
+
+			setNextEvent( url=( redirectLocation & delim & qs ) );
+		}
+	}
+
+// HELPERS
+	private void function _respondToSloRequest( event, rc, prc ) {
 		// 1. Parse the request, check it is generally valid
 		try {
 			var samlRequest       = samlRequestParser.parse();
@@ -86,50 +144,8 @@ component {
 		WriteDump( sessionsToLogout ); abort;
 	}
 
-	/**
-	 * /saml2/slo/sprequest/
-	 *
-	 * Initiates an SLO request to a Service Provider from this IdP.
-	 * In our current implementation, this will be triggered from an embedded iframe
-	 * in the logout page
-	 */
-	public void function sprequest( event, rc, prc ) {
-		var samlSessionId = rc.sid ?: "";
-		var sessionDetail = samlSessionService.getSessionDetail( samlSessionId );
-		var sessionIndex  = sessionDetail.sessionIndex ?: "";
-
-		if ( sessionIndex != samlSessionService.getSessionId() ) {
-			event.notFound();
-		}
-
-		var ssoReqs          = sessionDetail.issuerMetadata.getServiceProviderSSORequirements();
-		var redirectLocation = ssoReqs.logoutService.location ?: "";
-		var binding          = ssoReqs.logoutService.binding ?: "";
-		if ( isEmptyString( ssoReqs.logoutService.location ?: "" ) ) {
-			event.notFound();
-		}
-
-		var samlSpLogoutRequest = samlRequestBuilder.buildSloRequest(
-			  issuer       = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
-			, sloEndpoint  = redirectLocation
-			, nameIdValue  = sessionDetail.nameId
-			, sessionIndex = sessionDetail.sessionIndex
-		);
-
-		if ( binding contains "POST" ) {
-			// POST BINDING, javascript form to post request to redirect location
-			return renderView( view="/saml2/ssoRequestForm", args={
-				  samlResponse     = samlSpLogoutRequest
-				, redirectLocation = redirectLocation
-				, serviceName	   = ( samlRequest.issuerEntity.consumerRecord.name ?: "" )
-				, noRelayState     = true
-			} );
-		} else {
-			// REDIRECT BINDING, zip up xml to send in URL
-			var qs    = "samlRequest=" & deflateEncoder.encode( samlSpLogoutRequest );
-			var delim = Find( redirectLocation, "?" ) ? "&" : "?";
-
-			setNextEvent( url=( redirectLocation & delim & qs ) );
-		}
+	private void function _processSloResponse() {
+		// TODO
+		WriteDump( "TODO" ); abort;
 	}
 }
