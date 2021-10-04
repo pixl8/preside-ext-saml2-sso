@@ -10,6 +10,7 @@ component {
 			, certAlias    = ( settings.injectedConfig.samlCertAlias        ?: "" )
 			, certPassword = ( settings.injectedConfig.samlCertPassword     ?: "" )
 		};
+		settings.saml2.sessionCookieName = "_samlid";
 		settings.saml2.authCheckHandler = "saml2.authenticationCheck";
 		settings.saml2.attributes = {};
 		settings.saml2.attributes.retrievalHandler = "saml2.retrieveAttributes";

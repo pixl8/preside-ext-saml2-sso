@@ -7,11 +7,9 @@ component {
 	property name="samlRequestBuilder"           inject="samlRequestBuilder";
 	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
 	property name="samlEntityPool"               inject="samlEntityPool";
-	property name="sessionStorage"               inject="sessionStorage";
 	property name="samlIdentityProviderService"  inject="samlIdentityProviderService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
-	property name="websiteLoginService"          inject="websiteLoginService";
-	property name="samlSingleLogoutService"      inject="samlSingleLogoutService";
+	property name="samlSessionService"           inject="samlSessionService";
 
 	public string function sso( event, rc, prc ) {
 		try {
@@ -60,7 +58,7 @@ component {
 			);
 
 			var attributeConfig = _getAttributeConfig( samlRequest.issuerEntity.consumerRecord );
-			var sessionIndex    = sessionStorage.getVar( "sessionid", CreateUUId() );
+			var sessionIndex    = samlSessionService.getSessionId();
 			var issuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
 
 			if ( isFeatureEnabled( "saml2SSOUrlAsIssuer" ) ) {
@@ -68,7 +66,7 @@ component {
 			}
 
 			if ( isFeatureEnabled( "samlSsoProviderSlo" ) ) {
-				samlSingleLogoutService.recordLoginSession(
+				samlSessionService.recordLoginSession(
 					  sessionIndex = sessionIndex
 					, userId       = userId
 					, issuerId     = samlRequest.issuerEntity.id
@@ -96,73 +94,6 @@ component {
 			, redirectLocation = redirectLocation
 			, serviceName	   = ( samlRequest.issuerEntity.consumerRecord.name ?: "" )
 		} );
-	}
-
-	public string function slo( event, rc, prc ) {
-		if ( !isFeatureEnabled( "samlSsoProviderSlo" ) ) {
-			event.notFound();
-		}
-
-		// 1. Parse the request, check it is generally valid
-		try {
-			var samlRequest       = samlRequestParser.parse();
-			var totallyBadRequest = !IsStruct( samlRequest ) || samlRequest.keyExists( "error" ) ||  !( samlRequest.samlRequest.type ?: "" ).len() || !samlRequest.keyExists( "issuerentity" ) || samlRequest.issuerEntity.isEmpty();
-		} catch( any e ) {
-			logError( e );
-			totallyBadRequest = true;
-		}
-
-		if ( totallyBadRequest ) {
-			event.setHTTPHeader( statusCode="400" );
-			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
-			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
-
-			rc.body = renderView(
-				  view          = "/page-types/samlSsoBadRequest/index"
-				, presideobject = "samlSsoBadRequest"
-				, id            = event.getCurrentPageId()
-				, args          = {}
-			);
-
-			event.setView( "/core/simpleBodyRenderer" );
-			return;
-		}
-
-		// 2. Finer detail validation
-		var isWrongRequestType = samlRequest.samlRequest.type != "LogoutRequest";
-		var samlResponse       = "";
-
-		if ( isWrongRequestType ) {
-			samlResponse = samlResponseBuilder.buildErrorResponse(
-				  statusCode          = "urn:oasis:names:tc:SAML:2.0:status:Responder"
-				, subStatusCode       = "urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"
-				, statusMessage       = "Operation unsupported"
-				, issuer              = samlRequest.samlRequest.issuer
-				, inResponseTo        = samlRequest.samlRequest.id
-				, recipientUrl        = redirectLocation
-			);
-
-			return renderView( view="/saml2/ssoResponseForm", args={
-				  samlResponse     = samlResponse
-				, samlRelayState   = samlRequest.relayState ?: ""
-				, redirectLocation = redirectLocation
-				, serviceName	   = ( samlRequest.issuerEntity.consumerRecord.name ?: "" )
-			} );
-		}
-
-		// 3. Log current user out
-		if ( isLoggedIn() ) {
-			websiteLoginService.logout();
-		}
-
-		// 3. Time to respond with logout request
-		var nameId = samlRequest.samleRequest.nameId ?: "";
-		var userId = samleSingleLogoutService.getUserIdFromNameID(
-			  nameId   = nameId
-			, issuerId = samleRequest.issuerEntity.id
-		);
-
-		WriteDump( "TODO: perform logout for [#userId#]" ); abort;
 	}
 
 	public any function idpSso( event, rc, prc ) {
@@ -219,7 +150,7 @@ component {
 			, nameIdValue     = attributeConfig.idValue
 			, audience        = entity.id
 			, sessionTimeout  = 40
-			, sessionIndex    = sessionStorage.getVar( "sessionid", CreateUUId() )
+			, sessionIndex    = samlSessionService.getSessionId()
 			, attributes      = attributeConfig.attributes
 		);
 
@@ -335,7 +266,7 @@ component {
 	}
 
 // Custom attributes for NameID:
-// Methods for getting the userId based on custom attribute field
+// Methods for getting the userId based on custom attribute field (and in reverse)
 	private string function getUserIdFromEmail( event, rc, prc, args={} ) {
 		var emailAddress = args.value ?: "";
 
@@ -344,12 +275,16 @@ component {
 			, active        = true
 		} ).id;
 	}
+	private string function getEmailForUser( event, rc, prc, args={} ) {
+		var userId = args.userId ?: "";
 
-// HELPERS
-	private struct function _getSamlRequest( event, rc, prc ) {
-
+		return getPresideObject( "website_user" ).selectData(
+			  id           = userId
+			, selectFields = [ "email_address" ]
+		).email_address;
 	}
 
+// HELPERS
 	private struct function _getAttributeConfig( required struct consumerRecord ) {
 		var attributes = samlAttributesService.getAttributeValues();
 		var idValue    = attributes[ consumerRecord.id_attribute ?: "" ] ?: getLoggedInUserId();
