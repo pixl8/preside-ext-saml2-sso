@@ -125,8 +125,15 @@ component {
 		};
 	}
 
-	public boolean function removeSession( required string sessionId ) {
+	public boolean function removeSessionById( required string sessionId ) {
 		return $getPresideObject( "saml2_login_session" ).deleteData( id=arguments.sessionId );
+	}
+
+	public boolean function removeSessionByIssuerAndIndex( required string issuerId, required string sessionIndex ) {
+		return $getPresideObject( "saml2_login_session" ).deleteData( filter={
+			  issuer        = arguments.issuerId
+			, session_index = arguments.sessionIndex
+		} );
 	}
 
 }

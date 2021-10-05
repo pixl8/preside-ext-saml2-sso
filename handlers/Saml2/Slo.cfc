@@ -213,12 +213,14 @@ component {
 			websiteLoginService.logout();
 		}
 
-		// 4. Redirect to logged out page (with variables to help output iframes to do followout logout requests with SPs)
+		// 4. Clear SPs recorded session
 		var sessionIndex = samlRequest.samlRequest.sessionIndex ?: "";
 		if ( isEmptyString( sessionIndex ) ) {
 			sessionIndex = samlSessionService.getSessionId();
 		}
+		samlSessionService.removeSessionByIssuerAndIndex( samlRequest.issuerEntity.id, sessionIndex )
 
+		// 5. Redirect to logged out page (with variables to help output iframes to do followout logout requests with SPs)
 		setNextEvent( url=event.buildLink( page="saml_slo_page" ), persistStruct={
 			  nameId       = samlRequest.samlRequest.nameId ?: ""
 			, requestId    = samlRequest.samlRequest.id ?: ""
@@ -254,7 +256,9 @@ component {
 		}
 
 		// 2. Remove the session that this logout request is a response to
-		samlSessionService.removeSession( samlResponse.samlResponse.inResponseTo ?: "" );
+		samlSessionService.removeSessionById(
+			sessionId = ( samlResponse.samlResponse.inResponseTo ?: "" )
+		);
 
 		// 3. For now, we're just going to redirect to logged out page.
 		// nothing more for us to do here (although we could fire off a number
