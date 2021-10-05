@@ -49,13 +49,13 @@ component {
 		, required string issuer
 		, required string nameIdValue
 		, required string sessionIndex
+		, required string requestId
 	) {
 		var nowish = getInstant();
-		var id     = LCase( _createSamlId() );
 
 		var xml  = _getXmlHeader();
 			xml &= '<saml2p:LogoutRequest xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" Version="2.0"'
-			xml &= 'ID="#id#" ';
+			xml &= 'ID="#requestId#" ';
 			xml &= 'IssueInstant="#_dateTimeFormat( nowish )#" ';
 			xml &= 'Destination="#arguments.sloEndpoint#" '
 			xml &= 'NotOnOrAfter="#_dateTimeFormat( DateAdd( 'n', 10, nowish ) )#" ';

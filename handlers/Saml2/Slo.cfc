@@ -58,6 +58,7 @@ component {
 			, sloEndpoint  = redirectLocation
 			, nameIdValue  = sessionDetail.nameId
 			, sessionIndex = sessionDetail.sessionIndex
+			, requestId    = samlSessionId
 		);
 
 		if ( binding contains "POST" ) {
