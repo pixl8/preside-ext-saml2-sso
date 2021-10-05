@@ -1,6 +1,7 @@
 component {
 
 	property name="samlRequestParser"   inject="samlRequestParser";
+	property name="samlResponseParser"  inject="samlResponseParser";
 	property name="samlResponseBuilder" inject="samlResponseBuilder";
 	property name="samlRequestBuilder"  inject="samlRequestBuilder";
 	property name="deflateEncoder"      inject="httpRedirectRequestDeflateEncoder";
@@ -146,7 +147,7 @@ component {
 				) );
 			}
 
-			samlSessionService.clearSession( sessionIndex );
+			samlSessionService.invalidateSession();
 		}
 
 		return renderView(
@@ -226,7 +227,34 @@ component {
 	}
 
 	private void function _processSloResponse() {
-		// TODO
-		WriteDump( "TODO" ); abort;
+		// 1. Parse the response, check it is generally valid
+		try {
+			var samlResponse      = samlResponseParser.parse();
+			var totallyBadRequest = !IsStruct( samlResponse ) || samlResponse.keyExists( "error" ) ||  !( samlResponse.samlResponse.type ?: "" ).len() || !samlResponse.keyExists( "issuerentity" ) || samlResponse.issuerEntity.isEmpty();
+		} catch( any e ) {
+			logError( e );
+			totallyBadRequest = true;
+		}
+
+		if ( totallyBadRequest ) {
+			event.setHTTPHeader( statusCode="400" );
+			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
+			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
+
+			rc.body = renderView(
+				  view          = "/page-types/samlSsoBadRequest/index"
+				, presideobject = "samlSsoBadRequest"
+				, id            = event.getCurrentPageId()
+				, args          = {}
+			);
+
+			event.setView( "/core/simpleBodyRenderer" );
+			return;
+		}
+
+		// 2. For now, we're just going to redirect to logged out page.
+		// nothing more for us to do here (although we could fire off a number
+		// of hooks, etc. and do a load of helpful things... another time)
+		setNextEvent( url=event.buildLink( page="saml_slo_page" ) );
 	}
 }

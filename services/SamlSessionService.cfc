@@ -26,12 +26,8 @@ component {
 		return sessionId;
 	}
 
-	public void function clearSession( string sessionId=getSessionId() ) {
+	public void function invalidateSession() {
 		cookieService.deleteVar( samlSessionCookieName );
-
-		$getPresideObject( "saml2_login_session" ).deleteData( filter={
-			session_index = arguments.sessionId
-		} );
 	}
 
 	public void function recordLoginSession(
@@ -128,4 +124,9 @@ component {
 			, issuerMetadata = new SamlMetadata( spIssuer.metadata )
 		};
 	}
+
+	public boolean function removeSession( required string sessionId ) {
+		return $getPresideObject( "saml2_login_session" ).deleteData( id=arguments.sessionId );
+	}
+
 }
