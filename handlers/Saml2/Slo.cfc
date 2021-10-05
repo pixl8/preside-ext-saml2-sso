@@ -253,7 +253,10 @@ component {
 			return;
 		}
 
-		// 2. For now, we're just going to redirect to logged out page.
+		// 2. Remove the session that this logout request is a response to
+		samlSessionService.removeSession( samlResponse.samlResponse.inResponseTo ?: "" );
+
+		// 3. For now, we're just going to redirect to logged out page.
 		// nothing more for us to do here (although we could fire off a number
 		// of hooks, etc. and do a load of helpful things... another time)
 		setNextEvent( url=event.buildLink( page="saml_slo_page" ) );
