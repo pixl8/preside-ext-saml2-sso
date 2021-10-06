@@ -37,7 +37,7 @@ component {
 	) {
 		if ( $isFeatureEnabled( "samlSsoProviderSlo" ) ) {
 			$getPresideObject( "saml2_login_session" ).insertData({
-				  owner         = arguments.ownerId
+				  owner         = arguments.userId
 				, session_index = arguments.sessionIndex
 				, issuer        = arguments.issuerId
 			});
