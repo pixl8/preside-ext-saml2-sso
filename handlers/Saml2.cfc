@@ -7,10 +7,9 @@ component {
 	property name="samlRequestBuilder"           inject="samlRequestBuilder";
 	property name="samlSsoWorkflowService"       inject="samlSsoWorkflowService";
 	property name="samlEntityPool"               inject="samlEntityPool";
-	property name="sessionStorage"               inject="sessionStorage";
 	property name="samlIdentityProviderService"  inject="samlIdentityProviderService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
-
+	property name="samlSessionService"           inject="samlSessionService";
 
 	public string function sso( event, rc, prc ) {
 		try {
@@ -51,7 +50,7 @@ component {
 				, recipientUrl        = redirectLocation
 			);
 		} else {
-			runEvent(
+			var userId = runEvent(
 					event          = authCheckHandler // default, saml2.authenticationCheck (below)
 				  , eventArguments = { samlRequest = samlRequest }
 				  , private        = true
@@ -59,10 +58,19 @@ component {
 			);
 
 			var attributeConfig = _getAttributeConfig( samlRequest.issuerEntity.consumerRecord );
+			var sessionIndex    = samlSessionService.getSessionId();
 			var issuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
 
 			if ( isFeatureEnabled( "saml2SSOUrlAsIssuer" ) ) {
 				issuer = issuer.reReplace( "/$", "" ) & "/saml2/sso/";
+			}
+
+			if ( isFeatureEnabled( "samlSsoProviderSlo" ) ) {
+				samlSessionService.recordLoginSession(
+					  sessionIndex = sessionIndex
+					, userId       = userId
+					, issuerId     = samlRequest.issuerEntity.id
+				);
 			}
 
 			samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
@@ -73,7 +81,7 @@ component {
 				, nameIdValue     = attributeConfig.idValue
 				, audience        = samlRequest.issuerEntity.id
 				, sessionTimeout  = 40
-				, sessionIndex    = sessionStorage.getVar( "sessionid", CreateUUId() )
+				, sessionIndex    = sessionIndex
 				, attributes      = attributeConfig.attributes
 			);
 		}
@@ -142,7 +150,7 @@ component {
 			, nameIdValue     = attributeConfig.idValue
 			, audience        = entity.id
 			, sessionTimeout  = 40
-			, sessionIndex    = sessionStorage.getVar( "sessionid", CreateUUId() )
+			, sessionIndex    = samlSessionService.getSessionId()
 			, attributes      = attributeConfig.attributes
 		);
 
@@ -154,7 +162,7 @@ component {
 		} );
 	}
 
-	private void function authenticationCheck( event, rc, prc, samlRequest={} ) {
+	private string function authenticationCheck( event, rc, prc, samlRequest={} ) {
 		if ( !isLoggedIn() ) {
 			setNextEvent( url=event.buildLink( page="login" ), persistStruct={
 				  samlRequest     = samlRequest
@@ -174,7 +182,7 @@ component {
 			}
 		}
 
-		return;
+		return getLoggedInUserId();
 	}
 
 	private struct function retrieveAttributes( event, rc, prc, supportedAttributes={} ) {
@@ -260,11 +268,26 @@ component {
 		);
 	}
 
-// HELPERS
-	private struct function _getSamlRequest( event, rc, prc ) {
+// Custom attributes for NameID:
+// Methods for getting the userId based on custom attribute field (and in reverse)
+	private string function getUserIdFromEmail( event, rc, prc, args={} ) {
+		var emailAddress = args.value ?: "";
 
+		return getPresideObject( "website_user" ).selectData( selectFields=[ "id" ], filter={
+			  email_address = emailAddress
+			, active        = true
+		} ).id;
+	}
+	private string function getEmailForUser( event, rc, prc, args={} ) {
+		var userId = args.userId ?: "";
+
+		return getPresideObject( "website_user" ).selectData(
+			  id           = userId
+			, selectFields = [ "email_address" ]
+		).email_address;
 	}
 
+// HELPERS
 	private struct function _getAttributeConfig( required struct consumerRecord ) {
 		var attributes = samlAttributesService.getAttributeValues();
 		var idValue    = attributes[ consumerRecord.id_attribute ?: "" ] ?: getLoggedInUserId();

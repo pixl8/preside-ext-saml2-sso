@@ -41,6 +41,12 @@ component {
 		template = template.replace( "${supportcontact}", ( settings.support_person          ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${supportemail}"  , ( settings.support_email           ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 
+		if ( $isFeatureEnabled( "samlSsoProviderSlo" ) ) {
+			template = template.replace( "${slo}", '<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="#( settings.sso_endpoint_root ?: "" )#/saml2/slo/"/>', "all" );
+		} else {
+			template = template.replace( "${slo}", "", "all" );
+		}
+
 		return template;
 	}
 

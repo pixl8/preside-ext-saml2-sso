@@ -14,6 +14,11 @@ component extends="AbstractSamlObject" {
 				  forceAuthentication = mustForceAuthentication()
 				, nameIdPolicy        = getNameIdPolicy()
 			});
+		} else if ( memento.type == "logoutRequest" ) {
+			memento.append({
+				  nameId       = getNameId()
+				, sessionIndex = getSessionIndex()
+			});
 		}
 
 		return memento;
@@ -63,5 +68,17 @@ component extends="AbstractSamlObject" {
 		}
 
 		return {};
+	}
+
+	public string function getNameId() {
+		var rootEl = getRootNode();
+
+		return rootEl[ "NameID" ].xmlText ?: "";
+	}
+
+	public string function getSessionIndex() {
+		var rootEl = getRootNode();
+
+		return rootEl[ "sessionindex" ].xmlText ?: "";
 	}
 }

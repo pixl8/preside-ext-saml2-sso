@@ -50,6 +50,14 @@ component extends="AbstractSamlObject" {
 			}
 		}
 
+		var logoutService = XmlSearch( _getXmlObject(), "/EntityDescriptor/SPSSODescriptor/SingleLogoutService" );
+		if ( logoutService.len() ) {
+			reqs.logoutService = {
+				  binding  = logoutService[1].xmlAttributes.binding  ?: ""
+				, location = logoutService[1].xmlAttributes.location ?: ""
+			}
+		}
+
 		reqs.requestAttributes = [];
 		var attributes = XmlSearch( _getXmlObject(), "/EntityDescriptor/SPSSODescriptor/AttributeConsumingService[@isDefault='true']/RequestedAttribute" );
 		for( var attrib in attributes ) {

@@ -10,6 +10,7 @@ component {
 			, certAlias    = ( settings.injectedConfig.samlCertAlias        ?: "" )
 			, certPassword = ( settings.injectedConfig.samlCertPassword     ?: "" )
 		};
+		settings.saml2.sessionCookieName = "_samlid";
 		settings.saml2.authCheckHandler = "saml2.authenticationCheck";
 		settings.saml2.attributes = {};
 		settings.saml2.attributes.retrievalHandler = "saml2.retrieveAttributes";
@@ -25,6 +26,7 @@ component {
 
 
 		settings.features.samlSsoProvider     = { enabled=true, siteTemplates=[ "*" ], widgets=[] };
+		settings.features.samlSsoProviderSlo  = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.samlSsoConsumer     = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.saml2SSOUrlAsIssuer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.saml2CertificateManager = { enabled=false, siteTemplates=[ "*" ], widgets=[] };

@@ -56,7 +56,6 @@ component {
 		_getWorkflowService().complete( argumentCollection=_getWorkflowStateArgs() );
 	}
 
-
 // PRIVATE HELPERS
 	private struct function _getWorkflowStateArgs() {
 		var stateArgs = { workflow = "saml2sso", reference="saml2sso" };

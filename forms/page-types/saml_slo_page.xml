@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form feature="samlSsoProviderSlo">
+    <tab id="main" sortorder="10">
+        <fieldset id="main" sortorder="10">
+            <field name="main_image" deleted="true" />
+            <field name="layout"     deleted="true" />
+            <field name="teaser"     deleted="true" />
+        </fieldset>
+    </tab>
+
+    <tab id="meta"       deleted="true" />
+    <tab id="dates"      deleted="true" />
+    <tab id="navigation" deleted="true" />
+    <tab id="access"     deleted="true" />
+</form>

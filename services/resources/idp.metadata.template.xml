@@ -12,6 +12,7 @@
         <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
 
         <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="${ssolocation}" />
+        ${slo}
 
 ${attribs}
     </md:IDPSSODescriptor>
