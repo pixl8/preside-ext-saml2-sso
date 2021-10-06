@@ -53,7 +53,7 @@ component {
 			event.notFound();
 		}
 
-		var samlSpLogoutRequest = samlRequestBuilder.buildSloRequest(
+		var samlSpLogoutRequest = samlRequestBuilder.buildLogoutRequest(
 			  issuer       = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
 			, sloEndpoint  = redirectLocation
 			, nameIdValue  = sessionDetail.nameId

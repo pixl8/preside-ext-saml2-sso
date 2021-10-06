@@ -69,7 +69,7 @@ component {
 				samlSessionService.recordLoginSession(
 					  sessionIndex = sessionIndex
 					, userId       = userId
-					, issuerId     = samlRequest.issuerEntity.id
+					, issuerId     = samlRequest.issuerEntity.consumerRecord.id ?: ""
 				);
 			}
 
