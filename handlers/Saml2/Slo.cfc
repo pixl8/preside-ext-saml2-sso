@@ -42,7 +42,7 @@ component {
 		var sessionDetail = samlSessionService.getSessionDetail( samlSessionId );
 		var sessionIndex  = sessionDetail.sessionIndex ?: "";
 
-		if ( sessionIndex != samlSessionService.getSessionId() ) {
+		if ( !Len( sessionIndex ) ) {
 			event.notFound();
 		}
 
