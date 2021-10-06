@@ -54,7 +54,11 @@ component {
 		return ValueArray( records.id );
 	}
 
-	public void function getUserIdFromNameId( required string nameId, required string issuerId ) {
+	public string function getUserIdFromNameId( required string nameId, required string issuerId ) {
+		if ( !Len( Trim( arguments.nameId ) ) || !Len( Trim( arguments.issuerId ) ) ) {
+			return arguments.nameId;
+		}
+
 		var nameIdField = getNameIdFieldForSp( arguments.issuerId );
 		var customEvent = "saml2.getUserIdFrom#nameIdField#";
 

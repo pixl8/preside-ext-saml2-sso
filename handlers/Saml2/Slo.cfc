@@ -125,9 +125,9 @@ component {
 		var spIssuerId   = rc.spIssuerId   ?: "";
 		var sessionIndex = rc.sessionIndex ?: "";
 		var requestId    = rc.requestId    ?: "";
+		var userId       = rc.userId       ?: samlSessionService.getUserIdFromNameId( nameId, spIssuerId );
 
-		if ( !isEmptyString( nameId ) && !isEmptyString( spIssuerId ) ) {
-			var userId = samlSessionService.getUserIdFromNameId( nameId, spIssuerId );
+		if ( !isEmptyString( userId ) && !isEmptyString( sessionIndex ) ) {
 			var sessionsToLogout = samlSessionService.getSessions( userId, sessionIndex );
 
 			// URL for a logout response to original
