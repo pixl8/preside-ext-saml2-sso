@@ -37,7 +37,7 @@ component {
 	 * In our current implementation, this will be triggered from an embedded iframe
 	 * in the logout page
 	 */
-	public void function sprequest( event, rc, prc ) {
+	public any function sprequest( event, rc, prc ) {
 		var samlSessionId = rc.sid ?: "";
 		var sessionDetail = samlSessionService.getSessionDetail( samlSessionId );
 		var sessionIndex  = sessionDetail.sessionIndex ?: "";
@@ -85,7 +85,7 @@ component {
 	 * In our current implementation, this will be triggered from an embedded iframe
 	 * in the logout page
 	 */
-	public void function spresponse( event, rc, prc ) {
+	public any function spresponse( event, rc, prc ) {
 		var issuerId       = rc.issuer ?: "";
 		var inResponseTo   = rc.inResponseTo ?: ""
 		var spIssuer       = entityPool.getEntityById( issuerId );
