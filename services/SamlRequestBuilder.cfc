@@ -54,18 +54,18 @@ component {
 		var nowish = getInstant();
 
 		var xml  = _getXmlHeader();
-			xml &= '<saml2p:LogoutRequest xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" Version="2.0"'
-			xml &= 'ID="#requestId#" ';
+			xml &= '<samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" Version="2.0" '
+			xml &= 'ID="#arguments.requestId#" ';
 			xml &= 'IssueInstant="#_dateTimeFormat( nowish )#" ';
 			xml &= 'Destination="#arguments.sloEndpoint#" '
 			xml &= 'NotOnOrAfter="#_dateTimeFormat( DateAdd( 'n', 10, nowish ) )#" ';
 			xml &= 'Reason="urn:oasis:names:tc:SAML:2.0:logout:user">';
 
-				xml &= '<saml2:Issuer>#arguments.issuer#</saml2:Issuer>'
-				xml &= '<saml2:NameID>#arguments.nameIdValue#</saml2:NameID>'
+				xml &= '<saml:Issuer>#arguments.issuer#</saml:Issuer>'
+				xml &= '<saml:NameID>#arguments.nameIdValue#</saml:NameID>'
 				xml &= '<samlp:SessionIndex>#arguments.sessionIndex#</samlp:SessionIndex>'
 
-			xml &= '</saml2p:LogoutRequest>';
+			xml &= '</samlp:LogoutRequest>';
 
 		xml = _getXmlSigner().sign( xml );
 
