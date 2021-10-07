@@ -42,6 +42,8 @@ component {
 		var sessionDetail = samlSessionService.getSessionDetail( samlSessionId );
 		var sessionIndex  = sessionDetail.sessionIndex ?: "";
 
+
+
 		if ( !Len( sessionIndex ) ) {
 			event.notFound();
 		}
@@ -62,6 +64,7 @@ component {
 		);
 
 		if ( binding contains "POST" ) {
+			event.setXFrameOptionsHeader( "sameorigin" );
 			// POST BINDING, javascript form to post request to redirect location
 			return renderView( view="/saml2/ssoRequestForm", args={
 				  samlResponse     = samlSpLogoutRequest
@@ -104,6 +107,8 @@ component {
 
 		if ( logoutBinding contains "POST" ) {
 			// POST BINDING, javascript form to post request to redirect location
+			event.setXFrameOptionsHeader( "sameorigin" );
+
 			return renderView( view="/saml2/ssoRequestForm", args={
 				  samlResponse     = logoutResponse
 				, redirectLocation = logoutEndpoint
