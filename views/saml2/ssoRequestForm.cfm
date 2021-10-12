@@ -16,6 +16,8 @@
         <input type="hidden" name="SAMLRequest" value="#ToBase64( args.samlRequest )#" />
       <cfelseif Len( Trim( args.samlResponse ) )>
         <input type="hidden" name="SAMLResponse" value="#ToBase64( args.samlResponse )#" />
+      </cfif>
+
       <cfif not args.noRelayState>
         <input type="hidden" name="RelayState" value="#args.samlRelayState#" />
       </cfif>
