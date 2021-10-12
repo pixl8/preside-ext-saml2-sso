@@ -1,4 +1,5 @@
 <cfparam name="args.samlRequest"      default="" />
+<cfparam name="args.samlResponse"     default="" />
 <cfparam name="args.samlRelayState"   default="" />
 <cfparam name="args.redirectLocation" default="" />
 <cfparam name="args.serviceName"      default="" />
@@ -11,7 +12,10 @@
   </head>
   <body>
     <form id="samlform" action="#args.redirectLocation#" method="POST">
-      <input type="hidden" name="SAMLRequest" value="#ToBase64( args.samlRequest )#" />
+      <cfif Len( Trim( args.samlRequest ) )>
+        <input type="hidden" name="SAMLRequest" value="#ToBase64( args.samlRequest )#" />
+      <cfelseif Len( Trim( args.samlResponse ) )>
+        <input type="hidden" name="SAMLResponse" value="#ToBase64( args.samlResponse )#" />
       <cfif not args.noRelayState>
         <input type="hidden" name="RelayState" value="#args.samlRelayState#" />
       </cfif>
