@@ -228,7 +228,7 @@ component {
 		setNextEvent( url=event.buildLink( page="saml_slo_page" ), persistStruct={
 			  nameId       = samlRequest.samlRequest.nameId ?: ""
 			, requestId    = samlRequest.samlRequest.id ?: ""
-			, spIssuerId   = samlRequest.issuerEntity.id
+			, spIssuerId   = samlRequest.issuerEntity.consumerRecord.id ?: ""
 			, sessionIndex = sessionIndex
 		} );
 	}
