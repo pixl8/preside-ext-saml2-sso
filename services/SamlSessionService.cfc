@@ -27,7 +27,16 @@ component {
 	}
 
 	public void function invalidateSession() {
+		var sessionId = getSessionId();
 		cookieService.deleteVar( samlSessionCookieName );
+
+		$createTask(
+			  event             = "saml2.slo.clearSessionInBgThread"
+			, args              = { sessionIndex=sessionId }
+			, runNow            = false
+			, runIn             = CreateTimeSpan( 0, 0, 5, 0 )
+			, discardOnComplete = true
+		);
 	}
 
 	public void function recordLoginSession(
@@ -140,4 +149,9 @@ component {
 		} );
 	}
 
+	public boolean function removeSessionsByIndex( required string sessionIndex ) {
+		return $getPresideObject( "saml2_login_session" ).deleteData( filter={
+			session_index = arguments.sessionIndex
+		} );
+	}
 }

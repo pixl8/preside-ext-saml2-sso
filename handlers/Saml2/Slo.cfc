@@ -269,4 +269,15 @@ component {
 		// of hooks, etc. and do a load of helpful things... another time)
 		setNextEvent( url=event.buildLink( page="saml_slo_page" ) );
 	}
+
+// BG THREAD RUNNERS
+	private boolean function clearSessionInBgThread( event, rc, prc, args={} ) {
+		var sessionIndex = args.sessionIndex ?: "";
+
+		if ( Len( Trim( sessionIndex ) ) ) {
+			samlSessionService.removeSessionsByIndex( sessionIndex );
+		}
+
+		return true;
+	}
 }
