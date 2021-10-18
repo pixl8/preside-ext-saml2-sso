@@ -228,7 +228,7 @@ component {
 		setNextEvent( url=event.buildLink( page="saml_slo_page" ), persistStruct={
 			  nameId       = samlRequest.samlRequest.nameId ?: ""
 			, requestId    = samlRequest.samlRequest.id ?: ""
-			, spIssuerId   = samlRequest.issuerEntity.id
+			, spIssuerId   = samlRequest.issuerEntity.consumerRecord.id ?: ""
 			, sessionIndex = sessionIndex
 		} );
 	}
@@ -268,5 +268,16 @@ component {
 		// nothing more for us to do here (although we could fire off a number
 		// of hooks, etc. and do a load of helpful things... another time)
 		setNextEvent( url=event.buildLink( page="saml_slo_page" ) );
+	}
+
+// BG THREAD RUNNERS
+	private boolean function clearSessionInBgThread( event, rc, prc, args={} ) {
+		var sessionIndex = args.sessionIndex ?: "";
+
+		if ( Len( Trim( sessionIndex ) ) ) {
+			samlSessionService.removeSessionsByIndex( sessionIndex );
+		}
+
+		return true;
 	}
 }
