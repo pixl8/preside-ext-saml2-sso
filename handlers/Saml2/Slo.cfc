@@ -4,6 +4,7 @@ component {
 	property name="samlResponseParser"  inject="samlResponseParser";
 	property name="samlResponseBuilder" inject="samlResponseBuilder";
 	property name="samlRequestBuilder"  inject="samlRequestBuilder";
+	property name="samlEntityPool"      inject="samlEntityPool";
 	property name="deflateEncoder"      inject="httpRedirectRequestDeflateEncoder";
 	property name="websiteLoginService" inject="websiteLoginService";
 	property name="samlSessionService"  inject="samlSessionService";
@@ -89,7 +90,7 @@ component {
 	public any function spresponse( event, rc, prc ) {
 		var issuerId       = rc.issuer ?: "";
 		var inResponseTo   = rc.inResponseTo ?: ""
-		var spIssuer       = entityPool.getEntityById( issuerId );
+		var spIssuer       = samlEntityPool.getEntityById( issuerId );
 		var logoutEndpoint = spIssuer.serviceProviderSsoRequirements.logoutService.location ?: "";
 		var logoutBinding  = spIssuer.serviceProviderSsoRequirements.logoutService.binding ?: "";
 
