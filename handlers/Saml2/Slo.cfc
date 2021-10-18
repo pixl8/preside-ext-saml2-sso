@@ -98,7 +98,7 @@ component {
 			event.notFound();
 		}
 
-		var logoutResponse = buildLogoutResponse(
+		var logoutResponse = samlResponseBuilder.buildLogoutResponse(
 			  issuer       = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
 			, inResponseTo = inResponseTo
 			, destination  = logoutEndpoint
