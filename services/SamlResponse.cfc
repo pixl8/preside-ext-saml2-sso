@@ -118,7 +118,9 @@ component extends="AbstractSamlObject" {
 	}
 
 	public string function getInResponseTo() {
-		return rootEl.xmlAttributes.inResponseTo ?: "";
+		var rootEl = getRootNode();
+
+		return rootEl.xmlAttributes.InResponseTo ?: "";
 	}
 
 // AUTHENTICATION REQUEST METHODS

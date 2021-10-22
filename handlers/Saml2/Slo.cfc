@@ -18,6 +18,8 @@ component {
 	 * SP initiated logout _requests_ and also logout _responses_
 	 */
 	public void function index( event, rc, prc ) {
+		event.cachePage( false );
+		event.preventPageCache();
 		if ( !isFeatureEnabled( "samlSsoProviderSlo" ) ) {
 			event.notFound();
 		}
@@ -236,7 +238,7 @@ component {
 	private void function _processSloResponse() {
 		// 1. Parse the response, check it is generally valid
 		try {
-			var samlResponse      = samlResponseParser.parse();
+			var samlResponse      = samlResponseParser.parse( issuerType="sp" );
 			var totallyBadRequest = !IsStruct( samlResponse ) || samlResponse.keyExists( "error" ) ||  !( samlResponse.samlResponse.type ?: "" ).len() || !samlResponse.keyExists( "issuerentity" ) || samlResponse.issuerEntity.isEmpty();
 		} catch( any e ) {
 			logError( e );
