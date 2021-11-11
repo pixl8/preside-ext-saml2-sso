@@ -144,7 +144,12 @@ component {
 
 	private string function _getSubject( required date instant, required string nameIdFormat, required string nameIdValue, required string inResponseTo, required string recipientUrl ) {
 		var xml  = '<saml:Subject>';
-		    xml &= '<saml:NameID Format="#arguments.nameIdFormat#">#nameIdValue#</saml:NameID>';
+
+		if ( Len( Trim( arguments.nameIdFormat ) ) ) {
+			xml &= '<saml:NameID Format="#arguments.nameIdFormat#">#nameIdValue#</saml:NameID>';
+		} else {
+			xml &= '<saml:NameID>#nameIdValue#</saml:NameID>';
+		}
 
 		if ( arguments.inResponseTo.len() ) {
 		    xml &= '<saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">';

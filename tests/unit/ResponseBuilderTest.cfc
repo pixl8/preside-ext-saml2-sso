@@ -2,7 +2,7 @@ component extends="testbox.system.BaseSpec" {
 
 	function run() {
 		describe( "buildAuthenticationAssertion()", function(){
-			xit( "should return minimal authentication assertion response XML with minimal args", function(){
+			it( "should return minimal authentication assertion response XML with minimal args", function(){
 				var builder  = _getBuilder();
 				var response = builder.buildAuthenticationAssertion(
 					  issuer              = "http://www.thewebsite.com/"
@@ -17,6 +17,33 @@ component extends="testbox.system.BaseSpec" {
 				);
 
 				expect( IsXml( response ) ).toBeTrue();
+				expect( response contains "<saml:NameID Format" ).toBeTrue();
+
+				var openSamlObjectRepresentingResponse = new samlIdProvider.OpenSamlUtils().xmlToOpenSamlObject( response );
+				try {
+					openSamlObjectRepresentingResponse.validate( true );
+				} catch ( any e ) {
+					fail( "SAML did not validate" );
+				}
+			} );
+
+			it( "should leave out format attribute of nameId when format is empty", function(){
+				var builder  = _getBuilder();
+				var response = builder.buildAuthenticationAssertion(
+					  issuer              = "http://www.thewebsite.com/"
+					, nameIdFormat        = ""
+					, nameIdValue         = "test@test.com"
+					, inResponseTo        = "aaf23196-1773-2113-474a-fe114412ab72"
+					, recipientUrl        = "https://sp.example.com/SAML2/SSO/POST"
+					, audience            = "https://sp.example.com/SAML2"
+					, sessionTimeout      = 30
+					, sessionIndex        = "C894146D-598F-4D9B-8733ACF80280C4B7"
+					, attributes          = { email = "test@test.com", displayName="Test user", firstName="Test", lastName="user" }
+				);
+
+				expect( IsXml( response ) ).toBeTrue();
+				expect( response contains "<saml:NameID>test@test.com</saml:NameID>" ).toBeTrue();
+				expect( response contains "<saml:NameID Format" ).toBeFalse();
 
 				var openSamlObjectRepresentingResponse = new samlIdProvider.OpenSamlUtils().xmlToOpenSamlObject( response );
 				try {

@@ -69,7 +69,7 @@ component {
 				  issuer          = issuer
 				, inResponseTo    = samlRequest.samlRequest.id
 				, recipientUrl    = redirectLocation
-				, nameIdFormat    = "urn:oasis:names:tc:SAML:2.0:nameid-format:#attributeConfig.idFormat#"
+				, nameIdFormat    = attributeConfig.idFormat
 				, nameIdValue     = attributeConfig.idValue
 				, audience        = samlRequest.issuerEntity.id
 				, sessionTimeout  = 40
@@ -264,8 +264,8 @@ component {
 
 	private struct function _getAttributeConfig( required struct consumerRecord ) {
 		var attributes = samlAttributesService.getAttributeValues();
+		var idFormat   = samlAttributesService.getNameIdFormat( consumerRecord = consumerRecord );
 		var idValue    = attributes[ consumerRecord.id_attribute ?: "" ] ?: getLoggedInUserId();
-		var idFormat   = IsTrue( consumerRecord.id_attribute_is_transient ?: "" ) ? "transient" : "persistent";
 		var restricted = ( consumerRecord.use_attributes ?: "" ).listToArray();
 
 		if ( restricted.len() ) {
