@@ -102,6 +102,14 @@ component extends="preside.system.base.AdminHandler" {
 
 		prc.consumer = QueryRowToStruct( prc.consumer );
 
+		if ( !Len( prc.consumer.id_attribute_format ?: "" ) ) {
+			if ( isTrue( prc.consumer.id_attribute_is_transient ?: "" ) ) {
+				prc.consumer.id_attribute_format = "transient";
+			} else {
+				prc.consumer.id_attribute_format = "auto";
+			}
+		}
+
 		prc.pageTitle    = translateResource( uri="saml2:provider.editConsumer.page.title", data=[ prc.consumer.name ] );
 		prc.pageSubTitle = translateResource( uri="saml2:provider.editConsumer.page.subtitle", data=[ prc.consumer.name ] );
 

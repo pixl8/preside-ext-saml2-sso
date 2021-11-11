@@ -31,6 +31,29 @@ component {
 		);
 	}
 
+	public string function getNameIdFormat( required struct consumerRecord ) {
+		var explicitFormat = consumerRecord.id_attribute_format ?: "";
+
+		if ( !Len( explicitFormat ) ) {
+			if ( IsBoolean( consumerRecord.id_attribute_is_transient ?: "" ) && consumerRecord.id_attribute_is_transient ) {
+				explicitFormat = "transient";
+			} else {
+				explicitFormat = "auto";
+			}
+		}
+
+		if ( explicitFormat == "auto" ) {
+			var attribConfig = _getSupportedAttributes();
+			var idField = consumerRecord.id_attribute ?: "";
+			if ( !Len( idField ) ) {
+				idField = "id";
+			}
+			explicitFormat = attribConfig[ idField ].nameIdFormat ?: "unspecified";
+		}
+
+		return $translateResource( uri="enum.samlNameIdFormat:#explicitFormat#.uri", defaultValue="" );
+	}
+
 // PRIVATE HELPERS
 
 // GETTERS AND SETTERS

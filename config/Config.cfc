@@ -15,11 +15,11 @@ component {
 		settings.saml2.attributes = {};
 		settings.saml2.attributes.retrievalHandler = "saml2.retrieveAttributes";
 		settings.saml2.attributes.supported = {
-			  id          = { friendlyName="UserID"                                                  , samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" }
-			, email       = { friendlyName="Email"      , samlUrn="urn:oid:0.9.2342.19200300.100.1.3", samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" }
-			, displayName = { friendlyName="DisplayName", samlUrn="urn:oid:2.16.840.1.113730.3.1.241", samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" }
-			, firstName   = { friendlyName="FirstName"  , samlUrn="urn:oid:2.5.4.42"                 , samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" }
-			, lastName    = { friendlyName="LastName"   , samlUrn="urn:oid:2.5.4.4"                  , samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" }
+			  id          = { friendlyName="UserID"                                                  , samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri", nameIdFormat="persistent" }
+			, email       = { friendlyName="Email"      , samlUrn="urn:oid:0.9.2342.19200300.100.1.3", samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri", nameIdFormat="email" }
+			, displayName = { friendlyName="DisplayName", samlUrn="urn:oid:2.16.840.1.113730.3.1.241", samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri", nameIdFormat="unspecified" }
+			, firstName   = { friendlyName="FirstName"  , samlUrn="urn:oid:2.5.4.42"                 , samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri", nameIdFormat="unspecified" }
+			, lastName    = { friendlyName="LastName"   , samlUrn="urn:oid:2.5.4.4"                  , samlNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri", nameIdFormat="unspecified" }
 		};
 
 		settings.saml2.identityProviders = settings.saml2.identityProviders ?: {};
@@ -46,6 +46,7 @@ component {
 
 		settings.enum.samlSsoType = [ "sp", "idp" ];
 		settings.enum.samlIdpType = [ "admin", "web" ];
+		settings.enum.samlNameIdFormat = [ "auto", "persistent", "email", "unspecified", "transient", "none" ];
 
 		settings.multilingual.ignoredUrlPatterns = settings.multilingual.ignoredUrlPatterns ?: [];
 		settings.multilingual.ignoredUrlPatterns.append( "^/saml2/" );
