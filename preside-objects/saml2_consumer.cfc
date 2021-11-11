@@ -11,7 +11,9 @@ component  {
 	property name="sso_type"                  type="string"  dbtype="varchar" maxlength=3 enum="samlSsoType" renderer="samlSsoType";
 	property name="use_attributes"            type="string"  dbtype="text";
 	property name="id_attribute"              type="string"  dbtype="varchar" maxlength=200;
-	property name="id_attribute_is_transient" type="boolean" dbtype="boolean" default=false;
+	property name="id_attribute_format"       type="string"  dbtype="varchar" maxlength=15 enum="samlNameIdFormat";
+
+	property name="id_attribute_is_transient" type="boolean" dbtype="boolean" default=false; // field is deprecated, but here for backward compatibility
 
 	property name="access_condition" relationship="many-to-one" relatedto="rules_engine_condition";
 

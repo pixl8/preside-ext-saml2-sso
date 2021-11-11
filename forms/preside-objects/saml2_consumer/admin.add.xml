@@ -12,9 +12,9 @@
 	</tab>
 	<tab id="attributes">
 		<fieldset id="attributes" sortorder="20">
-			<field binding="saml2_consumer.id_attribute"              sortorder="10" control="samlAssertionAttributesPicker"/>
-			<field binding="saml2_consumer.id_attribute_is_transient" sortorder="20" />
-			<field binding="saml2_consumer.use_attributes"            sortorder="30" control="samlAssertionAttributesPicker" multiple="true" />
+			<field binding="saml2_consumer.id_attribute"        sortorder="10" control="samlAssertionAttributesPicker"/>
+			<field binding="saml2_consumer.id_attribute_format" sortorder="20" control="enumRadioList" />
+			<field binding="saml2_consumer.use_attributes"      sortorder="30" control="samlAssertionAttributesPicker" multiple="true" />
 		</fieldset>
 	</tab>
 	<tab id="editorial">
