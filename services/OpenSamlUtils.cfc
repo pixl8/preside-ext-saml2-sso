@@ -92,6 +92,17 @@ component {
 		return true;
 	}
 
+	public boolean function validateRequestSignature( required string samlRequest, required string signingCert ) {
+		var samlRequestObj = xmlToOpenSamlObject( samlRequest );
+		var requestSig     = samlRequestObj.getSignature();
+
+		if ( IsNull( requestSig ) ) {
+			return false;
+		}
+
+		return validateSignature( signature=requestSig, credential=_getCredentialFromCert( arguments.signingCert ) );
+	}
+
 	public boolean function validateSignature( required any signature, required any credential ) {
 		var profileValidator = _create( "org.opensaml.security.SAMLSignatureProfileValidator" ).init();
 		try {
@@ -122,7 +133,11 @@ component {
 	}
 
 	private any function _getCredentialFromMetadata( required string idpMeta ) {
-		var x509Cert        = _ensureCertWrappedInHeaderAndFooter( Trim( new SamlMetadata( arguments.idpMeta ).getX509Certificate() ) );
+		return _getCredentialFromCert( new SamlMetadata( arguments.idpMeta ).getX509Certificate() );
+	}
+
+	private any function _getCredentialFromCert( required string cert ) {
+		var x509Cert        = _ensureCertWrappedInHeaderAndFooter( Trim( arguments.cert ) );
 		var byteArrayOfCert = CreateObject( "java", "java.io.ByteArrayInputStream" ).init( x509Cert.getBytes() );
 		var certFactory     = CreateObject( "java", "java.security.cert.CertificateFactory" ).getInstance( "X.509" );
 		var cert            = certFactory.generateCertificate( byteArrayOfCert );

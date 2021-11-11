@@ -1,5 +1,12 @@
 # Changelog
 
+## v5.0.0
+
+* Add beta support for SLO when acting as a frontend IdP (add feature flag `settings.features.samlSsoProviderSlo.enabled=true`)
+* Add beta feature for allowing custom certificates to be input for IdP integrations (add feature flag `settings.features.saml2CertificateManager.enabled=true`)
+* Add validation of SAML request signatures
+* Add admin ability to specify NameID format used for service provider SAML Assertion responses
+
 ## v4.1.5
 
 * Hopeful fix, and more useful error information, for "Invalid signature" failures on apparently valid SAML responses.

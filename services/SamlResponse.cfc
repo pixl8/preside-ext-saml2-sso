@@ -12,6 +12,7 @@ component extends="AbstractSamlObject" {
 			, notAfter          = getNotAfter()
 			, audience          = getAudience()
 			, assertionIsSigned = getAssertionIsSigned()
+			, inResponseTo      = getInResponseTo()
 		};
 
 		if ( memento.type == "authnRequest" ) {
@@ -114,6 +115,12 @@ component extends="AbstractSamlObject" {
 		var rootEl = getRootNode();
 
 		return Len( rootEl.Assertion.Signature.SignatureValue.xmlText ?: "" ) > 0
+	}
+
+	public string function getInResponseTo() {
+		var rootEl = getRootNode();
+
+		return rootEl.xmlAttributes.InResponseTo ?: "";
 	}
 
 // AUTHENTICATION REQUEST METHODS

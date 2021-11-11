@@ -40,6 +40,19 @@
 							#translateResource( "saml2:consumer.idp.useFor.admin" )#
 						</cfif>
 					</dd>
+					<cfif isFeatureEnabled( "saml2CertificateManager" )>
+						<dt>#translateResource( "saml2:consumer.idp.cert" )#:</dt>
+						<dd>
+							<cfif Len( provider.certificate )>
+								<a href="#event.buildAdminLink( objectName="saml2_certificate", recordId=provider.certificate )#">
+									<i class="fa fa-fw #translateResource( 'preside-objects.saml2_certificate:iconClass' )#"></i>
+									#renderLabel( "saml2_certificate", provider.certificate )#
+								</a>
+							<cfelse>
+								<em class="light-grey">#translateResource( "saml2:consumer.idp.cert.default" )#</em>
+							</cfif>
+						</dd>
+					</cfif>
 					<dt>#translateResource( "saml2:consumer.idp.download.meta" )#:</dt>
 					<dd>
 						<a href="#downloadMetaLink#"><i class="fa fa-fw fa-download"></i></a>&nbsp;

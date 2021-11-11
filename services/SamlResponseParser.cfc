@@ -21,7 +21,7 @@ component {
 	}
 
 // PUBLIC API METHODS
-	public struct function parse() {
+	public struct function parse( string issuerType="idp" ) {
 		var parsedResponse = ( _isPostRequest() ? _getHttpPostResponseBindingParser() : _getHttpRedirectResponseBindinParser() ).parse();
 
 		parsedResponse.samlResponse = parsedResponse.samlResponse.getMemento()
@@ -30,12 +30,16 @@ component {
 			try {
 				parsedResponse.issuerEntity = _getSamlEntityPool().getEntity(
 					  entityId   = parsedResponse.samlResponse.issuer
-					, entityType = "idp"
+					, entityType = arguments.issuerType
 					, audience   = parsedResponse.samlResponse.audience
 				);
 
-				if ( !IsBoolean( parsedResponse.issuerEntity.idpRecord.enabled ?: "" ) || ! parsedResponse.issuerEntity.idpRecord.enabled ) {
-					throw( type="entitypool.missingidentity" );
+				if ( arguments.issuerType == "idp" ) {
+					if ( !IsBoolean( parsedResponse.issuerEntity.idpRecord.enabled ?: "" ) || ! parsedResponse.issuerEntity.idpRecord.enabled ) {
+						throw( type="entitypool.missingidentity" );
+					}
+				} else {
+
 				}
 
 				var nowish = DateConvert( "local2Utc", Now() );
@@ -43,16 +47,18 @@ component {
 					throw( type="saml2responseparser.assertion.timed.out", message="This login request has timed out. Please try again." );
 				}
 
-				var signaturesValid = _getOpenSamlUtils().validateSignatures(
-					  samlResponse = parsedResponse.samlXml
-					, idpMeta      = parsedResponse.issuerEntity.idpRecord.metadata ?: ""
-				);
-				if ( !signaturesValid ) {
-					throw(
-						  type    = "saml2responseparser.invalid.signature"
-						, message = "The assertion response failed signature validation."
-						, detail  = parsedResponse.samlXml
+				if ( arguments.issuerType == "idp" ) {
+					var signaturesValid = _getOpenSamlUtils().validateSignatures(
+						  samlResponse = parsedResponse.samlXml
+						, idpMeta      = parsedResponse.issuerEntity.idpRecord.metadata ?: ""
 					);
+					if ( !signaturesValid ) {
+						throw(
+							  type    = "saml2responseparser.invalid.signature"
+							, message = "The assertion response failed signature validation."
+							, detail  = parsedResponse.samlXml
+						);
+					}
 				}
 			} catch ( "entitypool.missingentity" e ) {
 				parsedResponse.issuerEntity = {};

@@ -117,6 +117,31 @@ component {
 		);
 	}
 
+	public struct function getEntityById( required string id, string entityType="sp" ) {
+		var sourceObject = "saml2_consumer";
+		var entityKey    = "consumerRecord";
+
+		if ( arguments.entityType == "idp" ) {
+			sourceObject = "saml2_identity_provider";
+			entityKey    = "idpRecord";
+		}
+
+		var record = $getPresideObject( sourceObject ).selectData( id=arguments.id );
+
+		for( var r in record ) {
+			var entity        = _getEntityFromMetadata( r.metadata ).getMemento();
+			var savedEntityId = entity.id;
+
+			entity[ entityKey ] = r;
+			return entity;
+		}
+
+		throw(
+			  type    = "entitypool.missingentity"
+			, message = "The entity with id [#arguments.id#] could not be found"
+		);
+	}
+
 // PRIVATE HELPERS
 	private any function _getEntityFromMetadata( required string metadata ) {
 		try {

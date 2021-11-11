@@ -6,19 +6,22 @@ component {
 
 // CONSTRUCTOR
 	/**
-	 * @samlAttributesService.inject samlAttributesService
-	 * @samlKeyStore.inject          samlKeyStore
-	 * @samlIdpService.inject        samlIdentityProviderService
+	 * @samlAttributesService.inject          samlAttributesService
+	 * @samlKeyStore.inject                   samlKeyStore
+	 * @samlIdpService.inject                 samlIdentityProviderService
+	 * @samlUploadedCertificateService.inject samlUploadedCertificateService
 	 *
 	 */
 	public any function init(
 		  required any    samlAttributesService
 		, required any    samlKeyStore
 		, required any    samlIdpService
+		, required any    samlUploadedCertificateService
 	) {
 		_setSamlAttributesService( arguments.samlAttributesService );
 		_setSamlKeyStore( arguments.samlKeyStore );
 		_setSamlIdpService( arguments.samlIdpService );
+		_setSamlUploadedCertificateService( arguments.samlUploadedCertificateService );
 
 		return this;
 	}
@@ -37,6 +40,12 @@ component {
 		template = template.replace( "${orgurl}"        , ( settings.organisation_url        ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${supportcontact}", ( settings.support_person          ?: "----ERROR: NOT CONFIGURED----" ), "all" );
 		template = template.replace( "${supportemail}"  , ( settings.support_email           ?: "----ERROR: NOT CONFIGURED----" ), "all" );
+
+		if ( $isFeatureEnabled( "samlSsoProviderSlo" ) ) {
+			template = template.replace( "${slo}", '<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="#( settings.sso_endpoint_root ?: "" )#/saml2/slo/"/>', "all" );
+		} else {
+			template = template.replace( "${slo}", "", "all" );
+		}
 
 		return template;
 	}
@@ -59,12 +68,13 @@ component {
 		var supportEmail       = ( settings.support_email           ?: "----ERROR: NOT CONFIGURED----" )
 		var serviceName        = ( settings.service_name            ?: "----ERROR: NOT CONFIGURED----" )
 		var serviceDescription = ( settings.service_description     ?: "----ERROR: NOT CONFIGURED----" )
+		var x509Cert           = _getX509Cert( multline=false, certificate=idpSettings.certificate ?: "" );
 
 		if ( Len( Trim( idpSettings.entityIdSuffix ?: "" ) ) ) {
 			entityId &= idpSettings.entityIdSuffix;
 		}
 
-		template = template.replace( "${x509}"              , _getX509Cert()    , "all" );
+		template = template.replace( "${x509}"              , x509Cert          , "all" );
 		template = template.replace( "${ssolocation}"       , ssoLocation       , "all" );
 		template = template.replace( "${entityid}"          , entityId          , "all" );
 		template = template.replace( "${orgshortname}"      , orgShortName      , "all" );
@@ -83,8 +93,14 @@ component {
 	}
 
 // PRIVATE HELPERS
-	private string function _getX509Cert( boolean multiline=false ) {
+	private string function _getX509Cert( boolean multiline=false, string certificate="" ) {
 		try {
+			if ( Len( arguments.certificate ) ) {
+				return _getSamlUploadedCertificateService().getFormattedX509Certificate(
+					  certificateId = arguments.certificate
+					, multiline     = arguments.multiline
+				);
+			}
 			return _getSamlKeyStore().getFormattedX509Certificate( multiline=arguments.multiline );
 		} catch( any e ) {
 			return "=====ERROR READING X509 CERT. SEE SAML2 EXTENSION DOCUMENTATION FOR SETUP HELP=====";
@@ -129,6 +145,13 @@ component {
 	}
 	private void function _setSamlIdpService( required any samlIdpService ) {
 	    _samlIdpService = arguments.samlIdpService;
+	}
+
+	private any function _getSamlUploadedCertificateService() {
+	    return _samlUploadedCertificateService;
+	}
+	private void function _setSamlUploadedCertificateService( required any samlUploadedCertificateService ) {
+	    _samlUploadedCertificateService = arguments.samlUploadedCertificateService;
 	}
 
 }

@@ -28,6 +28,8 @@ component extends="AbstractSamlObject" {
 			return {};
 		}
 
+		spSSONode = spSSONode[ 1 ];
+
 		var reqs = {};
 
 		reqs.requestsWillBeSigned = spSSONode.xmlAttributes.authnRequestsSigned ?: false;
@@ -45,6 +47,14 @@ component extends="AbstractSamlObject" {
 				  index    = assertionConsumer[1].xmlAttributes.index    ?: 0
 				, binding  = assertionConsumer[1].xmlAttributes.binding  ?: ""
 				, location = assertionConsumer[1].xmlAttributes.location ?: ""
+			}
+		}
+
+		var logoutService = XmlSearch( _getXmlObject(), "/EntityDescriptor/SPSSODescriptor/SingleLogoutService" );
+		if ( logoutService.len() ) {
+			reqs.logoutService = {
+				  binding  = logoutService[1].xmlAttributes.binding  ?: ""
+				, location = logoutService[1].xmlAttributes.location ?: ""
 			}
 		}
 
