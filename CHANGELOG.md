@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.0.1
+
+* [#11](https://github.com/pixl8/preside-ext-saml2-sso/issues/11) Remove unused private methods (hope to resolve sporadic Lucee bug errors in some environments)
+
 ## v5.0.0
 
 * Add beta support for SLO when acting as a frontend IdP (add feature flag `settings.features.samlSsoProviderSlo.enabled=true`)
