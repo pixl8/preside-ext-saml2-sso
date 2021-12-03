@@ -166,11 +166,4 @@ component {
 		return arguments.cert;
 	}
 
-// GETTERS AND SETTERS
-	private any function _getKeyStore() {
-		return _keyStore;
-	}
-	private void function _setKeyStore( required any keyStore ) {
-		_keyStore = arguments.keyStore;
-	}
 }
