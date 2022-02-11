@@ -24,11 +24,9 @@ component {
 	) {
 		var idpMeta = new SamlMetadata( arguments.idpMetaData );
 		var nowish  = getInstant();
-		var id      = LCase( _createSamlId() );
-
 		var xml  = _getXmlHeader();
 		    xml &= '<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" Version="2.0" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" ';
-		    xml &= 'ID="#id#" ';
+		    xml &= 'ID="#_createSamlId()#" ';
 		    xml &= 'ProviderName="#XmlFormat( arguments.spName )#" ';
 		    xml &= 'IssueInstant="#_dateTimeFormat( nowish )#" ';
 		    xml &= 'Destination="#XmlFormat( idpMeta.getIdpSsoLocation() )#" ';
