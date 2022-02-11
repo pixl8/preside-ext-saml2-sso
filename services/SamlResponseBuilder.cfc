@@ -37,7 +37,7 @@ component {
 	) {
 		var nowish = getInstant();
 		var xml    = "";
-		var id     = LCase( _createSamlId() );
+		var id     = _createSamlId();
 
 		xml  = _getAssertionHeader( instant=nowish, issuer=arguments.issuer, id=id );
 		xml &= _getSubject(
@@ -68,7 +68,7 @@ component {
 	) {
 		var nowish = getInstant();
 		var xml    = "";
-		var id     = LCase( _createSamlId() );
+		var id     = _createSamlId();
 
 		xml  = _getXmlHeader() & _getResponseHeader(
 			  instant       = nowish
@@ -93,10 +93,9 @@ component {
 	) {
 		var nowish = getInstant();
 		var xml    = "";
-		var id     = LCase( _createSamlId() );
 
 		xml  = _getXmlHeader() & '<samlp:LogoutResponse xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" Version="2.0"';
-		xml &= ' ID="#CreateUUId()#"';
+		xml &= ' ID="#_createSamlId()#"';
 		xml &= ' IssueInstant="#_dateTimeFormat( Now() )#"';
 		xml &= ' Destination="#arguments.destination#"';
 
@@ -108,6 +107,9 @@ component {
 		xml &= '<saml:Issuer>#arguments.issuer#</saml:Issuer>';
 		xml &= '<samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status>';
 		xml &= '</samlp:LogoutResponse>';
+
+		xml = _getXmlSigner().sign( xml );
+		xml = Replace( xml, '<?xml version="1.0" encoding="UTF-8"?>', '' );
 
 		return xml;
 	}
