@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.0.2
+
+* Sign Single Logout Responses
+* Ensure ID attribute on logout responses meets SAML spec and does not start with a number
+
 ## v5.0.1
 
 * [#11](https://github.com/pixl8/preside-ext-saml2-sso/issues/11) Remove unused private methods (hope to resolve sporadic Lucee bug errors in some environments)
