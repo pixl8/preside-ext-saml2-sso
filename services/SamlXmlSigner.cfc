@@ -34,9 +34,9 @@ component {
 		}
 
 		signature = osUtils.createAndPrepareOpenSamlSignature( credential );
-
 		assertion.setSignature( signature );
 
+		osUtils.setDigestAlgorithm( signature );
 		osUtils.openSamlObjectToXml( assertion, false ); // odd looking but necessary. the process of doing this sets the signature into the object's internal XML definition
 		osUtils.signSamlObject( signature );
 

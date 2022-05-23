@@ -7,6 +7,9 @@ component {
 		_setSignatureMappings( {
 			"SHA256withRSA": "ALGO_ID_SIGNATURE_RSA_SHA256"
 		} );
+		_setDigestMappings( {
+			"SHA256withRSA": "ALGO_ID_DIGEST_SHA256"
+		} );
 
 		return this;
 	}
@@ -68,6 +71,18 @@ component {
 		_create( "org.opensaml.xml.security.SecurityHelper" ).prepareSignatureParams( signature, credential, NullValue(), NullValue() );
 
 		return signature;
+	}
+
+	public any function setDigestAlgorithm( required any signature ) {
+		var signatureConstants = _create( "org.opensaml.xml.signature.SignatureConstants" );
+		var algorithmName      = signature.getSigningCredential().getEntityCertificate().getSigAlgName();
+		var digestMappings     = _getDigestMappings();
+
+		signature.getContentReferences().get( 0 ).setDigestAlgorithm( signatureConstants.ALGO_ID_DIGEST_SHA256 );
+
+		if ( StructKeyExists( digestMappings, algorithmName ) ) {
+			signature.getContentReferences().get( 0 ).setDigestAlgorithm( signatureConstants[ digestMappings[ algorithmName ] ] );
+		}
 	}
 
 	public void function signSamlObject( required any signature ) {
@@ -181,6 +196,13 @@ component {
 	}
 	private void function _setSignatureMappings( required struct signatureMappings ) {
 		_signatureMappings = arguments.signatureMappings;
+	}
+
+	private struct function _getDigestMappings() {
+		return _digestMappings;
+	}
+	private void function _setDigestMappings( required struct digestMappings ) {
+		_digestMappings = arguments.digestMappings;
 	}
 
 }
