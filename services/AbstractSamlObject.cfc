@@ -33,6 +33,7 @@ component {
 			strippedXml = replaceNoCase( strippedXml, "</#namespace#:", "</", "all" );
 			strippedXml = replaceNoCase( strippedXml, 'xmlns:#namespace#=".*?"', "", "all" );
 		}
+		strippedXml = replaceNoCase( strippedXml, 'xmlns=".*?"', "", "all" );
 
 		return strippedXml;
 	}
