@@ -31,9 +31,9 @@ component {
 		for( var namespace in namespaces ) {
 			strippedXml = replaceNoCase( strippedXml, "<#namespace#:", "<", "all" );
 			strippedXml = replaceNoCase( strippedXml, "</#namespace#:", "</", "all" );
-			strippedXml = replaceNoCase( strippedXml, 'xmlns:#namespace#=".*?"', "", "all" );
+			strippedXml = reReplaceNoCase( strippedXml, 'xmlns:#namespace#="[^"]*"', "", "all" );
 		}
-		strippedXml = replaceNoCase( strippedXml, 'xmlns=".*?"', "", "all" );
+		strippedXml = reReplaceNoCase( strippedXml, 'xmlns="[^"]*"', "", "all" );
 
 		return strippedXml;
 	}
