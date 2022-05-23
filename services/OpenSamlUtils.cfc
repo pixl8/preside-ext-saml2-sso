@@ -5,7 +5,7 @@ component {
 		_setupJavaloader();
 		_bootstrapOpenSamlConfiguration();
 		_setSignatureMappings( {
-			rsawithsha256 = "ALGO_ID_SIGNATURE_RSA_SHA256"
+			"SHA256withRSA": "ALGO_ID_SIGNATURE_RSA_SHA256"
 		} );
 
 		return this;
@@ -64,7 +64,6 @@ component {
 try {
 	SystemOutput( "signatureMappings=#serializeJson(signatureMappings)#" & Chr( 10 ) );
 	SystemOutput( "algorithmName=#algorithmName#" & Chr( 10 ) );
-	SystemOutput( "cert=#credential.getEntityCertificate().toString()#" & Chr( 10 ) );
 }
 catch( any e ) {}
 
