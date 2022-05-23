@@ -62,15 +62,19 @@ component {
 		signature.setSigningCredential( credential );
 
 try {
-	dumplog( signatureMappings=signatureMappings, algorithmName=algorithmName, cert=credential.getEntityCertificate().toString() );
+	SystemOutput( "signatureMappings=#serializeJson(signatureMappings)#" & Chr( 10 ) );
+	SystemOutput( "algorithmName=#algorithmName#" & Chr( 10 ) );
+	SystemOutput( "cert=#credential.getEntityCertificate().toString()#" & Chr( 10 ) );
 }
 catch( any e ) {}
 
 		if ( StructKeyExists( signatureMappings, algorithmName ) ) {
+
 try {
-	dumplog( algorithm=signatureConstants[ signatureMappings[ algorithmName ] ] );
+	SystemOutput( "algorithm=#signatureConstants[ signatureMappings[ algorithmName ] ]#" & Chr( 10 ) );
 }
 catch( any e ) {}
+
 			signature.setSignatureAlgorithm( signatureConstants[ signatureMappings[ algorithmName ] ] );
 		}
 
