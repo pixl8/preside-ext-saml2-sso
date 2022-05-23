@@ -61,7 +61,16 @@ component {
 
 		signature.setSigningCredential( credential );
 
+try {
+	dumplog( signatureMappings=signatureMappings, algorithmName=algorithmName, cert=credential.getEntityCertificate().toString() );
+}
+catch( any e ) {}
+
 		if ( StructKeyExists( signatureMappings, algorithmName ) ) {
+try {
+	dumplog( algorithm=signatureConstants[ signatureMappings[ algorithmName ] ] );
+}
+catch( any e ) {}
 			signature.setSignatureAlgorithm( signatureConstants[ signatureMappings[ algorithmName ] ] );
 		}
 
