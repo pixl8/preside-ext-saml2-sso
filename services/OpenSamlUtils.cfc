@@ -61,19 +61,7 @@ component {
 
 		signature.setSigningCredential( credential );
 
-try {
-	SystemOutput( "signatureMappings=#serializeJson(signatureMappings)#" & Chr( 10 ) );
-	SystemOutput( "algorithmName=#algorithmName#" & Chr( 10 ) );
-}
-catch( any e ) {}
-
 		if ( StructKeyExists( signatureMappings, algorithmName ) ) {
-
-try {
-	SystemOutput( "algorithm=#signatureConstants[ signatureMappings[ algorithmName ] ]#" & Chr( 10 ) );
-}
-catch( any e ) {}
-
 			signature.setSignatureAlgorithm( signatureConstants[ signatureMappings[ algorithmName ] ] );
 		}
 
