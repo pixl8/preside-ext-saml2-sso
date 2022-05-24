@@ -4,6 +4,12 @@ component {
 	public any function init() {
 		_setupJavaloader();
 		_bootstrapOpenSamlConfiguration();
+		_setSignatureMappings( {
+			"SHA256withRSA": "ALGO_ID_SIGNATURE_RSA_SHA256"
+		} );
+		_setDigestMappings( {
+			"SHA256withRSA": "ALGO_ID_DIGEST_SHA256"
+		} );
 
 		return this;
 	}
@@ -50,14 +56,33 @@ component {
 	}
 
 	public any function createAndPrepareOpenSamlSignature( required any credential ) {
-		var bf        = _create( "org.opensaml.Configuration" ).getBuilderFactory();
-		var signature = bf.getBuilder( _create( "org.opensaml.xml.signature.Signature" ).DEFAULT_ELEMENT_NAME ).buildObject();
+		var bf                 = _create( "org.opensaml.Configuration" ).getBuilderFactory();
+		var signature          = bf.getBuilder( _create( "org.opensaml.xml.signature.Signature" ).DEFAULT_ELEMENT_NAME ).buildObject();
+		var signatureConstants = _create( "org.opensaml.xml.signature.SignatureConstants" );
+		var algorithmName      = credential.getEntityCertificate().getSigAlgName();
+		var signatureMappings  = _getSignatureMappings();
 
 		signature.setSigningCredential( credential );
+
+		if ( StructKeyExists( signatureMappings, algorithmName ) ) {
+			signature.setSignatureAlgorithm( signatureConstants[ signatureMappings[ algorithmName ] ] );
+		}
 
 		_create( "org.opensaml.xml.security.SecurityHelper" ).prepareSignatureParams( signature, credential, NullValue(), NullValue() );
 
 		return signature;
+	}
+
+	public any function setDigestAlgorithm( required any signature ) {
+		var signatureConstants = _create( "org.opensaml.xml.signature.SignatureConstants" );
+		var algorithmName      = signature.getSigningCredential().getEntityCertificate().getSigAlgName();
+		var digestMappings     = _getDigestMappings();
+
+		signature.getContentReferences().get( 0 ).setDigestAlgorithm( signatureConstants.ALGO_ID_DIGEST_SHA256 );
+
+		if ( StructKeyExists( digestMappings, algorithmName ) ) {
+			signature.getContentReferences().get( 0 ).setDigestAlgorithm( signatureConstants[ digestMappings[ algorithmName ] ] );
+		}
 	}
 
 	public void function signSamlObject( required any signature ) {
@@ -164,6 +189,20 @@ component {
 		}
 
 		return arguments.cert;
+	}
+
+	private struct function _getSignatureMappings() {
+		return _signatureMappings;
+	}
+	private void function _setSignatureMappings( required struct signatureMappings ) {
+		_signatureMappings = arguments.signatureMappings;
+	}
+
+	private struct function _getDigestMappings() {
+		return _digestMappings;
+	}
+	private void function _setDigestMappings( required struct digestMappings ) {
+		_digestMappings = arguments.digestMappings;
 	}
 
 }

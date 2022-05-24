@@ -25,14 +25,16 @@ component {
 
 // PRIVATE HELPERS
 	private string function _stripNameSpaces( required string sourceXml ) {
-		var namespaces = _getNamespaces( arguments.sourceXml );
+		var namespaces  = _getNamespaces( arguments.sourceXml );
 		var strippedXml = arguments.sourceXml;
 
 		for( var namespace in namespaces ) {
 			strippedXml = replaceNoCase( strippedXml, "<#namespace#:", "<", "all" );
 			strippedXml = replaceNoCase( strippedXml, "</#namespace#:", "</", "all" );
-			strippedXml = replaceNoCase( strippedXml, 'xmlns:#namespace#=".*?"', "", "all" );
+			strippedXml = rereplaceNoCase( strippedXml, 'xmlns:#namespace#=".*?"', "", "all" );
+			strippedXml = rereplaceNoCase( strippedXml, '\s#namespace#:([a-zA-Z0-9]+=")', " \1", "all" );
 		}
+		strippedXml = rereplaceNoCase( strippedXml, 'xmlns=".*?"', "", "all" );
 
 		return strippedXml;
 	}
