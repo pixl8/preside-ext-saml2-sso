@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.1.0
+
+* Ensure correct signing algorithm is used to match certificate (RSA SHA-256)
+* Include default namespace when stripping namespace attributes
+
 ## v5.0.2
 
 * Sign Single Logout Responses
