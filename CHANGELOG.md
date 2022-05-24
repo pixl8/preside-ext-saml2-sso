@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.1.1
+
+* Remove extra testing code for digest algorithm
+
 ## v5.1.0
 
 * Ensure correct signing algorithm is used to match certificate (RSA SHA-256)

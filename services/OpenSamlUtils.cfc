@@ -78,8 +78,6 @@ component {
 		var algorithmName      = signature.getSigningCredential().getEntityCertificate().getSigAlgName();
 		var digestMappings     = _getDigestMappings();
 
-		signature.getContentReferences().get( 0 ).setDigestAlgorithm( signatureConstants.ALGO_ID_DIGEST_SHA256 );
-
 		if ( StructKeyExists( digestMappings, algorithmName ) ) {
 			signature.getContentReferences().get( 0 ).setDigestAlgorithm( signatureConstants[ digestMappings[ algorithmName ] ] );
 		}
