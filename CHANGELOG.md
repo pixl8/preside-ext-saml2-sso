@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.1.2
+
+* [SAML-7](https://projects.pixl8.london/browse/SAML-7) - Add preSamlSsoLoginResponse interceptor
+
 ## v5.1.1
 
 * Remove extra testing code for digest algorithm
