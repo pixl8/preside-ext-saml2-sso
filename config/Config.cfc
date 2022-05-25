@@ -1,7 +1,8 @@
 component {
 
 	public void function configure( required struct config ) {
-		var settings = arguments.config.settings ?: {};
+		var settings            = arguments.config.settings            ?: {};
+		var interceptorSettings = arguments.config.interceptorSettings ?: [];
 
 		settings.saml2 = {};
 		settings.saml2.keystore = {
@@ -50,6 +51,8 @@ component {
 
 		settings.multilingual.ignoredUrlPatterns = settings.multilingual.ignoredUrlPatterns ?: [];
 		settings.multilingual.ignoredUrlPatterns.append( "^/saml2/" );
+
+		interceptorSettings.customInterceptionPoints.append( "preSamlSsoLoginResponse" );
 
 		_workaroundEsapiDefaultClassIssue();
 	}
