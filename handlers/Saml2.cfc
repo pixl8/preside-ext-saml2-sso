@@ -73,6 +73,13 @@ component {
 				);
 			}
 
+			announceInterception( "preSamlSsoLoginResponse", {
+				  userId          = userId
+				, samlRequest     = samlRequest
+				, attributeConfig = attributeConfig
+				, sessionIndex    = sessionIndex
+			} );
+
 			samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
 				  issuer          = issuer
 				, inResponseTo    = samlRequest.samlRequest.id
