@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.1.3
+
+* [SAML-8](https://projects.pixl8.london/browse/SAML-8) - Minor styling on SAML redirect pages
+
 ## v5.1.2
 
 * [SAML-7](https://projects.pixl8.london/browse/SAML-7) - Add preSamlSsoLoginResponse interceptor
