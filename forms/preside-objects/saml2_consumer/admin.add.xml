@@ -5,6 +5,7 @@
 			<field binding="saml2_consumer.name"             sortorder="10" control="textinput" />
 			<field binding="saml2_consumer.slug"             sortorder="20" control="autoslug" basedOn="name"         required="true" />
 			<field binding="saml2_consumer.sso_type"         sortorder="30" control="enumRadioList" defaultValue="sp" required="true" />
+			<field binding="saml2_consumer.slo_behaviour"    sortorder="35" control="enumRadioList" defaultValue="default" required="true" />
 			<field binding="saml2_consumer.metadata"         sortorder="40" control="textarea">
 				<rule validator="samlMetadata" />
 			</field>
