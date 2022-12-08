@@ -226,11 +226,21 @@ component {
 		}
 		samlSessionService.removeSessionByIssuerAndIndex( samlRequest.issuerEntity.id, sessionIndex )
 
+		var requestId  = samlRequest.samlRequest.id ?: "";
+		var spIssuerId = samlRequest.issuerEntity.consumerRecord.id ?: "";
+
+		if ( ( samlRequest.issuerEntity.slo_behaviour ?: "" ) == "redirect" ) {
+			setNextEvent( url = event.buildLink(
+				  linkto      = "saml2.slo.spresponse"
+				, queryString = "issuer=#spIssuerId#&inResponseTo=#requestId#"
+			) );
+		}
+
 		// 5. Redirect to logged out page (with variables to help output iframes to do followout logout requests with SPs)
 		setNextEvent( url=event.buildLink( page="saml_slo_page" ), persistStruct={
 			  nameId       = samlRequest.samlRequest.nameId ?: ""
-			, requestId    = samlRequest.samlRequest.id ?: ""
-			, spIssuerId   = samlRequest.issuerEntity.consumerRecord.id ?: ""
+			, requestId    = requestId
+			, spIssuerId   = spIssuerId
 			, sessionIndex = sessionIndex
 		} );
 	}

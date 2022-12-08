@@ -8,7 +8,8 @@ component  {
 	property name="metadata"                  type="string"  dbtype="text"    required=true;
 	property name="login_message"             type="string"  dbtype="text";
 	property name="access_denied_message"     type="string"  dbtype="text";
-	property name="sso_type"                  type="string"  dbtype="varchar" maxlength=3 enum="samlSsoType" renderer="samlSsoType";
+	property name="sso_type"                  type="string"  dbtype="varchar" maxlength=3  enum="samlSsoType"      renderer="samlSsoType";
+	property name="slo_behaviour"             type="string"  dbtype="varchar" maxlength=10 enum="samlSloBehaviour" feature="samlSsoProviderSlo";
 	property name="use_attributes"            type="string"  dbtype="text";
 	property name="id_attribute"              type="string"  dbtype="varchar" maxlength=200;
 	property name="id_attribute_format"       type="string"  dbtype="varchar" maxlength=15 enum="samlNameIdFormat";

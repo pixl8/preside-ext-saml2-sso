@@ -48,6 +48,7 @@ component {
 		settings.enum.samlSsoType = [ "sp", "idp" ];
 		settings.enum.samlIdpType = [ "admin", "web" ];
 		settings.enum.samlNameIdFormat = [ "auto", "persistent", "email", "unspecified", "transient", "none" ];
+		settings.enum.samlSloBehaviour = [ "default", "redirect" ];
 
 		settings.multilingual.ignoredUrlPatterns = settings.multilingual.ignoredUrlPatterns ?: [];
 		settings.multilingual.ignoredUrlPatterns.append( "^/saml2/" );
