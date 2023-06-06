@@ -33,6 +33,8 @@ component {
 			);
 
 			event.setView( "/core/simpleBodyRenderer" );
+
+			announceInterception( "postRenderSiteTreePage" );
 			return;
 		}
 
@@ -130,6 +132,8 @@ component {
 			);
 
 			event.setView( "/core/simpleBodyRenderer" );
+
+			announceInterception( "postRenderSiteTreePage" );
 			return;
 		}
 
@@ -260,6 +264,8 @@ component {
 			);
 
 			event.setView( "/core/simpleBodyRenderer" );
+
+			announceInterception( "postRenderSiteTreePage" );
 			return;
 		}
 
