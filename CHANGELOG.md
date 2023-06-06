@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.1.4
+
+* [#15](https://github.com/pixl8/preside-ext-saml2-sso/issues/15) - Announce interception points on rendering of bad sso request page
+
 ## v5.1.3
 
 * [SAML-8](https://projects.pixl8.london/browse/SAML-8) - Minor styling on SAML redirect pages
