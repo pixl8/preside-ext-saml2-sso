@@ -1,8 +1,8 @@
 <cfparam name="args.id"   type="string" />
 <cfparam name="args.name" type="string" />
 <cfscript>
-	canEdit   = hasCmsPermission( "saml2.provider.manage"         );
-	canDelete = hasCmsPermission( "saml2.provider.deleteConsumer" );
+	canEdit   = hasCmsPermission( "saml2.consumer.manage"         );
+	canDelete = hasCmsPermission( "saml2.consumer.deleteConsumer" );
 
 	if ( canEdit ) {
 		editLink = event.buildAdminLink( linkto="saml2Admin.editConsumer", queryString="id=" & args.id );

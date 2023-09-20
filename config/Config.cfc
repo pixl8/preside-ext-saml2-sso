@@ -35,7 +35,7 @@ component {
 		settings.adminPermissions.saml2 = {
 			  general  = [ "navigate", "manage" ]
 			, provider = [ "navigate", "manage", "deleteConsumer" ]
-			, consumer = [ "navigate", "manage" ]
+			, consumer = [ "navigate", "manage", "deleteConsumer" ]
 		};
 		settings.adminRoles.sysadmin.append( "saml2.general.navigate" );
 		settings.adminRoles.sysadmin.append( "saml2.provider.navigate" );
