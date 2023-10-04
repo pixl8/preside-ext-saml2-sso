@@ -9,14 +9,14 @@ component {
 	 * @serviceProviders.multiple  true
 	 */
 	private boolean function evaluateExpression( event, rc, prc, boolean _is=true, string serviceProviders="" ){
-		if ( !isStruct( rc.samlRequest ?: "" ) ) {
-			return false;
+		var isSamlLoginRequest = false;
+
+		if ( isStruct( rc.samlRequest ?: "" ) ) {
+			if ( !len( arguments.serviceProviders ) || listFindNoCase( arguments.serviceProviders, rc.samlRequest.issuerEntity.consumerRecord.id ?: "" ) ) {
+				isSamlLoginRequest = true;
+			}
 		}
 
-		if ( len( arguments.serviceProviders ) ) {
-			return listFindNoCase( arguments.serviceProviders, ( rc.samlRequest.issuerEntity.consumerRecord.id ?: "" ) );
-		}
-
-		return true;
+		return isSamlLoginRequest == arguments._is;
 	}
 }
