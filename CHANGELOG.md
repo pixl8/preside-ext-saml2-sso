@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.1.5
+
+* Add a rules engine expression to be able to match SAML login requests
+
 ## v5.1.4
 
 * [#15](https://github.com/pixl8/preside-ext-saml2-sso/issues/15) - Announce interception points on rendering of bad sso request page
