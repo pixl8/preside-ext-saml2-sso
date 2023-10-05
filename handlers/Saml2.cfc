@@ -203,8 +203,8 @@ component {
 		return {
 			  email       = ( userDetails.email_address ?: "" )
 			, displayName = ( userDetails.display_name ?: "" )
-			, firstName   = ListFirst( userDetails.display_name ?: "", " " )
-			, lastName    = ListRest( userDetails.display_name ?: "", " " )
+			, firstName   = userDetails.firstname ?: ( ListFirst( userDetails.display_name ?: "", " " ) )
+			, lastName    = userDetails.lastname ?: ( ListRest( userDetails.display_name ?: "", " " ) )
 			, id          = userDetails.id ?: getLoggedInUserId()
 		};
 	}
