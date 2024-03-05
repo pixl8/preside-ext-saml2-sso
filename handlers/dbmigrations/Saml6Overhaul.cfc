@@ -5,7 +5,7 @@ component {
 
 	property name="saml2LegacyMigrationService" inject="saml2LegacyMigrationService";
 
-	private boolean function run() {
+	private boolean function runAsync() {
 		saml2LegacyMigrationService.migrate();
 
 		return true;
