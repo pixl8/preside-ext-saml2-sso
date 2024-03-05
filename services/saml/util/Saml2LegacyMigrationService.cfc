@@ -137,9 +137,9 @@ component {
 
 		var meta  = _readMeta( arguments.oldIdp.metadata ?: "" );
 		var newIdp = {
-			  id      = arguments.oldIdp.id       ?: ""
-			, slug    = arguments.oldIdp.slug     ?: ""
-			, enabled = arguments.oldIdp.sso_type ?: ""
+			  id      = arguments.oldIdp.id      ?: ""
+			, slug    = arguments.oldIdp.slug    ?: ""
+			, enabled = arguments.oldIdp.enabled ?: ""
 		};
 
 		newIdp.name                = configuredIdp.title  ?: ""
