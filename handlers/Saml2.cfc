@@ -10,17 +10,41 @@ component {
 	property name="samlIdentityProviderService"  inject="samlIdentityProviderService";
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
 	property name="samlSessionService"           inject="samlSessionService";
+	property name="samlMetadataGenerator"        inject="samlProviderMetadataGenerator";
+	property name="debugger"                     inject="saml2DebuggingService";
 
 	public string function sso( event, rc, prc ) {
+		var debugInfo = { success=true, requesttype="authnrequest" };
 		try {
-			var samlRequest       = samlRequestParser.parse();
-			var totallyBadRequest = !IsStruct( samlRequest ) || samlRequest.keyExists( "error" ) ||  !( samlRequest.samlRequest.type ?: "" ).len() || !samlRequest.keyExists( "issuerentity" ) || samlRequest.issuerEntity.isEmpty();
+			var samlRequest        = samlRequestParser.parse();
+			var xmlPresent         = Len( samlRequest.samlXml ?: "" ) > 0;
+			var entityFound        = StructKeyExists( samlRequest, "issuerentity" ) && !IsEmpty( samlRequest.issuerEntity );
+			var requestTypePresent = Len( samlRequest.samlRequest.type ?: "" ) > 0;
+			var hasError           = Len( samlRequest.error ?: "" ) > 0;
+			var totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent || hasError;
+
+			if ( !xmlPresent ) {
+				debugInfo.failureReason = "noxml";
+			} else if ( !entityFound ) {
+				debugInfo.failureReason = "entitynotfound";
+			} else if ( !requestTypePresent ) {
+				debugInfo.failureReason = "norequesttype";
+			} else if ( hasError ) {
+				debugInfo.failureReason = samlRequest.error;
+			}
 		} catch( any e ) {
 			logError( e );
 			totallyBadRequest = true;
+			debugInfo.error         = "Message: #( e.message ?: '' )#. Detail: #( e.detail ?: '' )#";
+			debugInfo.failureReason = "error";
 		}
 
+		debugInfo.sp         = samlRequest.issuerEntity.id ?: "";
+		debugInfo.samlXml    = samlRequest.samlXml         ?: "";
+		debugInfo.relayState = samlRequest.relayState      ?: "";
+
 		if ( totallyBadRequest ) {
+			debugInfo.success = false;
 			event.setHTTPHeader( statusCode="400" );
 			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
 			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
@@ -35,22 +59,30 @@ component {
 			event.setView( "/core/simpleBodyRenderer" );
 
 			announceInterception( "postRenderSiteTreePage" );
+
+			debugger.log( argumentCollection=debugInfo );
+
 			return;
 		}
 
-		var redirectLocation   = samlRequest.issuerEntity.serviceProviderSsoRequirements.defaultAssertionConsumer.location ?: "";
+		var redirectLocation   = samlRequest.issuerEntity.assertion_consumer_location ?: "";
 		var isWrongRequestType = samlRequest.samlRequest.type != "AuthnRequest";
 		var samlResponse       = "";
+		var issuer             = samlMetadataGenerator.getIdpEntityId();
 
 		if ( isWrongRequestType ) {
+			debugInfo.success = false;
+			debugInfo.failureReason = "wrongreqtype";
+
 			samlResponse = samlResponseBuilder.buildErrorResponse(
 				  statusCode          = "urn:oasis:names:tc:SAML:2.0:status:Responder"
 				, subStatusCode       = "urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"
 				, statusMessage       = "Operation unsupported"
-				, issuer              = samlRequest.samlRequest.issuer
+				, issuer              = issuer
 				, inResponseTo        = samlRequest.samlRequest.id
 				, recipientUrl        = redirectLocation
 			);
+
 		} else {
 			var userId = runEvent(
 					event          = authCheckHandler // default, saml2.authenticationCheck (below)
@@ -59,21 +91,17 @@ component {
 				  , prePostExempt  = true
 			);
 
-			var attributeConfig = _getAttributeConfig( samlRequest.issuerEntity.consumerRecord );
+			var attributeConfig = _getAttributeConfig( samlRequest.issuerEntity );
 			var sessionIndex    = samlSessionService.getSessionId();
-			var issuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
-
-			if ( isFeatureEnabled( "saml2SSOUrlAsIssuer" ) ) {
-				issuer = issuer.reReplace( "/$", "" ) & "/saml2/sso/";
-			}
 
 			if ( isFeatureEnabled( "samlSsoProviderSlo" ) ) {
 				samlSessionService.recordLoginSession(
 					  sessionIndex = sessionIndex
 					, userId       = userId
-					, issuerId     = samlRequest.issuerEntity.consumerRecord.id ?: ""
+					, issuerId     = samlRequest.issuerEntity.id
 				);
 			}
+
 
 			announceInterception( "preSamlSsoLoginResponse", {
 				  userId          = userId
@@ -82,16 +110,20 @@ component {
 				, sessionIndex    = sessionIndex
 			} );
 
+			debugger.log( argumentCollection=debugInfo );
+
 			samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
-				  issuer          = issuer
-				, inResponseTo    = samlRequest.samlRequest.id
-				, recipientUrl    = redirectLocation
-				, nameIdFormat    = attributeConfig.idFormat
-				, nameIdValue     = attributeConfig.idValue
-				, audience        = samlRequest.issuerEntity.id
-				, sessionTimeout  = 40
-				, sessionIndex    = sessionIndex
-				, attributes      = attributeConfig.attributes
+				  issuer            = issuer
+				, inResponseTo      = samlRequest.samlRequest.id
+				, recipientUrl      = redirectLocation
+				, nameIdFormat      = attributeConfig.idFormat
+				, nameIdValue       = attributeConfig.idValue
+				, audience          = samlRequest.issuerEntity.entity_id
+				, sessionTimeout    = 40
+				, sessionIndex      = sessionIndex
+				, attributes        = attributeConfig.attributes
+				, privateKey        = samlRequest.issuerEntity.private_key
+				, publicCertificate = samlRequest.issuerEntity.public_cert
 			);
 		}
 
@@ -108,18 +140,33 @@ component {
 	public any function idpSso( event, rc, prc ) {
 		var slug              = rc.providerSlug ?: "";
 		var totallyBadRequest = !slug.len() > 0;
+		var debugInfo         = { success=true, requesttype="idpsso" };
 
 		if ( slug.len() ) {
 			try {
 				var entity = samlEntityPool.getEntityBySlug( slug );
-				var totallyBadRequest = entity.isEmpty() || ( entity.consumerRecord.sso_type ?: "" ) != "idp";
+				var entityFound = !IsEmpty( entity );
+				var correctSsoType = ( entity.consumerRecord.sso_type ?: "" ) == "idp";
+				var totallyBadRequest = !entityFound || !correctSsoType;
+
+				if ( !entityFound ) {
+					debugInfo.failureReason = "entitynotfound";
+				} else if ( !correctSsoType ) {
+					debugInfo.failureReason = "wrongspssotype";
+				}
 			} catch( any e ) {
 				logError( e );
 				totallyBadRequest = true;
+				debugInfo.error         = "Message: #( e.message ?: '' )#. Detail: #( e.detail ?: '' )#";
+				debugInfo.failureReason = "error";
 			}
 		}
 
+		debugInfo.sp = entity.consumerRecord.id ?: "";
+
 		if ( totallyBadRequest ) {
+			debugInfo.success = false;
+
 			event.setHTTPHeader( statusCode="400" );
 			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
 			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
@@ -134,10 +181,12 @@ component {
 			event.setView( "/core/simpleBodyRenderer" );
 
 			announceInterception( "postRenderSiteTreePage" );
+
+			debugger.log( argumentCollection=debugInfo );
 			return;
 		}
 
-		var redirectLocation = entity.serviceProviderSsoRequirements.defaultAssertionConsumer.location ?: "";
+		var redirectLocation = entity.consumerRecord.assertion_consumer_location ?: "";
 
 		runEvent(
 				event          = authCheckHandler // default, saml2.authenticationCheck (below)
@@ -147,23 +196,23 @@ component {
 		);
 
 		var attributeConfig = _getAttributeConfig( entity.consumerRecord );
-		var issuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
-
-		if ( isFeatureEnabled( "saml2SSOUrlAsIssuer" ) ) {
- 			issuer = event.getSiteUrl( includePath=false, includeLanguageSlug=false ).reReplace( "/$", "" ) & "/saml2/idpsso/#slug#/";
- 		}
+		var issuer = samlMetadataGenerator.getIdpEntityId();
 
 		samlResponse = samlResponseBuilder.buildAuthenticationAssertion(
-			  issuer          = issuer
-			, inResponseTo    = ""
-			, recipientUrl    = redirectLocation
-			, nameIdFormat    = "urn:oasis:names:tc:SAML:2.0:nameid-format:#attributeConfig.idFormat#"
-			, nameIdValue     = attributeConfig.idValue
-			, audience        = entity.id
-			, sessionTimeout  = 40
-			, sessionIndex    = samlSessionService.getSessionId()
-			, attributes      = attributeConfig.attributes
+			  issuer            = issuer
+			, inResponseTo      = ""
+			, recipientUrl      = redirectLocation
+			, nameIdFormat      = attributeConfig.idFormat
+			, nameIdValue       = attributeConfig.idValue
+			, audience          = entity.consumerRecord.entity_id
+			, sessionTimeout    = 40
+			, sessionIndex      = samlSessionService.getSessionId()
+			, attributes        = attributeConfig.attributes
+			, privateKey        = entity.consumerRecord.private_key
+			, publicCertificate = entity.consumerRecord.public_cert
 		);
+
+		debugger.log( argumentCollection=debugInfo );
 
 		return renderView( view="/saml2/ssoResponseForm", args={
 			  samlResponse     = samlResponse
@@ -212,46 +261,78 @@ component {
 	public string function spSso( event, rc, prc ) {
 		event.cachePage( false );
 
+		var debugInfo    = { success=true, requesttype="spsso" };
 		var providerSlug = rc.providerSlug ?: "";
 		var idp          = samlIdentityProviderService.getProvider( providerSlug );
 
-		if ( idp.isEmpty() || !Len( idp.metaData ?: "" ) ) {
+		if ( StructIsEmpty( idp ) ) {
+			debugInfo.success = false;
+			debugInfo.failureReason = "entitynotfound";
+			debugger.log( argumentCollection=debugInfo );
 			event.notFound();
 		}
 
-		var spIssuer = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() );
-		var spName   = getSystemSetting( "saml2Provider", "organisation_short_name" );
 
-		if ( Len( Trim( idp.entityIdSuffix ?: "" ) ) ) {
-			spIssuer &= idp.entityIdSuffix;
-		}
 
+		var metaSettings = samlMetadataGenerator.getIdpSpMetadataSettings( providerSlug );
 		var samlRequest = samlRequestBuilder.buildAuthenticationRequest(
-			  idpMetaData         = idp.metaData
-			, responseHandlerUrl  = event.buildLink( linkto="saml2.response", queryString="idp=" & idp.id )
-			, spIssuer            = spIssuer
-			, spName              = spName
-			, signWithCertificate = ( idp.certificate ?: "" )
+			  responseHandlerUrl  = metaSettings.assertionConsumerLocation
+			, spIssuer            = metaSettings.entityId
+			, spName              = metaSettings.orgShortName
+			, ssoLocation         = idp.sso_location
+			, nameIdFormat        = idp.name_id_format
+			, privateSigningKey   = idp.private_key
+			, publicSigningCert   = idp.public_cert
 		);
+
+		debugInfo.samlXml = samlRequest;
+		debugInfo.idp     = idp.id;
+		debugger.log( argumentCollection=debugInfo );
 
 		return renderView( view="/saml2/ssoRequestForm", args={
 			  samlRequest      = samlRequest
 			, samlRelayState   = rc.relayState ?: ""
-			, redirectLocation = idp.ssoLocation
+			, redirectLocation = idp.sso_location
 			, serviceName	   = idp.title
 		} );
 	}
 
 	public void function response( event, rc, prc ) {
+		var debugInfo = { success=true, requesttype="authnresponse" };
+
 		try {
-			var samlResponse      = samlResponseParser.parse();
-			var totallyBadRequest = !IsStruct( samlResponse ) || samlResponse.keyExists( "error" ) ||  !( samlResponse.samlResponse.type ?: "" ).len() || !samlResponse.keyExists( "issuerentity" ) || samlResponse.issuerEntity.isEmpty();
+			var samlResponse       = samlResponseParser.parse();
+			var xmlPresent         = Len( samlResponse.samlXml ?: "" ) > 0;
+			var entityFound        = StructKeyExists( samlResponse, "issuerentity" ) && !IsEmpty( samlResponse.issuerEntity );
+			var requestTypePresent = Len( samlResponse.samlResponse.type ?: "" ) > 0;
+			var totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent;
+
+			if ( !xmlPresent ) {
+				debugInfo.failureReason = "noxml";
+			} else if ( !entityFound ) {
+				debugInfo.failureReason = "entitynotfound";
+			} else if ( !requestTypePresent ) {
+				debugInfo.failureReason = "noresponsetype";
+			}
 		} catch( any e ) {
 			logError( e );
 			totallyBadRequest = true;
+			if ( ( e.type ?: "" ) == "saml2responseparser.invalid.signature" ) {
+				debugInfo.failureReason = "invalidsignature";
+			} else if ( ( e.type ?: "" ) == "saml2responseparser.assertion.timed.out" ) {
+				debugInfo.failureReason = "timeout";
+			} else {
+				debugInfo.error         = "Message: #( e.message ?: '' )#. Detail: #( e.detail ?: '' )#";
+				debugInfo.failureReason = "error";
+			}
 		}
 
+		debugInfo.idp        = samlResponse.issuerEntity.idpRecord.id ?: "";
+		debugInfo.samlXml    = samlResponse.samlXml                   ?: "";
+		debugInfo.relayState = samlResponse.relayState                ?: "";
+
 		if ( totallyBadRequest ) {
+			debugInfo.success = false;
 			event.setHTTPHeader( statusCode="400" );
 			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
 			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
@@ -266,6 +347,8 @@ component {
 			event.setView( "/core/simpleBodyRenderer" );
 
 			announceInterception( "postRenderSiteTreePage" );
+
+			debugger.log( argumentCollection=debugInfo );
 			return;
 		}
 
@@ -273,12 +356,36 @@ component {
 			throw( type="saml2.method.not.supported", message="Currently, the SAML2 extension does not support auto login as a result of a SAML assertion response. Instead, you are required to provide a custom postAuthHandler for each IDP to process their response" );
 		}
 
+		debugger.log( argumentCollection=debugInfo );
+
 		runEvent(
 			  event          = samlResponse.issuerEntity.idpRecord.postAuthHandler
 			, eventArguments = samlResponse
 			, private        = true
 			, prePostExempt  = true
 		);
+
+	}
+
+	public void function idpmeta( event, rc, prc ) {
+		if ( !Len( rc.sp ?: "" ) && !getPresideObject( "saml2_sp" ).dataExists( id=rc.sp ) ) {
+			event.notFound();
+		}
+		var meta = samlMetadataGenerator.generateIdpMetadata( rc.sp );
+
+		event.renderData( data=meta, contentType="application/xml" );
+	}
+
+	public void function spmeta( event, rc, prc ) {
+		var idp  = Len( rc.idp ?: "" ) ? getPresideObject( "saml2_idp" ).selectData( id=rc.idp, selectFields=[ "slug" ] ) : QueryNew('');
+
+		if ( !idp.recordCount ) {
+			event.notFound();
+		}
+
+		var meta = samlMetadataGenerator.generateSpMetadata( idp.slug );
+
+		event.renderData( data=meta, contentType="application/xml" );
 	}
 
 // Custom attributes for NameID:
