@@ -25,8 +25,8 @@ component {
 		var kp = {};
 		try {
 			kp = {
-				  public  = samlKeyStore.getCert()
-				, private = samlKeyStore.getPrivateKey()
+				  public  = samlKeyStore.getFormattedX509Certificate()
+				, private = samlKeyStore.getFormattedPrivateKey()
 			};
 		} catch( any e ) {
 			$raiseError( e );
