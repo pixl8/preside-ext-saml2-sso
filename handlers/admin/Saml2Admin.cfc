@@ -1,6 +1,6 @@
 component extends="preside.system.base.AdminHandler" {
 
-	property name="consumerDao"                   inject="presidecms:object:saml2_consumer";
+	property name="consumerDao"                   inject="presidecms:object:saml2_sp";
 	property name="samlProviderMetadataGenerator" inject="samlProviderMetadataGenerator";
 	property name="samlIdentityProviderService"       inject="samlIdentityProviderService";
 	property name="systemConfigurationService"    inject="systemConfigurationService";
@@ -25,139 +25,12 @@ component extends="preside.system.base.AdminHandler" {
 
 	public void function index( event, rc, prc ) {
 		if ( IsFeatureEnabled( "samlSsoProvider" ) && hasCmsPermission( "saml2.provider.navigate" ) ) {
-			setNextEvent( url=event.buildAdminLink( "saml2Admin.consumers" ) );
+			setNextEvent( url=event.buildAdminLink( objectName="saml2_sp" ) );
 		} else if ( IsFeatureEnabled( "samlSsoConsumer" ) && hasCmsPermission( "saml2.consumer.navigate" )) {
-			setNextEvent( url=event.buildAdminLink( "saml2Admin.providers" ) );
+			setNextEvent( url=event.buildAdminLink( objectName="saml2_idp" ) );
 		}
 
 		event.adminAccessDenied();
-	}
-
-	public void function consumers( event, rc, prc ) {
-		prc.consumersExist  = consumerDao.dataExists();
-		prc.canAdd          = hasCmsPermission( "saml2.consumer.manage" )
-		prc.addConsumerLink = prc.canAdd ? event.buildAdminLink( "saml2Admin.addConsumer" ) : "";
-	}
-
-	public void function getConsumersForAjaxDataTables( event, rc, prc ) {
-		runEvent(
-			  event          = "admin.DataManager._getObjectRecordsForAjaxDataTables"
-			, prePostExempt  = true
-			, private        = true
-			, eventArguments = {
-				  object      = "saml2_consumer"
-				, gridFields  = "name,sso_type,sso_link"
-				, actionsView = "/admin/saml2Admin/_consumerGridActions"
-			}
-		);
-	}
-
-	public void function addConsumer( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
-			event.adminAccessDenied();
-		}
-
-		prc.pageTitle    = translateResource( "saml2:provider.addconsumer.page.title" );
-		prc.pageSubTitle = translateResource( "saml2:provider.addconsumer.page.subtitle" );
-
-		event.addAdminBreadCrumb(
-			  title = translateResource( "saml2:provider.addconsumer.breadcrumb.title" )
-			, link  = event.buildAdminLink( linkto="saml2Admin.addconsumer" )
-		);
-	}
-
-	public void function addConsumerAction( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
-			event.adminAccessDenied();
-		}
-
-		runEvent(
-			  event          = "admin.DataManager._addRecordAction"
-			, prePostExempt  = true
-			, private        = true
-			, eventArguments = {
-				  object            = "saml2_consumer"
-				, errorAction       = "saml2Admin.addConsumer"
-				, viewRecordAction  = "saml2Admin.editConsumer"
-				, successAction     = "saml2Admin"
-				, redirectOnSuccess = true
-				, audit             = true
-				, auditType         = "saml2providerconsumer"
-				, auditAction       = "add_consumer"
-			}
-		);
-	}
-
-	public void function editConsumer( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
-			event.adminAccessDenied();
-		}
-
-		var consumerId = rc.id ?: "";
-
-		prc.consumer = consumerDao.selectData( id=consumerId );
-		if ( !prc.consumer.recordCount ) {
-			event.notFound();
-		}
-
-		prc.consumer = QueryRowToStruct( prc.consumer );
-
-		if ( !Len( prc.consumer.id_attribute_format ?: "" ) ) {
-			if ( isTrue( prc.consumer.id_attribute_is_transient ?: "" ) ) {
-				prc.consumer.id_attribute_format = "transient";
-			} else {
-				prc.consumer.id_attribute_format = "auto";
-			}
-		}
-
-		prc.pageTitle    = translateResource( uri="saml2:provider.editConsumer.page.title", data=[ prc.consumer.name ] );
-		prc.pageSubTitle = translateResource( uri="saml2:provider.editConsumer.page.subtitle", data=[ prc.consumer.name ] );
-
-		event.addAdminBreadCrumb(
-			  title = translateResource( uri="saml2:provider.editConsumer.breadcrumb.title", data=[ prc.consumer.name ] )
-			, link  = event.buildAdminLink( linkto="saml2Admin.editConsumer", queryString="id=" & consumerId )
-		);
-	}
-
-	public void function editConsumerAction( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
-			event.adminAccessDenied();
-		}
-
-		runEvent(
-			  event          = "admin.DataManager._editRecordAction"
-			, private        = true
-			, prePostExempt  = true
-			, eventArguments = {
-				  object            = "saml2_consumer"
-				, errorUrl          = event.buildAdminLink( linkto="saml2Admin.editConsumer", querystring="id=" & ( rc.id ?: "" )  )
-				, successUrl        = event.buildAdminLink( linkto="saml2Admin" )
-				, redirectOnSuccess = true
-				, audit             = true
-				, auditType         = "saml2providerconsumer"
-				, auditAction       = "edit_consumer"
-			}
-		);
-
-	}
-
-	public void function deleteConsumerAction( event, rc, prc ) {
-		if( !hasCmsPermission( "saml2.consumer.deleteConsumer" ) ) {
-			event.adminAccessDenied();
-		}
-
-		runEvent(
-			  event          = "admin.DataManager._deleteRecordAction"
-			, private        = true
-			, prePostExempt  = true
-			, eventArguments = {
-				  object      = "saml2_consumer"
-				, postAction  = "saml2Admin"
-				, audit       = true
-				, auditType   = "saml2providerconsumer"
-				, auditAction = "edit_consumer"
-			}
-		);
 	}
 
 	public void function settings( event, rc, prc ) {
@@ -165,7 +38,8 @@ component extends="preside.system.base.AdminHandler" {
 			event.adminAccessDenied();
 		}
 
-		prc.configuration = systemConfigurationService.getCategorySettings( "saml2Provider" );
+		prc.configuration = samlProviderMetadataGenerator.getMetadataSettings();
+		StructAppend( prc.configuration, getSystemCategorySettings( "saml2Provider" ) );
 
 		event.addAdminBreadCrumb(
 			  title = translateResource( uri="saml2:provider.settings.breadcrumb.title" )
@@ -178,7 +52,7 @@ component extends="preside.system.base.AdminHandler" {
 			event.adminAccessDenied();
 		}
 
-		var formName         = "saml2.provider.settings";
+		var formName         = "saml2.settings";
 		var formData         = event.getCollectionForForm( formName );
 		var validationResult = validateForm( formName, formData );
 
@@ -211,101 +85,5 @@ component extends="preside.system.base.AdminHandler" {
 
 		setNextEvent( url=event.buildAdminLink( linkTo="saml2Admin" ) );
 
-	}
-
-	public void function previewMetadata( event, rc, prc ) {
-		prc.providerEnabled = IsFeatureEnabled( "samlSsoProvider" ) && hasCmsPermission( "saml2.provider.navigate" );
-
-		if ( !prc.providerEnabled ) {
-			event.notFound();
-		}
-
-		prc.idpMetadata = samlProviderMetadataGenerator.generateIdpMetadata();
-		prc.x509Cert = samlProviderMetadataGenerator.getFormattedX509Cert();
-
-		event.addAdminBreadCrumb(
-			  title = translateResource( uri="saml2:provider.previewMetadata.breadcrumb.title" )
-			, link  = event.buildAdminLink( linkto="saml2Admin.previewMetadata" )
-		);
-	}
-
-	public void function downloadMetadata( event, rc, prc ) {
-		var metadata = samlProviderMetadataGenerator.generateIdpMetadata();
-		var fileName = "IDPMetaData.xml";
-
-		header name="Content-Disposition" value="attachment; filename=""#fileName#""";
-		content reset=true type="application/xml";WriteOutput( metadata );abort;
-	}
-
-	public void function downloadSpMetadata( event, rc, prc ) {
-		var idp      = rc.id ?: "";
-		var metadata = samlProviderMetadataGenerator.generateSpMetadata( idp );
-
-		if ( !Len( Trim( metadata ) ) ) {
-			event.notFound();
-		}
-
-		var fileName = "#idp#-sp-metadata.xml";
-
-		header name="Content-Disposition" value="attachment; filename=""#fileName#""";
-		content reset=true type="application/xml";WriteOutput( metadata );abort;
-	}
-
-	public void function providers( event, rc, prc ) {
-		prc.providers = samlIdentityProviderService.listProviders();
-	}
-
-	public void function editProvider( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
-			event.adminAccessDenied();
-		}
-
-		var providerId = rc.id ?: "";
-
-		prc.provider = samlIdentityProviderService.getProvider( providerId );
-		if ( !prc.provider.count() ) {
-			event.notFound();
-		}
-
-		prc.pageTitle    = translateResource( uri="saml2:consumer.editProvider.page.title", data=[ prc.provider.title ] );
-		prc.pageSubTitle = translateResource( uri="saml2:consumer.editProvider.page.subtitle", data=[ prc.provider.description ] );
-
-		event.addAdminBreadCrumb(
-			  title = translateResource( uri="saml2:consumer.editProvider.breadcrumb.title", data=[ prc.provider.title ] )
-			, link  = event.buildAdminLink( linkto="saml2Admin.editProvider", queryString="id=" & providerId )
-		);
-	}
-
-	public void function editProviderAction( event, rc, prc ) {
-		if ( !hasCmsPermission( "saml2.consumer.manage" ) ) {
-			event.adminAccessDenied();
-		}
-
-		rc.id = samlIdentityProviderService.getIdpIdBySlug( rc.id ?: "" );
-
-		runEvent(
-			  event          = "admin.DataManager._editRecordAction"
-			, private        = true
-			, prePostExempt  = true
-			, eventArguments = {
-				  object            = "saml2_identity_provider"
-				, errorUrl          = event.buildAdminLink( linkto="saml2Admin.editProvider", querystring="id=" & ( rc.id ?: "" )  )
-				, successUrl        = event.buildAdminLink( linkto="saml2Admin" )
-				, redirectOnSuccess = true
-				, audit             = true
-				, auditType         = "saml2consumerprovider"
-				, auditAction       = "edit_provider"
-			}
-		);
-	}
-
-	public void function certificates( event, rc, prc ) {
-		if ( !isFeatureEnabled( "saml2CertificateManager" ) ) {
-			event.notFound();
-		}
-
-		if ( !hasCmsPermission( "saml2.certificates.navigate" ) ) {
-			event.adminAccessDenied();
-		}
 	}
 }

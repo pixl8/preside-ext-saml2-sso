@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form i18nBaseUri="preside-objects.saml2_idp:">
+	<tab id="default" sortorder="10">
+		<fieldset id="defaultedit" sortorder="10">
+			<field binding="saml2_idp.entity_id"           control="textinput" sortorder="10" />
+			<field binding="saml2_idp.sso_location"        control="textinput" sortorder="20" />
+			<field binding="saml2_idp.signing_certificate" control="textarea"  sortorder="30" />
+		</fieldset>
+	</tab>
+</form>

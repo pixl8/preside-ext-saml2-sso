@@ -11,7 +11,6 @@ component {
 
 				args.certInfo = {
 					  issuer     = certObj.getIssuerDN().toString()
-					, subject    = certObj.getSubjectDN().toString()
 					, selfIssued = certObj.isSelfIssued( certObj )
 					, expires = certObj.getNotAfter()
 					, valid = true
