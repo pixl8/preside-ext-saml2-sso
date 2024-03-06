@@ -15,7 +15,7 @@
 			<field binding="saml2_sp.requests_will_be_signed" sortorder="20" control="yesnoswitch" required="false" default="true" />
 			<field binding="saml2_sp.signing_certificate"     sortorder="30" control="textarea">
 				<rule validator="x509Cert" />
-				<rule validator="required" serverCondition="${requests_will_be_signed}" clientCondition="false" />
+				<rule validator="required" serverCondition="IsBoolean( ${requests_will_be_signed} ) and ${requests_will_be_signed}" clientCondition="false" />
 			</field>
 		</fieldset>
 		<fieldset id="manual-slo" sortorder="50" feature="samlSsoProviderSlo">
