@@ -31,16 +31,16 @@ component {
 			return "";
 		}
 
-		template = template.replace( "${x509}"          , settings.x509Certificate     , "all" );
-		template = template.replace( "${attribs}"       , settings.supportedAttribs    , "all" );
-		template = template.replace( "${nameidformat}"  , settings.nameIdFormat        , "all" );
-		template = template.replace( "${ssolocation}"   , settings.singleSignOnLocation, "all" );
-		template = template.replace( "${entityid}"      , settings.entityId            , "all" );
-		template = template.replace( "${orgshortname}"  , settings.orgShortName        , "all" );
-		template = template.replace( "${orgfullname}"   , settings.orgFullName         , "all" );
-		template = template.replace( "${orgurl}"        , settings.orgUrl              , "all" );
-		template = template.replace( "${supportcontact}", settings.supportPerson       , "all" );
-		template = template.replace( "${supportemail}"  , settings.supportEmail        , "all" );
+		template = template.replace( "${x509}"          , settings.x509Certificate    , "all" );
+		template = template.replace( "${attribs}"       , settings.supportedAttribs   , "all" );
+		template = template.replace( "${nameidformat}"  , settings.nameIdFormat       , "all" );
+		template = template.replace( "${ssolocation}"   , settings.singleLoginLocation, "all" );
+		template = template.replace( "${entityid}"      , settings.entityId           , "all" );
+		template = template.replace( "${orgshortname}"  , settings.orgShortName       , "all" );
+		template = template.replace( "${orgfullname}"   , settings.orgFullName        , "all" );
+		template = template.replace( "${orgurl}"        , settings.orgUrl             , "all" );
+		template = template.replace( "${supportcontact}", settings.supportPerson      , "all" );
+		template = template.replace( "${supportemail}"  , settings.supportEmail       , "all" );
 
 		if ( $isFeatureEnabled( "samlSsoProviderSlo" ) ) {
 			template = template.replace( "${slo}", '<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="#settings.singleLogoutLocation#"/>', "all" );
