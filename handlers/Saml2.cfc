@@ -15,14 +15,16 @@ component {
 	property name="debugger"                     inject="saml2DebuggingService";
 
 	public string function sso( event, rc, prc ) {
-		var debugInfo = { success=true, requesttype="authnrequest" };
+		var debugInfo         = { success=true, requesttype="authnrequest" };
+		var totallyBadRequest = false;
 		try {
 			var samlRequest        = samlRequestParser.parse();
 			var xmlPresent         = Len( samlRequest.samlXml ?: "" ) > 0;
 			var entityFound        = StructKeyExists( samlRequest, "issuerentity" ) && !IsEmpty( samlRequest.issuerEntity );
 			var requestTypePresent = Len( samlRequest.samlRequest.type ?: "" ) > 0;
 			var hasError           = Len( samlRequest.error ?: "" ) > 0;
-			var totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent || hasError;
+
+			totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent || hasError;
 
 			if ( !xmlPresent ) {
 				debugInfo.failureReason = "noxml";
@@ -158,7 +160,8 @@ component {
 				var entity = samlEntityPool.getEntityBySlug( slug );
 				var entityFound = !IsEmpty( entity );
 				var correctSsoType = ( entity.consumerRecord.sso_type ?: "" ) == "idp";
-				var totallyBadRequest = !entityFound || !correctSsoType;
+
+				totallyBadRequest = !entityFound || !correctSsoType;
 
 				if ( !entityFound ) {
 					debugInfo.failureReason = "entitynotfound";
@@ -298,7 +301,8 @@ component {
 	}
 
 	public void function response( event, rc, prc ) {
-		var debugInfo = { success=true, requesttype="authnresponse" };
+		var debugInfo         = { success=true, requesttype="authnresponse" };
+		var totallyBadRequest = false;
 
 		try {
 			var samlResponse       = samlResponseParser.parse();
@@ -306,7 +310,8 @@ component {
 			var entityFound        = StructKeyExists( samlResponse, "issuerentity" ) && !IsEmpty( samlResponse.issuerEntity );
 			var requestTypePresent = Len( samlResponse.samlResponse.type ?: "" ) > 0;
 			var hasError           = Len( samlResponse.error ?: "" ) > 0;
-			var totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent || hasError;
+
+			totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent || hasError;
 
 			if ( !xmlPresent ) {
 				debugInfo.failureReason = "noxml";
