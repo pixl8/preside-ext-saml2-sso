@@ -305,7 +305,8 @@ component {
 			var xmlPresent         = Len( samlResponse.samlXml ?: "" ) > 0;
 			var entityFound        = StructKeyExists( samlResponse, "issuerentity" ) && !IsEmpty( samlResponse.issuerEntity );
 			var requestTypePresent = Len( samlResponse.samlResponse.type ?: "" ) > 0;
-			var totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent;
+			var hasError           = Len( samlResponse.error ?: "" ) > 0;
+			var totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent || hasError;
 
 			if ( !xmlPresent ) {
 				debugInfo.failureReason = "noxml";
@@ -313,6 +314,8 @@ component {
 				debugInfo.failureReason = "entitynotfound";
 			} else if ( !requestTypePresent ) {
 				debugInfo.failureReason = "noresponsetype";
+			} else if ( hasError ) {
+				debugInfo.failureReason = samlResponse.error;
 			}
 		} catch( any e ) {
 			logError( e );
