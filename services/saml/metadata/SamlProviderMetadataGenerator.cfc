@@ -31,16 +31,18 @@ component {
 			return "";
 		}
 
-		template = template.replace( "${x509}"          , settings.x509Certificate    , "all" );
-		template = template.replace( "${attribs}"       , settings.supportedAttribs   , "all" );
-		template = template.replace( "${nameidformat}"  , settings.nameIdFormat       , "all" );
-		template = template.replace( "${ssolocation}"   , settings.singleLoginLocation, "all" );
-		template = template.replace( "${entityid}"      , settings.entityId           , "all" );
-		template = template.replace( "${orgshortname}"  , settings.orgShortName       , "all" );
-		template = template.replace( "${orgfullname}"   , settings.orgFullName        , "all" );
-		template = template.replace( "${orgurl}"        , settings.orgUrl             , "all" );
-		template = template.replace( "${supportcontact}", settings.supportPerson      , "all" );
-		template = template.replace( "${supportemail}"  , settings.supportEmail       , "all" );
+		template = Replace( template, {
+			  "${x509}"           = settings.x509Certificate
+			, "${attribs}"        = settings.supportedAttribs
+			, "${nameidformat}"   = settings.nameIdFormat
+			, "${ssolocation}"    = settings.singleLoginLocation
+			, "${entityid}"       = settings.entityId
+			, "${orgshortname}"   = settings.orgShortName
+			, "${orgfullname}"    = settings.orgFullName
+			, "${orgurl}"         = settings.orgUrl
+			, "${supportcontact}" = settings.supportPerson
+			, "${supportemail}"   = settings.supportEmail
+		} );
 
 		if ( $isFeatureEnabled( "samlSsoProviderSlo" ) ) {
 			template = template.replace( "${slo}", '<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="#settings.singleLogoutLocation#"/>', "all" );
@@ -60,14 +62,16 @@ component {
 			return ""
 		}
 
-		template = Replace( template, "${x509}"              , settings.x509Certificate          , "all" );
-		template = Replace( template, "${ssolocation}"       , settings.assertionConsumerLocation, "all" );
-		template = Replace( template, "${entityid}"          , settings.entityId                 , "all" );
-		template = Replace( template, "${orgshortname}"      , settings.orgShortName             , "all" );
-		template = Replace( template, "${orgfullname}"       , settings.orgFullName              , "all" );
-		template = Replace( template, "${orgurl}"            , settings.orgUrl                   , "all" );
-		template = Replace( template, "${supportcontact}"    , settings.supportPerson            , "all" );
-		template = Replace( template, "${supportemail}"      , settings.supportEmail             , "all" );
+		template = Replace( template, {
+			  "${x509}"           = settings.x509Certificate
+			, "${ssolocation}"    = settings.assertionConsumerLocation
+			, "${entityid}"       = settings.entityId
+			, "${orgshortname}"   = settings.orgShortName
+			, "${orgfullname}"    = settings.orgFullName
+			, "${orgurl}"         = settings.orgUrl
+			, "${supportcontact}" = settings.supportPerson
+			, "${supportemail}"   = settings.supportEmail
+		} );
 
 		return template;
 	}
@@ -128,7 +132,7 @@ component {
 		}
 
 		return {
-			  x509Certificate           = idp.public_cert
+			  x509Certificate           = $helpers.formatX509Certificate( idp.public_cert )
 			, assertionConsumerLocation = settings.sso_endpoint_root & "/saml2/response/?idp=#idpId#"
 			, entityId                  = entityId
 			, orgShortName              = settings.organisation_short_name
@@ -153,7 +157,7 @@ component {
 		}
 
 		return {
-			  x509Certificate           = sp.public_cert
+			  x509Certificate           = $helpers.formatX509Certificate( sp.public_cert )
 			, singleLoginLocation       = settings.sso_endpoint_root & "/saml2/sso/"
 			, singleLogoutLocation      = settings.sso_endpoint_root & "/saml2/slo/"
 			, entityId                  = entityId
