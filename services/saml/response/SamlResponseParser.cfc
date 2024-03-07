@@ -57,12 +57,9 @@ component {
 						  samlResponse = parsedResponse.samlXml
 						, signingCert  = parsedResponse.issuerEntity.idpRecord.signing_certificate ?: ""
 					);
-					if ( !signaturesValid ) {
-						throw(
-							  type    = "saml2responseparser.invalid.signature"
-							, message = "The assertion response failed signature validation."
-							, detail  = parsedResponse.samlXml
-						);
+
+					if ( !sigValid ) {
+						parsedResponse.error = "invalidsignature";
 					}
 				}
 			} catch ( entitypool.missingentity e ) {
