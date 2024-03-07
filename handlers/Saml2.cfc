@@ -11,6 +11,7 @@ component {
 	property name="authCheckHandler"             inject="coldbox:setting:saml2.authCheckHandler";
 	property name="samlSessionService"           inject="samlSessionService";
 	property name="samlMetadataGenerator"        inject="samlProviderMetadataGenerator";
+	property name="rulesEngineWebRequestService" inject="rulesEngineWebRequestService";
 	property name="debugger"                     inject="saml2DebuggingService";
 
 	public string function sso( event, rc, prc ) {
@@ -91,6 +92,17 @@ component {
 				  , prePostExempt  = true
 			);
 
+			if ( isFeatureEnabled( "rulesengine" ) ) {
+				var rulesEngineCondition = samlRequest.issuerEntity.access_condition ?: "";
+
+				if ( Len( Trim( rulesEngineCondition ) ) && !rulesEngineWebRequestService.evaluateCondition( rulesEngineCondition ) ) {
+					event.accessDenied(
+						  reason              = "INSUFFICIENT_PRIVILEGES"
+						, accessDeniedMessage = ( samlRequest.issuerEntity.access_denied_message ?: "" )
+					);
+				}
+			}
+
 			var attributeConfig = _getAttributeConfig( samlRequest.issuerEntity );
 			var sessionIndex    = samlSessionService.getSessionId();
 
@@ -101,7 +113,6 @@ component {
 					, issuerId     = samlRequest.issuerEntity.id
 				);
 			}
-
 
 			announceInterception( "preSamlSsoLoginResponse", {
 				  userId          = userId
@@ -226,20 +237,9 @@ component {
 		if ( !isLoggedIn() ) {
 			setNextEvent( url=event.buildLink( page="login" ), persistStruct={
 				  samlRequest     = samlRequest
-				, ssoLoginMessage = ( samlRequest.issuerEntity.consumerRecord.login_message ?: "" )
+				, ssoLoginMessage = ( samlRequest.issuerEntity.login_message ?: "" )
 				, postLoginUrl    = event.getBaseUrl() & event.getCurrentUrl()
 			} );
-		}
-
-		if ( isFeatureEnabled( "rulesengine" ) ) {
-			var rulesEngineCondition = samlRequest.issuerEntity.consumerRecord.access_condition ?: "";
-
-			if ( Len( Trim( rulesEngineCondition ) ) && !getModel( "rulesEngineWebRequestService" ).evaluateCondition( rulesEngineCondition ) ) {
-				event.accessDenied(
-					  reason              = "INSUFFICIENT_PRIVILEGES"
-					, accessDeniedMessage = ( samlRequest.issuerEntity.consumerRecord.access_denied_message ?: "" )
-				);
-			}
 		}
 
 		return getLoggedInUserId();
