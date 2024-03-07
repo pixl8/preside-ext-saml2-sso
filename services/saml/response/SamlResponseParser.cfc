@@ -53,7 +53,7 @@ component {
 				}
 
 				if ( arguments.issuerType == "idp" ) {
-					var signaturesValid = _getOpenSamlUtils().validateSignatures(
+					var sigValid = _getOpenSamlUtils().validateSignatures(
 						  samlResponse = parsedResponse.samlXml
 						, signingCert  = parsedResponse.issuerEntity.idpRecord.signing_certificate ?: ""
 					);
