@@ -5,7 +5,7 @@ component extends="testbox.system.BaseSpec" {
 			it( "should initialize by passing valid metadata to its constructor", function(){
 				var md = _getMetadata( FileRead( "/tests/resources/metadata/metadata_a.xml" ) );
 
-				expect( md ).toBeInstanceOf( "samlIdProvider.SamlMetadata" );
+				expect( md ).toBeInstanceOf( "samlIdProvider.saml.metadata.SamlMetadata" );
 			} );
 		} );
 
@@ -59,7 +59,7 @@ GvUxcf3q5ZXwJL6K+o0lrNadM/TN+8gZW441MEjl8Fc="
 	}
 
 	private any function _getMetadata( required string md ) {
-		return new samlIdProvider.SamlMetadata( arguments.md );
+		return new samlIdProvider.saml.metadata.SamlMetadata( arguments.md );
 	}
 
 }

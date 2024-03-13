@@ -59,14 +59,14 @@ component extends="testbox.system.BaseSpec" {
 		} );
 	}
 
-	private any function _getService( struct configuredProviders=_defaultConfiguredProviders() ) {
-		var svc = CreateObject( "app.extensions.preside-ext-saml2-sso.services.SamlIdentityProviderService" );
+	private any function _getService( struct configuredProviders=_defaultConfiguredProviders(), samlCertificateService=_getStubCertService() ) {
+		var svc = CreateObject( "app.extensions.preside-ext-saml2-sso.services.saml.idp.SamlIdentityProviderService" );
 
 		mockProviderDao = CreateStub();
 
 		svc = CreateMock( object=svc );
 		svc.$( "_ensureProvidersExistInDb" );
-		svc.$( "$getPresideObject" ).$args( "saml2_identity_provider" ).$results( mockProviderDao );
+		svc.$( "$getPresideObject" ).$args( "saml2_idp" ).$results( mockProviderDao );
 		svc.$( "$translateResource", "" );
 
 		svc.init(
@@ -75,6 +75,14 @@ component extends="testbox.system.BaseSpec" {
 
 
 		return svc;
+	}
+
+	private function _getStubCertService() {
+		return new samlIdProvider.saml.signing.SamlCertificateService(
+			  samlProviderMetadataGenerator = CreateStub()
+			, x509CertReader                = new samlIdProvider.saml.signing.X509CertReader()
+			, rsaKeyReader                  = new samlIdProvider.saml.signing.RsaKeyReader()
+		);
 	}
 
 	private struct function _defaultConfiguredProviders() {

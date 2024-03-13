@@ -7,7 +7,7 @@
 	<cfsavecontent variable="body">
 		<form id="#formId#" method="post" action="#event.buildAdminLink( linkTo='saml2Admin.saveSettingsAction' )#" data-auto-focus-form="true" data-dirty-form="protect" class="form-horizontal">
 			#renderForm(
-				  formName          = "saml2.provider.settings"
+				  formName          = "saml2.settings"
 				, context           = "admin"
 				, formId            = formId
 				, savedData         = configuration

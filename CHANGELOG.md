@@ -1,5 +1,15 @@
 # Changelog
 
+## v6.0.0
+
+Extension overhaul:
+
+* Metadata used only as an import tool
+* Signing certificates produced per provider, with ability to manually regenerate/upload them
+* Debug logging option added
+* Refreshed UI for managing providers (based on data manager)
+* Requires Preside 10.24, or higher
+
 ## v5.1.5
 
 * Add a rules engine expression to be able to match SAML login requests

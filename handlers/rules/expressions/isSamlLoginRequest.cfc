@@ -8,7 +8,7 @@ component {
 
 	/**
 	 * @serviceProviders.fieldType object
-	 * @serviceProviders.object    saml2_consumer
+	 * @serviceProviders.object    saml2_sp
 	 * @serviceProviders.multiple  true
 	 */
 	private boolean function evaluateExpression( event, rc, prc, boolean _is=true, string serviceProviders="" ){

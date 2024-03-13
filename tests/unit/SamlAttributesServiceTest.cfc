@@ -78,7 +78,7 @@ component extends="testbox.system.BaseSpec" {
 	}
 
 	private any function _getService( struct supportedAttributes=_defaultSupportedAttibutes(), attributeRetrievalHandler="test.attrib.retrieval.handler" ) {
-		var svc = CreateObject( "app.extensions.preside-ext-saml2-sso.services.SamlAttributesService" ).init( argumentCollection=arguments );
+		var svc = CreateObject( "app.extensions.preside-ext-saml2-sso.services.saml.response.SamlAttributesService" ).init( argumentCollection=arguments );
 
 		svc = CreateMock( object=svc );
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form i18nBaseUri="preside-objects.saml2_sp:">
+	<tab id="default" sortorder="10">
+		<fieldset id="idpcert" sortorder="10">
+			<field name="editDetail"  control="hidden" value="idpcert" />
+			<field name="method" sortorder="10" control="enumRadioList" enum="saml2CertEditMethod" required="true" default="auto" />
+
+			<field name="new_public_cert" sortorder="20" required="false" control="textarea">
+				<rule validator="required" serverCondition="${method} == 'manual'" clientCondition="false" />
+				<rule validator="x509Cert" />
+			</field>
+			<field name="new_private_key" sortorder="30" required="false" control="textarea">
+				<rule validator="required" serverCondition="${method} == 'manual'" clientCondition="false" />
+				<rule validator="rsaPrivateKey" />
+			</field>
+		</fieldset>
+	</tab>
+</form>

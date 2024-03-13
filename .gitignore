@@ -1,2 +1,5 @@
 tests/testresults.xml
+assets/node_modules/
+*.min.map
+*.min.js
 .twgit*

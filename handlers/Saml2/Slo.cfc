@@ -1,13 +1,15 @@
 component {
 
-	property name="samlRequestParser"   inject="samlRequestParser";
-	property name="samlResponseParser"  inject="samlResponseParser";
-	property name="samlResponseBuilder" inject="samlResponseBuilder";
-	property name="samlRequestBuilder"  inject="samlRequestBuilder";
-	property name="samlEntityPool"      inject="samlEntityPool";
-	property name="deflateEncoder"      inject="httpRedirectRequestDeflateEncoder";
-	property name="websiteLoginService" inject="websiteLoginService";
-	property name="samlSessionService"  inject="samlSessionService";
+	property name="samlRequestParser"     inject="samlRequestParser";
+	property name="samlResponseParser"    inject="samlResponseParser";
+	property name="samlResponseBuilder"   inject="samlResponseBuilder";
+	property name="samlRequestBuilder"    inject="samlRequestBuilder";
+	property name="samlEntityPool"        inject="samlEntityPool";
+	property name="deflateEncoder"        inject="httpRedirectRequestDeflateEncoder";
+	property name="websiteLoginService"   inject="websiteLoginService";
+	property name="samlSessionService"    inject="samlSessionService";
+	property name="samlMetadataGenerator" inject="samlProviderMetadataGenerator";
+	property name="debugger"              inject="saml2DebuggingService";
 
 	/**
 	 *
@@ -36,7 +38,7 @@ component {
 	/**
 	 * /saml2/slo/sprequest/
 	 *
-	 * Initiates an SLO request to a Service Provider from this IdP.
+	 * Initiates a SLO request to a Service Provider from this IdP.
 	 * In our current implementation, this will be triggered from an embedded iframe
 	 * in the logout page
 	 */
@@ -49,19 +51,26 @@ component {
 			event.notFound();
 		}
 
-		var ssoReqs          = sessionDetail.issuerMetadata.getServiceProviderSSORequirements();
-		var redirectLocation = ssoReqs.logoutService.location ?: "";
-		var binding          = ssoReqs.logoutService.binding ?: "";
-		if ( isEmptyString( ssoReqs.logoutService.location ?: "" ) ) {
+		var redirectLocation = sessionDetail.issuer.single_logout_location;
+		var binding          = sessionDetail.issuer.single_logout_binding;
+		if ( isEmptyString( redirectLocation ) ) {
 			event.notFound();
 		}
-
 		var samlSpLogoutRequest = samlRequestBuilder.buildLogoutRequest(
-			  issuer       = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
-			, sloEndpoint  = redirectLocation
-			, nameIdValue  = sessionDetail.nameId
-			, sessionIndex = sessionDetail.sessionIndex
-			, requestId    = samlSessionId
+			  issuer            = samlMetadataGenerator.getIdpEntityId()
+			, sloEndpoint       = redirectLocation
+			, nameIdValue       = sessionDetail.nameId
+			, sessionIndex      = sessionDetail.sessionIndex
+			, requestId         = samlSessionId
+			, privateSigningKey = sessionDetail.issuer.private_key
+			, publicSigningCert = sessionDetail.issuer.public_cert
+		);
+
+		debugger.log(
+			  success     = true
+			, requesttype = "initiateslorequest"
+			, sp          = sessionDetail.issuer.id ?: ""
+			, samlXml     = samlSpLogoutRequest
 		);
 
 		if ( binding contains "POST" ) {
@@ -70,7 +79,7 @@ component {
 			return renderView( view="/saml2/ssoRequestForm", args={
 				  samlRequest      = samlSpLogoutRequest
 				, redirectLocation = redirectLocation
-				, serviceName	   = ( samlRequest.issuerEntity.consumerRecord.name ?: "" )
+				, serviceName	   = ( sessionDetail.issuer.name ?: "" )
 				, noRelayState     = true
 			} );
 		} else {
@@ -85,7 +94,7 @@ component {
 	/**
 	 * /saml2/slo/idpresponse/
 	 *
-	 * Initiates a response to an SP logout request
+	 * Crafts a response to a SP logout request
 	 * In our current implementation, this will be triggered from an embedded iframe
 	 * in the logout page
 	 */
@@ -93,18 +102,29 @@ component {
 		var issuerId       = rc.issuer ?: "";
 		var inResponseTo   = rc.inResponseTo ?: ""
 		var spIssuer       = samlEntityPool.getEntityById( issuerId );
-		var logoutEndpoint = spIssuer.serviceProviderSsoRequirements.logoutService.location ?: "";
-		var logoutBinding  = spIssuer.serviceProviderSsoRequirements.logoutService.binding ?: "";
+		var logoutEndpoint = spIssuer.consumerRecord.single_logout_location ?: "";
+		var logoutBinding  = spIssuer.consumerRecord.single_logout_binding  ?: "";
+		var debugInfo      = { success=true, requesttype="sloresponse" };
+
+		debugInfo.sp = spIssuer.consumerRecord.id ?: "";
 
 		if ( isEmptyString( logoutEndpoint ) || isEmptyString( inResponseTo ) ) {
+			debugInfo.success = false;
+			debugInfo.failureReason = "entitynotfound";
+			debugger.log( argumentCollection=debugInfo );
 			event.notFound();
 		}
 
 		var logoutResponse = samlResponseBuilder.buildLogoutResponse(
-			  issuer       = getSystemSetting( "saml2Provider", "sso_endpoint_root", event.getSiteUrl() )
-			, inResponseTo = inResponseTo
-			, destination  = logoutEndpoint
+			  issuer            = samlMetadataGenerator.getIdpEntityId()
+			, inResponseTo      = inResponseTo
+			, destination       = logoutEndpoint
+			, privateKey        = spIssuer.consumerRecord.private_key
+			, publicCertificate = spIssuer.consumerRecord.public_cert
 		);
+
+		debugInfo.xml = logoutResponse;
+		debugger.log( argumentCollection=debugInfo );
 
 		if ( logoutBinding contains "POST" ) {
 			// POST BINDING, javascript form to post request to redirect location
@@ -167,19 +187,44 @@ component {
 
 // HELPERS
 	private void function _respondToSloRequest( event, rc, prc ) {
-		// 1. Parse the request, check it is generally valid
+		var debugInfo = { success=true, requesttype="slorequest" };
+
 		try {
-			var samlRequest       = samlRequestParser.parse();
-			var totallyBadRequest = !IsStruct( samlRequest ) || samlRequest.keyExists( "error" ) ||  !( samlRequest.samlRequest.type ?: "" ).len() || !samlRequest.keyExists( "issuerentity" ) || samlRequest.issuerEntity.isEmpty();
+			var samlRequest        = samlRequestParser.parse();
+			var xmlPresent         = Len( samlRequest.samlXml ?: "" ) > 0;
+			var entityFound        = StructKeyExists( samlRequest, "issuerentity" ) && !IsEmpty( samlRequest.issuerEntity );
+			var requestTypePresent = Len( samlRequest.samlRequest.type ?: "" ) > 0;
+			var hasError           = Len( samlRequest.error ?: "" ) > 0;
+			var totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent || hasError;
+
+			if ( !xmlPresent ) {
+				debugInfo.failureReason = "noxml";
+			} else if ( !entityFound ) {
+				debugInfo.failureReason = "entitynotfound";
+			} else if ( !requestTypePresent ) {
+				debugInfo.failureReason = "norequesttype";
+			} else if ( hasError ) {
+				debugInfo.failureReason = samlRequest.error;
+			}
 		} catch( any e ) {
 			logError( e );
 			totallyBadRequest = true;
+			debugInfo.error         = "Message: #( e.message ?: '' )#. Detail: #( e.detail ?: '' )#";
+			debugInfo.failureReason = "error";
 		}
 
+		debugInfo.sp         = samlRequest.issuerEntity.id ?: "";
+		debugInfo.samlXml    = samlRequest.samlXml         ?: "";
+		debugInfo.relayState = samlRequest.relayState      ?: "";
+
 		if ( totallyBadRequest ) {
+			debugInfo.success = false;
+			debugger.log( argumentCollection=debugInfo );
+
 			event.setHTTPHeader( statusCode="400" );
 			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
 			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
+
 
 			rc.body = renderView(
 				  view          = "/page-types/samlSsoBadRequest/index"
@@ -197,11 +242,19 @@ component {
 		var samlResponse       = "";
 
 		if ( isWrongRequestType ) {
+			debugInfo.success = false;
+			debugInfo.failureReason = "wrongreqtype";
+			debugger.log( argumentCollection=debugInfo );
+
+			var redirectLocation   = samlRequest.issuerEntity.single_logout_location ?: "";
+			if ( !Len( redirectLocation ) ) {
+				redirectLocation = samlRequest.issuerEntity.assertion_consumer_location ?: "";
+			}
 			samlResponse = samlResponseBuilder.buildErrorResponse(
 				  statusCode          = "urn:oasis:names:tc:SAML:2.0:status:Responder"
 				, subStatusCode       = "urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"
 				, statusMessage       = "Operation unsupported"
-				, issuer              = samlRequest.samlRequest.issuer
+				, issuer              = samlMetadataGenerator.getIdpEntityId()
 				, inResponseTo        = samlRequest.samlRequest.id
 				, recipientUrl        = redirectLocation
 			);
@@ -210,9 +263,11 @@ component {
 				  samlResponse     = samlResponse
 				, samlRelayState   = samlRequest.relayState ?: ""
 				, redirectLocation = redirectLocation
-				, serviceName	   = ( samlRequest.issuerEntity.consumerRecord.name ?: "" )
+				, serviceName	   = ( samlRequest.issuerEntity.name ?: "" )
 			} );
 		}
+
+		debugger.log( argumentCollection=debugInfo );
 
 		// 3. Log current user out
 		if ( isLoggedIn() ) {
@@ -224,26 +279,51 @@ component {
 		if ( isEmptyString( sessionIndex ) ) {
 			sessionIndex = samlSessionService.getSessionId();
 		}
-		samlSessionService.removeSessionByIssuerAndIndex( samlRequest.issuerEntity.id, sessionIndex )
+		samlSessionService.removeSessionByIssuerAndIndex( samlRequest.issuerEntity.id, sessionIndex );
 
 		// 5. Redirect to logged out page (with variables to help output iframes to do followout logout requests with SPs)
 		setNextEvent( url=event.buildLink( page="saml_slo_page" ), persistStruct={
 			  nameId       = samlRequest.samlRequest.nameId ?: ""
 			, requestId    = samlRequest.samlRequest.id ?: ""
-			, spIssuerId   = samlRequest.issuerEntity.consumerRecord.id ?: ""
+			, spIssuerId   = samlRequest.issuerEntity.id ?: ""
 			, sessionIndex = sessionIndex
 		} );
 	}
 
 	private void function _processSloResponse() {
-		// 1. Parse the response, check it is generally valid
 		try {
-			var samlResponse      = samlResponseParser.parse( issuerType="sp" );
-			var totallyBadRequest = !IsStruct( samlResponse ) || samlResponse.keyExists( "error" ) ||  !( samlResponse.samlResponse.type ?: "" ).len() || !samlResponse.keyExists( "issuerentity" ) || samlResponse.issuerEntity.isEmpty();
+			var samlResponse       = samlResponseParser.parse( issuerType="sp" );
+			var xmlPresent         = Len( samlResponse.samlXml ?: "" ) > 0;
+			var entityFound        = StructKeyExists( samlResponse, "issuerentity" ) && !IsEmpty( samlResponse.issuerEntity );
+			var requestTypePresent = Len( samlResponse.samlResponse.type ?: "" ) > 0;
+			var totallyBadRequest  = !xmlPresent || !entityFound || !requestTypePresent;
+
+			if ( !xmlPresent ) {
+				debugInfo.failureReason = "noxml";
+			} else if ( !entityFound ) {
+				debugInfo.failureReason = "entitynotfound";
+			} else if ( !requestTypePresent ) {
+				debugInfo.failureReason = "noresponsetype";
+			}
 		} catch( any e ) {
 			logError( e );
 			totallyBadRequest = true;
+			if ( ( e.type ?: "" ) == "saml2responseparser.invalid.signature" ) {
+				debugInfo.failureReason = "invalidsignature";
+			} else if ( ( e.type ?: "" ) == "saml2responseparser.assertion.timed.out" ) {
+				debugInfo.failureReason = "timeout";
+			} else {
+				debugInfo.error         = "Message: #( e.message ?: '' )#. Detail: #( e.detail ?: '' )#";
+				debugInfo.failureReason = "error";
+			}
 		}
+
+		debugInfo.sp         = samlResponse.issuerEntity.consumerRecord.id ?: "";
+		debugInfo.samlXml    = samlResponse.samlXml ?: "";
+		debugInfo.relayState = samlResponse.relayState ?: "";
+		debugInfo.success    = !totallyBadRequest;
+
+		debugger.log( argumentCollection=debugInfo );
 
 		if ( totallyBadRequest ) {
 			event.setHTTPHeader( statusCode="400" );
