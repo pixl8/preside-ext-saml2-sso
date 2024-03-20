@@ -29,6 +29,8 @@ component {
 		var password     = CreateUUId();
 		var keyToolArgs  = '-genkeypair -validity #arguments.expiryDays# -alias #certAlias# -keyalg RSA -storetype JKS -keystore #filePath# -storepass #password# -keysize 2048 -keypass #certPassword# -dname CN=#arguments.cn#'.split( "\s+" );
 
+		// TODO, replace this with a java lib for generating the keypair
+		// should keytool fail, it crashes the server :o
 		DirectoryCreate( GetDirectoryFromPath( filePath ), true, true );
 		CreateObject( "java", "sun.security.tools.keytool.Main" ).main( keyToolArgs );
 
@@ -50,7 +52,9 @@ component {
 	}
 
 	private string function _getCnForCertificates() {
-		return samlProviderMetadataGenerator.getMetaDataSettings().organisation_short_name;
+		var shortName = samlProviderMetadataGenerator.getMetaDataSettings().organisation_short_name;
+
+		return ReReplace( shortName, "\s+", "-", "all" );
 	}
 
 }

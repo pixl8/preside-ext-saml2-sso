@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.1
+
+* Fix issue where organisation short name setting containing spaces would crash server on certificate generation
+
 ## v6.0.0
 
 Extension overhaul:
