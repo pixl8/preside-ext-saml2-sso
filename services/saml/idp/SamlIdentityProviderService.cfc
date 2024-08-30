@@ -70,8 +70,10 @@ component {
 					StructAppend( provider, pr, false );
 				}
 
-				provider.title       = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId );
-				provider.description = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         );
+				provider.title             = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId );
+				provider.description       = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         );
+				provider.acClassRef        = provider.acClassRef        ?: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+				provider.acClassComparison = provider.acClassComparison ?: "minimum"
 
 				return provider;
 			}
