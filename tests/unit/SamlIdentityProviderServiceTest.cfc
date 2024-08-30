@@ -33,6 +33,8 @@ component extends="testbox.system.BaseSpec" {
 					, enabled         = dbProviders.enabled[1]
 					, metadata        = dbProviders.metadata[1]
 					, loginUrl        = "/saml2/login/jumpcloud/"
+					, acClassRef        = "minimum"
+					, acClassComparison = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
 					, entityIdSuffix  = ""
 				} );
 				providers.google.append( {
@@ -88,12 +90,14 @@ component extends="testbox.system.BaseSpec" {
 	private struct function _defaultConfiguredProviders() {
 		return {
 			"google" : {
-				  admin           = false
-				, web             = true
-				, autoRegister    = false
-				, postAuthHandler = "some.handler"
-				, entityIdSuffix  = ""
-				, loginUrl        = "/test/"
+				  admin             = false
+				, web               = true
+				, autoRegister      = false
+				, postAuthHandler   = "some.handler"
+				, entityIdSuffix    = ""
+				, loginUrl          = "/test/"
+				, acClassRef        = "exact"
+				, acClassComparison = "test"
 			},
 			"JumpCloud" : {}
 		};
