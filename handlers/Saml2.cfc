@@ -275,8 +275,6 @@ component {
 			event.notFound();
 		}
 
-
-
 		var metaSettings = samlMetadataGenerator.getIdpSpMetadataSettings( providerSlug );
 		var samlRequest = samlRequestBuilder.buildAuthenticationRequest(
 			  responseHandlerUrl  = metaSettings.assertionConsumerLocation
@@ -286,6 +284,8 @@ component {
 			, nameIdFormat        = idp.name_id_format
 			, privateSigningKey   = idp.private_key
 			, publicSigningCert   = idp.public_cert
+			, acClassRef          = idp.acClassRef
+			, acClassComparison   = idp.acClassComparison
 		);
 
 		debugInfo.samlXml = samlRequest;
