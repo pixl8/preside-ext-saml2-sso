@@ -37,15 +37,17 @@ component {
 			var provider = dbProvidersMap[ providerId ] ?: {};
 
 			provider.append( {
-				  id              = providerId
-				, admin           = configuredProviders[ providerId ].admin           ?: true
-				, web             = configuredProviders[ providerId ].web             ?: false
-				, autoRegister    = configuredProviders[ providerId ].autoRegister    ?: true
-				, postAuthHandler = configuredProviders[ providerId ].postAuthHandler ?: ""
-				, loginUrl        = configuredProviders[ providerId ].loginUrl        ?: "/saml2/login/#providerId#/"
-				, entityIdSuffix  = configuredProviders[ providerId ].entityIdSuffix  ?: ""
-				, title           = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId )
-				, description     = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         )
+				  id                = providerId
+				, admin             = configuredProviders[ providerId ].admin             ?: true
+				, web               = configuredProviders[ providerId ].web               ?: false
+				, autoRegister      = configuredProviders[ providerId ].autoRegister      ?: true
+				, postAuthHandler   = configuredProviders[ providerId ].postAuthHandler   ?: ""
+				, loginUrl          = configuredProviders[ providerId ].loginUrl          ?: "/saml2/login/#providerId#/"
+				, entityIdSuffix    = configuredProviders[ providerId ].entityIdSuffix    ?: ""
+				, acClassRef        = configuredProviders[ providerId ].acClassRef        ?: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+				, acClassComparison = configuredProviders[ providerId ].acClassComparison ?: "minimum"
+				, title             = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId )
+				, description       = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         )
 			} );
 
 			list.append( provider );
