@@ -21,6 +21,8 @@ component {
 		, required string spIssuer
 		, required string spName
 		, required string signWithCertificate
+		,          string acClassRef        = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+		,          string acClassComparison = "exact" // backward compat
 	) {
 		var idpMeta = new SamlMetadata( arguments.idpMetaData );
 		var nowish  = getInstant();
@@ -33,8 +35,8 @@ component {
 		    xml &= 'AssertionConsumerServiceURL="#XmlFormat( arguments.responseHandlerUrl )#">';
 		    	xml &= '<saml:Issuer>#arguments.spIssuer#</saml:Issuer>';
 		    	xml &= '<samlp:NameIDPolicy Format="#idpMeta.getIdpNameIdFormat()#" AllowCreate="true"/>';
-				xml &= '<samlp:RequestedAuthnContext Comparison="exact">';
-					xml &= '<saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef>';
+				xml &= '<samlp:RequestedAuthnContext Comparison="#arguments.acClassComparison#">';
+					xml &= '<saml:AuthnContextClassRef>#arguments.acClassRef#</saml:AuthnContextClassRef>';
 				xml &= '</samlp:RequestedAuthnContext>';
 			xml &= '</samlp:AuthnRequest>';
 

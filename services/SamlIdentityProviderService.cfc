@@ -32,15 +32,17 @@ component {
 			var provider = dbProvidersMap[ providerId ] ?: {};
 
 			provider.append( {
-				  id              = providerId
-				, admin           = providers[ providerId ].admin           ?: true
-				, web             = providers[ providerId ].web             ?: false
-				, autoRegister    = providers[ providerId ].autoRegister    ?: true
-				, postAuthHandler = providers[ providerId ].postAuthHandler ?: ""
-				, loginUrl        = providers[ providerId ].loginUrl        ?: "/saml2/login/#providerId#/"
-				, entityIdSuffix  = providers[ providerId ].entityIdSuffix  ?: ""
-				, title           = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId )
-				, description     = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         )
+				  id                = providerId
+				, admin             = providers[ providerId ].admin           ?: true
+				, web               = providers[ providerId ].web             ?: false
+				, autoRegister      = providers[ providerId ].autoRegister    ?: true
+				, postAuthHandler   = providers[ providerId ].postAuthHandler ?: ""
+				, loginUrl          = providers[ providerId ].loginUrl        ?: "/saml2/login/#providerId#/"
+				, entityIdSuffix    = providers[ providerId ].entityIdSuffix  ?: ""
+				, acClassRef        = providers[ providerId ].acClassRef        ?: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+				, acClassComparison = providers[ providerId ].acClassComparison ?: "minimum"
+				, title             = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId )
+				, description       = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         )
 			} );
 
 			list.append( provider );
@@ -71,8 +73,10 @@ component {
 					provider.ssoLocation = "";
 				}
 
-				provider.title       = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId );
-				provider.description = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         );
+				provider.title             = $translateResource( uri="saml2.identityProviders:#providerId#.title"      , defaultValue=providerId );
+				provider.description       = $translateResource( uri="saml2.identityProviders:#providerId#.description", defaultValue=""         );
+				provider.acClassRef        = provider.acClassRef        ?: "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+				provider.acClassComparison = provider.acClassComparison ?: "minimum"
 
 				return provider;
 			}

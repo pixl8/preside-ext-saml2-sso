@@ -1,5 +1,13 @@
 # Changelog
 
+## v5.1.7
+
+* Fix for RequestedAuthnContext and AuthnContextClassRef being the wrong way around in built SAML requests
+
+## v5.1.6
+
+* Allow configurable AuthnContext for SSO requests to IdPs where Preside is the SP.
+
 ## v5.1.5
 
 * Add a rules engine expression to be able to match SAML login requests

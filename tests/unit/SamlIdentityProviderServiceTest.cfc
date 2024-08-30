@@ -23,17 +23,19 @@ component extends="testbox.system.BaseSpec" {
 				service.$( "$translateResource" ).$args( uri="saml2.identityProviders:google.description"   , defaultValue=""          ).$results( "google description"    );
 
 				providers.jumpCloud.append( {
-					  admin           = true
-					, web             = false
-					, autoRegister    = true
-					, postAuthHandler = ""
-					, title           = "jumpCloud title"
-					, description     = "jumpCloud description"
-					, slug            = dbProviders.slug[1]
-					, enabled         = dbProviders.enabled[1]
-					, metadata        = dbProviders.metadata[1]
-					, loginUrl        = "/saml2/login/jumpcloud/"
-					, entityIdSuffix  = ""
+					  admin             = true
+					, web               = false
+					, autoRegister      = true
+					, postAuthHandler   = ""
+					, title             = "jumpCloud title"
+					, description       = "jumpCloud description"
+					, slug              = dbProviders.slug[1]
+					, enabled           = dbProviders.enabled[1]
+					, metadata          = dbProviders.metadata[1]
+					, loginUrl          = "/saml2/login/jumpcloud/"
+					, acClassRef        = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+					, acClassComparison = "minimum"
+					, entityIdSuffix    = ""
 				} );
 				providers.google.append( {
 					  slug        = dbProviders.slug[2]
@@ -80,12 +82,14 @@ component extends="testbox.system.BaseSpec" {
 	private struct function _defaultConfiguredProviders() {
 		return {
 			"google" : {
-				  admin           = false
-				, web             = true
-				, autoRegister    = false
-				, postAuthHandler = "some.handler"
-				, entityIdSuffix  = ""
-				, loginUrl        = "/test/"
+				  admin             = false
+				, web               = true
+				, autoRegister      = false
+				, postAuthHandler   = "some.handler"
+				, entityIdSuffix    = ""
+				, loginUrl          = "/test/"
+				, acClassRef        = "test"
+				, acClassComparison = "exact"
 			},
 			"JumpCloud" : {}
 		};

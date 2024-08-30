@@ -232,6 +232,8 @@ component {
 			, spIssuer            = spIssuer
 			, spName              = spName
 			, signWithCertificate = ( idp.certificate ?: "" )
+			, acClassRef          = idp.acClassRef
+			, acClassComparison   = idp.acClassComparison
 		);
 
 		return renderView( view="/saml2/ssoRequestForm", args={
