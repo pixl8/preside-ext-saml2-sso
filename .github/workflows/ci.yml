@@ -35,8 +35,9 @@ jobs:
           output_file: /tests/test-results.txt
           verbose: true
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v1
+      - name: Upload Test Results Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: tests/test-results.txt
