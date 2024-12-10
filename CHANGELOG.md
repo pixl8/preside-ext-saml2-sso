@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.7
+
+* Fix for RequestedAuthnContext and AuthnContextClassRef being the wrong way around in built SAML requests
+
 ## v6.0.6
 
 * Github build fixes
