@@ -23,8 +23,8 @@ component {
 		, required string nameIdFormat
 		, required string privateSigningKey
 		, required string publicSigningCert
-		,          string acClassRef        = "exact" // backward compat
-		,          string acClassComparison = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+		,          string acClassRef        = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+		,          string acClassComparison = "exact" // backward compat
 	) {
 		var nowish  = getInstant();
 		var xml  = _getXmlHeader();

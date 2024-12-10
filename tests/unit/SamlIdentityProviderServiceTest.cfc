@@ -96,8 +96,8 @@ component extends="testbox.system.BaseSpec" {
 				, postAuthHandler   = "some.handler"
 				, entityIdSuffix    = ""
 				, loginUrl          = "/test/"
-				, acClassRef        = "exact"
-				, acClassComparison = "test"
+				, acClassRef        = "test"
+				, acClassComparison = "exact"
 			},
 			"JumpCloud" : {}
 		};
