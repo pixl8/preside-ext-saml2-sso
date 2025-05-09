@@ -1,4 +1,4 @@
-<cfif ( isFeatureEnabled( "samlSsoProvider" ) && hasCmsPermission( "saml.provider.navigate" ) or ( isFeatureEnabled( "samlSsoConsumer" ) && hasCmsPermission( "saml.consumer.navigate" ) ) )>
+<cfif hasCmsPermission( "saml2.general.navigate" )>
 	<cfoutput>
 		<li>
 			<a href="#event.buildAdminLink( linkTo="saml2Admin" )#">

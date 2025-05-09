@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+	<tab id="default">
+		<fieldset id="default">
+			<field binding="saml2_sp.entity_id"                   required="true" />
+			<field binding="saml2_sp.assertion_consumer_location" required="true" />
+			<field binding="saml2_sp.assertion_consumer_binding"  required="true" />
+			<field binding="saml2_sp.want_assertions_signed"      required="false" />
+			<field binding="saml2_sp.requests_will_be_signed"     required="false" />
+			<field binding="saml2_sp.signing_certificate"         required="false">
+				<rule validator="x509Cert" />
+				<rule validator="required" serverCondition="${requests_will_be_signed}" clientCondition="false" />
+			</field>
+			<field binding="saml2_sp.single_logout_location" required="false" feature="samlSsoProviderSlo" />
+			<field binding="saml2_sp.single_logout_binding"  required="false" feature="samlSsoProviderSlo" />
+		</fieldset>
+	</tab>
+</form>

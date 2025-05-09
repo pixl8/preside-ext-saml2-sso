@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form i18nBaseUri="preside-objects.saml2_sp:">
+	<tab id="default" sortorder="10">
+		<fieldset id="metadata" sortorder="20">
+			<field name="editDetail"  control="hidden" value="meta" />
+			<field name="metaurl"  sortorder="10" control="textinput" />
+			<field name="metafile" sortorder="20" control="fileupload" accept="application/xml,text/xml" />
+			<field name="rawmeta"  sortorder="30" control="textarea" />
+		</fieldset>
+	</tab>
+</form>

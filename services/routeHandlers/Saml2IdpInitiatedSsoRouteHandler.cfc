@@ -18,10 +18,11 @@ component  {
 	}
 
 	public boolean function reverseMatch( required struct buildArgs, required any event ) {
-		return false;
+		return StructKeyExists( arguments.buildArgs, "saml2SpSlug" );
 	}
 
 	public string function build( required struct buildArgs, required any event ) {
-		return "";
+		return event.getSiteUrl() & "/saml2/idpsso/#arguments.buildArgs.saml2SpSlug#/";
 	}
+
 }

@@ -23,17 +23,19 @@ component extends="testbox.system.BaseSpec" {
 				service.$( "$translateResource" ).$args( uri="saml2.identityProviders:google.description"   , defaultValue=""          ).$results( "google description"    );
 
 				providers.jumpCloud.append( {
-					  admin           = true
-					, web             = false
-					, autoRegister    = true
-					, postAuthHandler = ""
-					, title           = "jumpCloud title"
-					, description     = "jumpCloud description"
-					, slug            = dbProviders.slug[1]
-					, enabled         = dbProviders.enabled[1]
-					, metadata        = dbProviders.metadata[1]
-					, loginUrl        = "/saml2/login/jumpcloud/"
-					, entityIdSuffix  = ""
+					  admin             = true
+					, web               = false
+					, autoRegister      = true
+					, postAuthHandler   = ""
+					, title             = "jumpCloud title"
+					, description       = "jumpCloud description"
+					, slug              = dbProviders.slug[1]
+					, enabled           = dbProviders.enabled[1]
+					, metadata          = dbProviders.metadata[1]
+					, loginUrl          = "/saml2/login/jumpcloud/"
+					, acClassRef        = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+					, acClassComparison = "minimum"
+					, entityIdSuffix    = ""
 				} );
 				providers.google.append( {
 					  slug        = dbProviders.slug[2]
@@ -59,14 +61,14 @@ component extends="testbox.system.BaseSpec" {
 		} );
 	}
 
-	private any function _getService( struct configuredProviders=_defaultConfiguredProviders() ) {
-		var svc = CreateObject( "app.extensions.preside-ext-saml2-sso.services.SamlIdentityProviderService" );
+	private any function _getService( struct configuredProviders=_defaultConfiguredProviders(), samlCertificateService=_getStubCertService() ) {
+		var svc = CreateObject( "app.extensions.preside-ext-saml2-sso.services.saml.idp.SamlIdentityProviderService" );
 
 		mockProviderDao = CreateStub();
 
 		svc = CreateMock( object=svc );
 		svc.$( "_ensureProvidersExistInDb" );
-		svc.$( "$getPresideObject" ).$args( "saml2_identity_provider" ).$results( mockProviderDao );
+		svc.$( "$getPresideObject" ).$args( "saml2_idp" ).$results( mockProviderDao );
 		svc.$( "$translateResource", "" );
 
 		svc.init(
@@ -77,15 +79,25 @@ component extends="testbox.system.BaseSpec" {
 		return svc;
 	}
 
+	private function _getStubCertService() {
+		return new samlIdProvider.saml.signing.SamlCertificateService(
+			  samlProviderMetadataGenerator = CreateStub()
+			, x509CertReader                = new samlIdProvider.saml.signing.X509CertReader()
+			, rsaKeyReader                  = new samlIdProvider.saml.signing.RsaKeyReader()
+		);
+	}
+
 	private struct function _defaultConfiguredProviders() {
 		return {
 			"google" : {
-				  admin           = false
-				, web             = true
-				, autoRegister    = false
-				, postAuthHandler = "some.handler"
-				, entityIdSuffix  = ""
-				, loginUrl        = "/test/"
+				  admin             = false
+				, web               = true
+				, autoRegister      = false
+				, postAuthHandler   = "some.handler"
+				, entityIdSuffix    = ""
+				, loginUrl          = "/test/"
+				, acClassRef        = "test"
+				, acClassComparison = "exact"
 			},
 			"JumpCloud" : {}
 		};

@@ -1,5 +1,103 @@
 # Changelog
 
+## v6.0.8
+
+* Nothing to see here, testing build
+
+## v6.0.7
+
+* Fix for RequestedAuthnContext and AuthnContextClassRef being the wrong way around in built SAML requests
+
+## v6.0.6
+
+* Github build fixes
+
+## v6.0.5
+
+* [#21](https://github.com/pixl8/preside-ext-saml2-sso/issues/21) Fix preside version dependency declaration
+
+## v6.0.4
+
+* Allow configurable AuthnContext for SSO requests to IdPs where Preside is the SP.
+
+## v6.0.3
+
+* Stop rendering cert issuers in <code> tags (which can cause layout overflow issues with long issuer strings)
+
+## v6.0.2
+
+* Fix issue where Service provider single logout binding was taking too much space in DB and failing db migration
+* Give data migration a name to ensure it happens sooner rather than later during db migration routines
+
+## v6.0.1
+
+* Fix issue where organisation short name setting containing spaces would crash server on certificate generation
+
+## v6.0.0
+
+Extension overhaul:
+
+* Metadata used only as an import tool
+* Signing certificates produced per provider, with ability to manually regenerate/upload them
+* Debug logging option added
+* Refreshed UI for managing providers (based on data manager)
+* Requires Preside 10.24, or higher
+
+## v5.1.5
+
+* Add a rules engine expression to be able to match SAML login requests
+
+## v5.1.4
+
+* [#15](https://github.com/pixl8/preside-ext-saml2-sso/issues/15) - Announce interception points on rendering of bad sso request page
+
+## v5.1.3
+
+* [SAML-8](https://projects.pixl8.london/browse/SAML-8) - Minor styling on SAML redirect pages
+
+## v5.1.2
+
+* [SAML-7](https://projects.pixl8.london/browse/SAML-7) - Add preSamlSsoLoginResponse interceptor
+
+## v5.1.1
+
+* Remove extra testing code for digest algorithm
+
+## v5.1.0
+
+* Ensure correct signing algorithm is used to match certificate (RSA SHA-256)
+* Include default namespace when stripping namespace attributes
+
+## v5.0.2
+
+* Sign Single Logout Responses
+* Ensure ID attribute on logout responses meets SAML spec and does not start with a number
+
+## v5.0.1
+
+* [#11](https://github.com/pixl8/preside-ext-saml2-sso/issues/11) Remove unused private methods (hope to resolve sporadic Lucee bug errors in some environments)
+
+## v5.0.0
+
+* Add beta support for SLO when acting as a frontend IdP (add feature flag `settings.features.samlSsoProviderSlo.enabled=true`)
+* Add beta feature for allowing custom certificates to be input for IdP integrations (add feature flag `settings.features.saml2CertificateManager.enabled=true`)
+* Add validation of SAML request signatures
+* Add admin ability to specify NameID format used for service provider SAML Assertion responses
+
+## v4.1.5
+
+* Hopeful fix, and more useful error information, for "Invalid signature" failures on apparently valid SAML responses.
+* Convert to GH actions flow
+* Fix for later versions of JAVA that drop support for sun.misc.BASE64Encoder
+
+## v4.1.4
+
+* Do not read HTTP request body every time we want to check the request method
+
+## v4.1.3
+
+* Do not refer to the session scope directly. Use sessionStorage abstraction instead.
+
 ## v4.1.2
 
 * Return multiple values of SamlResponse attributes if found

@@ -4,7 +4,7 @@ component extends="testbox.system.BaseSpec" {
 		describe( "init()", function(){
 			it( "should initialize by passing a valid SAML response to its constructor", function(){
 				var rp = _getResponse( FileRead( "/tests/resources/response/response.xml" ) );
-				expect( rp ).toBeInstanceOf( "samlIdProvider.SamlResponse" );
+				expect( rp ).toBeInstanceOf( "samlIdProvider.saml.response.SamlResponse" );
 			} );
 		} );
 
@@ -89,7 +89,7 @@ component extends="testbox.system.BaseSpec" {
 	}
 
 	private any function _getResponse( required string requestPath ) {
-		return new samlIdProvider.SamlResponse( arguments.requestPath );
+		return new samlIdProvider.saml.response.SamlResponse( arguments.requestPath );
 	}
 
 }
