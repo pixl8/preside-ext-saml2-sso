@@ -17,4 +17,11 @@
 
 		return x509cert;
 	}
+	function unformatX509Certificate( required string formatted ) {
+		var unformatted = Replace( arguments.formatted, "-----BEGIN CERTIFICATE-----", "" );
+		unformatted = Replace( unformatted, "-----END CERTIFICATE-----", "" );
+		unformatted = ReReplace( unformatted, "[\s\n]", "", "all" );
+
+		return unformatted;
+	}
 </cfscript>

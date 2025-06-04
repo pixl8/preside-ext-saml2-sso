@@ -32,7 +32,7 @@ component {
 		}
 
 		template = Replace( template, {
-			  "${x509}"           = settings.x509Certificate
+			  "${x509}"           = $helpers.unformatX509Certificate( settings.x509Certificate )
 			, "${attribs}"        = settings.supportedAttribs
 			, "${nameidformat}"   = settings.nameIdFormat
 			, "${ssolocation}"    = settings.singleLoginLocation
@@ -63,7 +63,7 @@ component {
 		}
 
 		template = Replace( template, {
-			  "${x509}"           = settings.x509Certificate
+			  "${x509}"           = $helpers.unformatX509Certificate( settings.x509Certificate )
 			, "${ssolocation}"    = settings.assertionConsumerLocation
 			, "${entityid}"       = settings.entityId
 			, "${orgshortname}"   = settings.orgShortName
