@@ -9,7 +9,7 @@
 <html>
 	<head>
 		<title>SAML2 Single Sign On</title>
-		<style>
+		<style nonce="#event?.getRequestNonce()#">
 			body {
 				font    : 16px/1.5 sans-serif;
 				padding : 2em;
@@ -69,7 +69,7 @@
 			</p>
 		</form>
 
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="#event?.getRequestNonce()#">
 			document.getElementById( "samlform" ).submit();
 		</script>
 	</body>
