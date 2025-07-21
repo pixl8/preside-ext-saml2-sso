@@ -23,7 +23,7 @@
       </cfif>
     </form>
     <p>Please wait while you are redirected to <strong>#args.serviceName#</strong> (#args.redirectLocation#)</p>
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="#event?.getRequestNonce()#">
       document.getElementById("samlform").submit();
     </script>
   </body>
