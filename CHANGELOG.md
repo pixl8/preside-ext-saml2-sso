@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.1.7
+
+* Support CSP nonces in script output for latest preside versions
+
 ## v4.1.5
 
 * Hopeful fix, and more useful error information, for "Invalid signature" failures on apparently valid SAML responses.
