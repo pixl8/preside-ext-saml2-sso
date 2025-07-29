@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.1.10
+
+* Support CSP nonces in script output for latest preside versions
+
 ## v5.1.8-9
 
 * Attempt build fixes
