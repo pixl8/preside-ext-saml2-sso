@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.11
+
+* Support CSP nonces in script output for latest preside versions
+
 ## v6.0.10
 
 * Hopeful version bump to fix an anomoly in github building
