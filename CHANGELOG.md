@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.0.3
+
+* Support CSP nonces in script output for latest preside versions
+
 ## v5.0.2
 
 * Sign Single Logout Responses
