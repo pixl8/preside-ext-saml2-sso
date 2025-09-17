@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.12
+
+* Support array values for custom user attributes
+
 ## v6.0.11
 
 * Support CSP nonces in script output for latest preside versions

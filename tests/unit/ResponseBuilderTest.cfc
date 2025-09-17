@@ -56,6 +56,47 @@ component extends="testbox.system.BaseSpec" {
 					fail( "SAML did not validate" );
 				}
 			} );
+
+			it( "should include one AttributeValue element when attribute is a string with a single value", function(){
+				var builder  = _getBuilder();
+				var response = builder.buildAuthenticationAssertion(
+					  issuer              = "http://www.thewebsite.com/"
+					, nameIdFormat        = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+					, nameIdValue         = "test@test.com"
+					, inResponseTo        = "aaf23196-1773-2113-474a-fe114412ab72"
+					, recipientUrl        = "https://sp.example.com/SAML2/SSO/POST"
+					, audience            = "https://sp.example.com/SAML2"
+					, sessionTimeout      = 30
+					, sessionIndex        = "C894146D-598F-4D9B-8733ACF80280C4B7"
+					, attributes          = { expertise = "admin" }
+					, privateKey          = testPk
+					, publicCertificate   = testCert
+				);
+
+				var matches = ReMatchNoCase( "<(?:[A-Za-z0-9-]+:)?AttributeValue[ >]", response );
+				expect( ArrayLen( matches ) ).toBe( 1 );
+			} );
+
+			it( "should include two AttributeValue elements when attribute has multiple values", function(){
+				var builder  = _getBuilder();
+				var response = builder.buildAuthenticationAssertion(
+					  issuer              = "http://www.thewebsite.com/"
+					, nameIdFormat        = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+					, nameIdValue         = "test@test.com"
+					, inResponseTo        = "aaf23196-1773-2113-474a-fe114412ab72"
+					, recipientUrl        = "https://sp.example.com/SAML2/SSO/POST"
+					, audience            = "https://sp.example.com/SAML2"
+					, sessionTimeout      = 30
+					, sessionIndex        = "C894146D-598F-4D9B-8733ACF80280C4B7"
+					, attributes          = { expertise=[ "admin", "expert" ] }
+					, privateKey          = testPk
+					, publicCertificate   = testCert
+				);
+
+				var matches = ReMatchNoCase( "<(?:[A-Za-z0-9-]+:)?AttributeValue[ >]", response );
+				expect( ArrayLen( matches ) ).toBe( 2 );
+			} );
+
 		} );
 
 		describe( "buildErrorResponse()", function(){
