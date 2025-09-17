@@ -1,5 +1,17 @@
 # Changelog
 
+## v6.0.11
+
+* Support CSP nonces in script output for latest preside versions
+
+## v6.0.10
+
+* Hopeful version bump to fix an anomoly in github building
+
+## v6.0.9
+
+* [SAML-23](https://projects.pixl8.london/browse/SAML-23) - Metadata: certs should not be PEM formatted
+
 ## v6.0.8
 
 * Nothing to see here, testing build
