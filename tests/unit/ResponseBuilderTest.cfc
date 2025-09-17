@@ -56,6 +56,48 @@ component extends="testbox.system.BaseSpec" {
 					fail( "SAML did not validate" );
 				}
 			} );
+
+			it( "should handle attributes with array values", function(){
+				var builder  = _getBuilder();
+				var response = builder.buildAuthenticationAssertion(
+					  issuer              = "http://www.thewebsite.com/"
+					, nameIdFormat        = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+					, nameIdValue         = "test@test.com"
+					, inResponseTo        = "aaf23196-1773-2113-474a-fe114412ab72"
+					, recipientUrl        = "https://sp.example.com/SAML2/SSO/POST"
+					, audience            = "https://sp.example.com/SAML2"
+					, sessionTimeout      = 30
+					, sessionIndex        = "C894146D-598F-4D9B-8733ACF80280C4B7"
+					, attributes          = {
+						email = "test@test.com",
+						displayName="Test user",
+						firstName="Test",
+						lastName="user",
+						roles = ["expert", "admin"]
+					}
+					, privateKey          = testPk
+					, publicCertificate   = testCert
+				);
+
+				expect( IsXml( response ) ).toBeTrue();
+				expect( response ).toInclude( "<saml:Attribute Name=""roles"">" );
+				expect( response ).toInclude( "<saml:AttributeValue" );
+				expect( response ).toInclude( "expert" );
+				expect( response ).toInclude( "admin" );
+
+				// Count the number of AttributeValue elements for roles
+				var attributeValueCount = ( response ).reFindNoCase( "<saml:AttributeValue[^>]*>expert</saml:AttributeValue>", "all" ).len();
+				expect( attributeValueCount ).toBe( 1 );
+				attributeValueCount = ( response ).reFindNoCase( "<saml:AttributeValue[^>]*>admin</saml:AttributeValue>", "all" ).len();
+				expect( attributeValueCount ).toBe( 1 );
+
+				var openSamlObjectRepresentingResponse = openSamlUtils.xmlToOpenSamlObject( response );
+				try {
+					openSamlObjectRepresentingResponse.validate( true );
+				} catch ( any e ) {
+					fail( "SAML did not validate" );
+				}
+			} );
 		} );
 
 		describe( "buildErrorResponse()", function(){
