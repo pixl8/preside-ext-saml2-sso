@@ -85,11 +85,40 @@ component extends="testbox.system.BaseSpec" {
 				expect( response ).toInclude( "expert" );
 				expect( response ).toInclude( "admin" );
 
-				// Count the number of AttributeValue elements for roles
-				var expertMatches = ( response ).reFindNoCase( "<saml:AttributeValue[^>]*>expert</saml:AttributeValue>", "all" );
-				expect( ArrayLen( expertMatches ) ).toBe( 1 );
-				var adminMatches = ( response ).reFindNoCase( "<saml:AttributeValue[^>]*>admin</saml:AttributeValue>", "all" );
-				expect( ArrayLen( adminMatches ) ).toBe( 1 );
+				// Parse XML and count AttributeValue elements for roles
+				var xmlDoc = XmlParse( response );
+				var attributeStatements = xmlDoc.xmlRoot.xmlChildren;
+				var rolesAttribute = "";
+				var attributeValues = [];
+
+				// Find the roles attribute in the assertion
+				for ( var assertion in attributeStatements ) {
+					if ( assertion.xmlName == "Assertion" ) {
+						for ( var statement in assertion.xmlChildren ) {
+							if ( statement.xmlName == "AttributeStatement" ) {
+								for ( var attribute in statement.xmlChildren ) {
+									if ( attribute.xmlName == "Attribute" && attribute.xmlAttributes.Name == "roles" ) {
+										rolesAttribute = attribute;
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				expect( rolesAttribute ).notToBeEmpty();
+
+				// Count AttributeValue elements within the roles attribute
+				for ( var child in rolesAttribute.xmlChildren ) {
+					if ( child.xmlName == "AttributeValue" ) {
+						ArrayAppend( attributeValues, child.xmlText );
+					}
+				}
+
+				expect( ArrayLen( attributeValues ) ).toBe( 2 );
+				expect( attributeValues ).toInclude( "expert" );
+				expect( attributeValues ).toInclude( "admin" );
 
 				var openSamlObjectRepresentingResponse = openSamlUtils.xmlToOpenSamlObject( response );
 				try {
