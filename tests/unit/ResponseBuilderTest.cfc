@@ -86,10 +86,10 @@ component extends="testbox.system.BaseSpec" {
 				expect( response ).toInclude( "admin" );
 
 				// Count the number of AttributeValue elements for roles
-				var attributeValueCount = ( response ).reFindNoCase( "<saml:AttributeValue[^>]*>expert</saml:AttributeValue>", "all" ).len();
-				expect( attributeValueCount ).toBe( 1 );
-				attributeValueCount = ( response ).reFindNoCase( "<saml:AttributeValue[^>]*>admin</saml:AttributeValue>", "all" ).len();
-				expect( attributeValueCount ).toBe( 1 );
+				var expertMatches = ( response ).reFindNoCase( "<saml:AttributeValue[^>]*>expert</saml:AttributeValue>", "all" );
+				expect( ArrayLen( expertMatches ) ).toBe( 1 );
+				var adminMatches = ( response ).reFindNoCase( "<saml:AttributeValue[^>]*>admin</saml:AttributeValue>", "all" );
+				expect( ArrayLen( adminMatches ) ).toBe( 1 );
 
 				var openSamlObjectRepresentingResponse = openSamlUtils.xmlToOpenSamlObject( response );
 				try {
