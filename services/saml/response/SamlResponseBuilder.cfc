@@ -235,8 +235,14 @@ component {
 			} else {
 				xml &= '<saml:Attribute Name="#key#">';
 			}
+			if ( IsArray( arguments.attributes[ key ] ) ) {
+				for ( var val in arguments.attributes[ key ] ) {
+					xml &= '<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">#XmlFormat( val )#</saml:AttributeValue>';
+				}
+			} else {
+				xml &= '<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">#XmlFormat( arguments.attributes[ key ] )#</saml:AttributeValue>';
+			}
 
-			xml &= '<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">#XmlFormat( arguments.attributes[ key ] )#</saml:AttributeValue>';
 			xml &= '</saml:Attribute>';
 		}
 

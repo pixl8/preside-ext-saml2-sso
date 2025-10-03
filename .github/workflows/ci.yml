@@ -42,6 +42,12 @@ jobs:
           name: test-results
           path: tests/test-results.txt
 
+      - name: Push to Translation Manager
+        if: "env.PUBLISH == 'true'"
+        uses: pixl8/github-action-push-to-translation-manager@v1
+        with:
+          translations_api_key: ${{ secrets.TRANSLATIONS_API_KEY }}
+
       - name: Generate release version number
         if: "env.PUBLISH == 'true'"
         id: versiongen
