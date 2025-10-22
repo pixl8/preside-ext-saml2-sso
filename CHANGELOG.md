@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.13
+
+* Apply translation manager CI action
+
 ## v6.0.12
 
 * Support array values for custom user attributes
