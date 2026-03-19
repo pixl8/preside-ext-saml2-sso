@@ -27,7 +27,7 @@ component {
 		var certAlias    = "generated";
 		var certPassword = CreateUUId();
 		var password     = CreateUUId();
-		var keyToolArgs  = '-genkeypair -validity #arguments.expiryDays# -alias #certAlias# -keyalg RSA -storetype JKS -keystore #filePath# -storepass #password# -keysize 2048 -keypass #certPassword# -dname CN=#arguments.cn#'.split( "\s+" );
+		var keyToolArgs  = '-genkeypair -validity #arguments.expiryDays# -alias #certAlias# -keyalg RSA -storetype JKS -keystore #filePath# -storepass #password# -keysize 3072 -keypass #certPassword# -dname CN=#arguments.cn#'.split( "\s+" );
 
 		// TODO, replace this with a java lib for generating the keypair
 		// should keytool fail, it crashes the server :o
