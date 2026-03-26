@@ -1,5 +1,7 @@
 <cfscript>
-	certElId = "certificate-" & CreateUUId();
+	certElId   = "certificate-" & CreateUUId();
+	sha256ElId = "sha256-" & CreateUUId();
+	sha1ElId   = "sha1-" & CreateUUId();
 </cfscript>
 <cfoutput>
 	<div class="table-responsive-lg">
@@ -25,7 +27,19 @@
 					<td><a data-toggle="collapse" data-target="###certElId#" aria-expanded="false" aria-controls="#certElId#"><i class="fa fa-fw fa-eye"></i></a></td>
 				</tr>
 				<tr id="#certElId#" class="collapse">
-					<td style="vertical-align:top" colspan="2"><pre><code>#args.data#</code></pre </td>
+					<td style="vertical-align:top" colspan="2"><pre><code>#args.data#</code></pre></td>
+				</tr>
+				<tr>
+					<th style="vertical-align:top">#translateResource( "saml2:x509.info.table.fingerprint.sha1.th")#</th>
+					<td style="vertical-align:top">
+						<code id="#sha1ElId#" style="word-break:break-all;">#args.certInfo.fingerprintSha1#</code>
+					</td>
+				</tr>
+				<tr>
+					<th style="vertical-align:top">#translateResource( "saml2:x509.info.table.fingerprint.sha256.th")#</th>
+					<td style="vertical-align:top">
+						<code id="#sha256ElId#" style="word-break:break-all;">#args.certInfo.fingerprintSha256#</code>
+					</td>
 				</tr>
 			</tbody>
 		</table>

@@ -51,6 +51,24 @@ component {
 		return result;
 	}
 
+	public string function getCertificateFingerprint( required string x509Cert, string algorithm="SHA-256" ) {
+		var certObj   = x509CertReader.read( arguments.x509Cert );
+		var derBytes  = certObj.getEncoded();
+		var digest    = CreateObject( "java", "java.security.MessageDigest" ).getInstance( arguments.algorithm );
+		var hashBytes = digest.digest( derBytes );
+		var sb        = CreateObject( "java", "java.lang.StringBuilder" );
+
+		for ( var i = 1; i <= ArrayLen( hashBytes ); i++ ) {
+			if ( i > 1 ) {
+				sb.append( ":" );
+			}
+			var hex = FormatBaseN( BitAnd( hashBytes[ i ], 255 ), 16 );
+			sb.append( UCase( hex.len() == 1 ? "0#hex#" : hex ) );
+		}
+
+		return sb.toString();
+	}
+
 	private string function _getCnForCertificates() {
 		var shortName = samlProviderMetadataGenerator.getMetaDataSettings().organisation_short_name;
 
