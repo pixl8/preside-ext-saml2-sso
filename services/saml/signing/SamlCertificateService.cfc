@@ -51,8 +51,8 @@ component {
 		return result;
 	}
 
-	public string function getCertificateFingerprint( required string x509Cert, string algorithm="SHA-256" ) {
-		var certObj   = x509CertReader.read( arguments.x509Cert );
+	public string function getCertificateFingerprint( required any x509Cert, string algorithm="SHA-256" ) {
+		var certObj   = IsSimpleValue( arguments.x509Cert ) ? x509CertReader.read( arguments.x509Cert ) : arguments.x509Cert;
 		var derBytes  = certObj.getEncoded();
 		var digest    = CreateObject( "java", "java.security.MessageDigest" ).getInstance( arguments.algorithm );
 		var hashBytes = digest.digest( derBytes );

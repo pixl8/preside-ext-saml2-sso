@@ -31,6 +31,14 @@ component extends="testbox.system.BaseSpec" {
 				expect( fingerprint ).toBe( "98:EF:0E:8E:21:9E:D4:2E:99:C5:C9:78:88:98:59:0C:58:F6:43:96" );
 			} );
 
+			it( "should return the correct SHA-256 fingerprint when passed a certificate object instead of a string", function() {
+				var svc         = _getService();
+				var certObj     = CreateObject( "app.extensions.preside-ext-saml2-sso.services.saml.signing.X509CertReader" ).read( _getTestCert() );
+				var fingerprint = svc.getCertificateFingerprint( certObj );
+
+				expect( fingerprint ).toBe( "4A:C0:DE:C4:5D:0A:77:F0:76:49:34:49:E1:71:17:90:CC:E2:03:A4:51:A2:A1:24:0A:3D:18:29:6A:C1:AA:9F" );
+			} );
+
 			it( "should format each byte as uppercase two-digit hex separated by colons", function() {
 				var svc         = _getService();
 				var fingerprint = svc.getCertificateFingerprint( _getTestCert() );
