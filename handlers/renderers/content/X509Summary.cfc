@@ -15,8 +15,8 @@ component {
 					, selfIssued        = certObj.isSelfIssued( certObj )
 					, expires           = certObj.getNotAfter()
 					, valid             = true
-					, fingerprintSha256 = samlCertificateService.getCertificateFingerprint( cert, "SHA-256" )
-					, fingerprintSha1   = samlCertificateService.getCertificateFingerprint( cert, "SHA-1" )
+					, fingerprintSha256 = samlCertificateService.getCertificateFingerprint( certObj, "SHA-256" )
+					, fingerprintSha1   = samlCertificateService.getCertificateFingerprint( certObj, "SHA-1" )
 				};
 
 				try {
