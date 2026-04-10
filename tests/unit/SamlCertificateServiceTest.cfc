@@ -10,9 +10,9 @@ component extends="testbox.system.BaseSpec" {
 			} );
 
 			it( "should return the correct SHA-256 fingerprint when the certificate is wrapped in PEM headers", function() {
-				var svc         = _getService();
+				var svc             = _getService();
 				var certWithHeaders = "-----BEGIN CERTIFICATE-----" & Chr(10) & _getTestCert() & Chr(10) & "-----END CERTIFICATE-----";
-				var fingerprint = svc.getCertificateFingerprint( certWithHeaders );
+				var fingerprint     = svc.getCertificateFingerprint( certWithHeaders );
 
 				expect( fingerprint ).toBe( "4A:C0:DE:C4:5D:0A:77:F0:76:49:34:49:E1:71:17:90:CC:E2:03:A4:51:A2:A1:24:0A:3D:18:29:6A:C1:AA:9F" );
 			} );
