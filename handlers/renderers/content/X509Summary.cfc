@@ -1,6 +1,7 @@
 component {
 
-	property name="x509CertReader" inject="x509CertReader";
+	property name="x509CertReader"         inject="x509CertReader";
+	property name="samlCertificateService" inject="samlCertificateService";
 
 	public string function default( event, rc, prc, args={} ){
 		var cert = args.data ?: "";
@@ -10,10 +11,12 @@ component {
 				var certObj = x509CertReader.read( cert );
 
 				args.certInfo = {
-					  issuer     = certObj.getIssuerDN().toString()
-					, selfIssued = certObj.isSelfIssued( certObj )
-					, expires = certObj.getNotAfter()
-					, valid = true
+					  issuer            = certObj.getIssuerDN().toString()
+					, selfIssued        = certObj.isSelfIssued( certObj )
+					, expires           = certObj.getNotAfter()
+					, valid             = true
+					, fingerprintSha256 = samlCertificateService.getCertificateFingerprint( certObj, "SHA-256" )
+					, fingerprintSha1   = samlCertificateService.getCertificateFingerprint( certObj, "SHA-1" )
 				};
 
 				try {

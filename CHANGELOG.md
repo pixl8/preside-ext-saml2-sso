@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.14
+
+* Ability to create a fingerprint from a X.509 certificate
+
 ## v6.0.13
 
 * Apply translation manager CI action
