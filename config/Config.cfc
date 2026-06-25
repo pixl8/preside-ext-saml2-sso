@@ -4,6 +4,7 @@ component {
 		var settings = arguments.config.settings ?: {};
 
 		settings.saml2 = {};
+		settings.saml2.keySize = Val( settings.env.SAML2_KEY_SIZE ?: 2048 );
 
 		_configureExtensionSettings( settings );
 		_configureFeatures( settings );

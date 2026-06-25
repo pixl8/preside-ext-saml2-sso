@@ -5,6 +5,7 @@
 component {
 
 	property name="samlProviderMetadataGenerator" inject="delayedInjector:samlProviderMetadataGenerator";
+	property name="configuredKeySize"             inject="coldbox:setting:saml2.keySize";
 
 // CONSTRUCTOR
 	public any function init() {
@@ -22,12 +23,12 @@ component {
 		};
 	}
 
-	public struct function generateKeyPair( expiryDays=7300, cn=_getCnForCertificates() ) {
+	public struct function generateKeyPair( expiryDays=7300, cn=_getCnForCertificates(), keySize=configuredKeySize ) {
 		var filePath     = ExpandPath( "/uploads/saml2/tmpkeystore#CreateUUId()#" );
 		var certAlias    = "generated";
 		var certPassword = CreateUUId();
 		var password     = CreateUUId();
-		var keyToolArgs  = '-genkeypair -validity #arguments.expiryDays# -alias #certAlias# -keyalg RSA -storetype JKS -keystore #filePath# -storepass #password# -keysize 2048 -keypass #certPassword# -dname CN=#arguments.cn#'.split( "\s+" );
+		var keyToolArgs  = '-genkeypair -validity #arguments.expiryDays# -alias #certAlias# -keyalg RSA -storetype JKS -keystore #filePath# -storepass #password# -keysize #arguments.keySize# -keypass #certPassword# -dname CN=#arguments.cn#'.split( "\s+" );
 
 		// TODO, replace this with a java lib for generating the keypair
 		// should keytool fail, it crashes the server :o
