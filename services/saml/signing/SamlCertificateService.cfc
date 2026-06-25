@@ -5,7 +5,7 @@
 component {
 
 	property name="samlProviderMetadataGenerator" inject="delayedInjector:samlProviderMetadataGenerator";
-	property name="configuredKeySize"             inject="coldbox:setting:saml2.keySize";
+	property name="defaultKeySize"                inject="coldbox:setting:saml2.certs.defaultKeySize";
 
 // CONSTRUCTOR
 	public any function init() {
@@ -23,7 +23,7 @@ component {
 		};
 	}
 
-	public struct function generateKeyPair( expiryDays=7300, cn=_getCnForCertificates(), keySize=configuredKeySize ) {
+	public struct function generateKeyPair( expiryDays=7300, cn=_getCnForCertificates(), keySize=defaultKeySize ) {
 		var filePath     = ExpandPath( "/uploads/saml2/tmpkeystore#CreateUUId()#" );
 		var certAlias    = "generated";
 		var certPassword = CreateUUId();
