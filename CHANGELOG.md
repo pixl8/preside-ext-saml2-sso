@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.15
+
+* Ability to configure a different key length for generated certificates
+
 ## v6.0.14
 
 * Ability to create a fingerprint from a X.509 certificate
