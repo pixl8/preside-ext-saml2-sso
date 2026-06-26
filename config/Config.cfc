@@ -38,6 +38,9 @@ component {
 			, supportContactName    = settings.env.SAML2_SUPPORT_CONTACT      ?: "Unknown"
 			, supportContactEmail   = settings.env.SAML2_SUPPORT_EMAIL        ?: "unknown@example.com"
 		};
+
+		settings.saml2.certs = {};
+		settings.saml2.certs.defaultKeySize = Val( settings.env.SAML2_KEY_SIZE ?: 2048 );
 	}
 
 	private void function _configureFeatures( settings ) {
