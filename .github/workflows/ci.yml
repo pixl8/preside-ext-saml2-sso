@@ -68,26 +68,14 @@ jobs:
       - name: Create Release
         if: "env.PUBLISH == 'true'"
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ steps.versiongen.outputs.semver_release_string }}
-          draft: false
+          token: ${{ secrets.RELEASE_PAT }}
+          tag_name: ${{ steps.versiongen.outputs.semver_release_string }}
+          name: Release ${{ steps.versiongen.outputs.semver_release_string }}
+          target_commitish: ${{ github.sha }}
           prerelease: ${{ steps.versiongen.outputs.semver_release_is_snapshot }}
-
-      - name: Upload Release Asset
-        if: "env.PUBLISH == 'true'"
-        id: upload
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ${{ steps.versiongen.outputs.semver_release_number }}.zip
-          asset_name: ${{ steps.versiongen.outputs.semver_release_number }}.zip
-          asset_content_type: application/zip
+          files: ${{ steps.versiongen.outputs.semver_release_number }}.zip
 
       - name: Inject download location
         if: "env.PUBLISH == 'true'"
@@ -95,7 +83,7 @@ jobs:
         with:
           files: box.json
         env:
-          DOWNLOAD_URL: ${{ steps.upload.outputs.browser_download_url }}
+          DOWNLOAD_URL: ${{ fromJson(steps.create_release.outputs.assets)[0].browser_download_url }}
 
       - name: Publish to forgebox
         if: "env.PUBLISH == 'true'"
