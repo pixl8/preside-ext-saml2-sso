@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.16
+
+* Build fixes
+
 ## v6.0.15
 
 * Ability to configure a different key length for generated certificates
