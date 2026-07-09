@@ -78,15 +78,15 @@ jobs:
           files: ${{ steps.versiongen.outputs.semver_release_number }}.zip
 
       - name: Inject download location
-        if: "env.PUBLISH == 'true'"
+        if: env.PUBLISH == 'true' && steps.create_release.outcome == 'success'
         uses: DominicWatson/github-action-envsubst@stable
         with:
           files: box.json
         env:
-          DOWNLOAD_URL: ${{ fromJson(steps.create_release.outputs.assets)[0].browser_download_url }}
+          DOWNLOAD_URL: ${{ steps.create_release.outcome == 'success' && fromJson(steps.create_release.outputs.assets)[0].browser_download_url || '' }}
 
       - name: Publish to forgebox
-        if: "env.PUBLISH == 'true'"
+        if: env.PUBLISH == 'true' && steps.create_release.outcome == 'success'
         uses: pixl8/github-action-box-publish@v3
         with:
           forgebox_user: ${{ secrets.FORGEBOX_USER }}
