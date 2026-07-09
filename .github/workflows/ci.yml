@@ -6,6 +6,8 @@ jobs:
   ci:
     name: CI for Preside Data API extension
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Setup flow variables
         run: |
