@@ -35,12 +35,18 @@ jobs:
           output_file: /tests/test-results.txt
           verbose: true
 
-      - name: Upload test results
+      - name: Upload Test Results Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: tests/test-results.txt
+
+      - name: Push to Translation Manager
+        if: "env.PUBLISH == 'true'"
+        uses: pixl8/github-action-push-to-translation-manager@v1
+        with:
+          translations_api_key: ${{ secrets.TRANSLATIONS_API_KEY }}
 
       - name: Generate release version number
         if: "env.PUBLISH == 'true'"
