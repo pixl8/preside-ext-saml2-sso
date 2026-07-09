@@ -1,6 +1,6 @@
 # Changelog
 
-## v5.0.4-5
+## v5.0.4-6
 
 * Build fixes
 
