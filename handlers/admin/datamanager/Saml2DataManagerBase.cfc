@@ -82,12 +82,12 @@ component extends="preside.system.base.EnhancedDataManagerBase" {
 			, requests_will_be_signed     = isTrue( meta.serviceProviderSsoRequirements.requestsWillBeSigned ?: "" )
 			, want_assertions_signed      = isTrue( meta.serviceProviderSsoRequirements.wantAssertionsSigned ?: "" )
 			, assertion_consumer_location = meta.serviceProviderSsoRequirements.defaultAssertionConsumer.location ?: ""
-			, assertion_consumer_binding  = ListLast( meta.serviceProviderSsoRequirements.defaultAssertionConsumer.binding ?: "", ":" )
+			, assertion_consumer_binding  = UCase( ListLast( meta.serviceProviderSsoRequirements.defaultAssertionConsumer.binding ?: "", ":" ) )
 		};
 
 		if ( isFeatureEnabled( "samlSsoProviderSlo" ) ) {
 			data.single_logout_location = meta.serviceProviderSsoRequirements.logoutService.location ?: "";
-			data.single_logout_binding  = ListLast( meta.serviceProviderSsoRequirements.logoutService.binding ?: "", ":" );
+			data.single_logout_binding  = UCase( ListLast( meta.serviceProviderSsoRequirements.logoutService.binding ?: "", ":" ) );
 		}
 
 		if ( !_validateMeta( argumentCollection=arguments, objectName="saml2_sp", data=data ) ) {
