@@ -1,5 +1,13 @@
 # Changelog
 
+## v6.0.19
+
+* Fix cert summary rendering issue for later versions of Java
+
+## v6.0.16-18
+
+* Build fixes
+
 ## v6.0.15
 
 * Ability to configure a different key length for generated certificates
