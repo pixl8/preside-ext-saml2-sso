@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.20
+
+* Fixes for issues with later versions of java and default new signing algorithms causing unexpected results
+
 ## v6.0.19
 
 * Fix cert summary rendering issue for later versions of Java
