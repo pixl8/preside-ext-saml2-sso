@@ -11,8 +11,8 @@ component {
 				var certObj = x509CertReader.read( cert );
 
 				args.certInfo = {
-					  issuer            = certObj.getIssuerDN().toString()
-					, selfIssued        = certObj.isSelfIssued( certObj )
+					  issuer            = certObj.getIssuerX500Principal().toString()
+					, selfIssued        = certObj.getSubjectX500Principal().equals( certObj.getIssuerX500Principal() )
 					, expires           = certObj.getNotAfter()
 					, valid             = true
 					, fingerprintSha256 = samlCertificateService.getCertificateFingerprint( certObj, "SHA-256" )

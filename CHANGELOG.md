@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.19
+
+* Fix cert summary rendering issue for later versions of Java
+
 ## v6.0.16-18
 
 * Build fixes
