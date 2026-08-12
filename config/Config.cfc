@@ -41,6 +41,7 @@ component {
 
 		settings.saml2.certs = {};
 		settings.saml2.certs.defaultKeySize = Val( settings.env.SAML2_KEY_SIZE ?: 2048 );
+		settings.saml2.certs.defaultSigAlg  = settings.env.SAML2_SIG_ALG ?: "SHA256withRSA";
 	}
 
 	private void function _configureFeatures( settings ) {
