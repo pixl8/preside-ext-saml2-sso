@@ -8,10 +8,16 @@ component {
 		_setupJavaloader();
 		_bootstrapOpenSamlConfiguration();
 		_setSignatureMappings( {
-			"SHA256withRSA": "ALGO_ID_SIGNATURE_RSA_SHA256"
+			  "SHA1withRSA"   : "ALGO_ID_SIGNATURE_RSA_SHA256"
+			, "SHA256withRSA" : "ALGO_ID_SIGNATURE_RSA_SHA256"
+			, "SHA384withRSA" : "ALGO_ID_SIGNATURE_RSA_SHA384"
+			, "SHA512withRSA" : "ALGO_ID_SIGNATURE_RSA_SHA512"
 		} );
 		_setDigestMappings( {
-			"SHA256withRSA": "ALGO_ID_DIGEST_SHA256"
+			  "SHA1withRSA"   : "ALGO_ID_DIGEST_SHA256"
+			, "SHA256withRSA" : "ALGO_ID_DIGEST_SHA256"
+			, "SHA384withRSA" : "ALGO_ID_DIGEST_SHA384"
+			, "SHA512withRSA" : "ALGO_ID_DIGEST_SHA512"
 		} );
 
 		return this;
