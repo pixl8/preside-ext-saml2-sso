@@ -4,19 +4,24 @@
  * the URL-encoded SAMLRequest/SAMLResponse, RelayState and SigAlg
  * parameters and appended as a separate Signature parameter.
  *
- * @singleton
+ * @singleton true
  */
 component {
 
 // CONSTRUCTOR
 	/**
-	 * @deflateEncoder.inject httpRedirectRequestDeflateEncoder
-	 * @keyStore.inject       samlKeyStore
+	 * @deflateEncoder.inject         httpRedirectRequestDeflateEncoder
+	 * @samlCertificateService.inject samlCertificateService
+	 * @openSamlUtils.inject          openSamlUtils
 	 */
-	public any function init( required any deflateEncoder, required any keyStore ) {
+	public any function init(
+		  required any deflateEncoder
+		, required any samlCertificateService
+		, required any openSamlUtils
+	) {
 		_setDeflateEncoder( arguments.deflateEncoder );
-		_setKeyStore( arguments.keyStore );
-		_setOpenSamlUtils( new OpenSamlUtils() );
+		_setSamlCertificateService( arguments.samlCertificateService );
+		_setOpenSamlUtils( arguments.openSamlUtils );
 
 		return this;
 	}
@@ -24,11 +29,13 @@ component {
 // PUBLIC API METHODS
 	public string function buildSignedQueryString(
 		  required string samlXml
+		, required string privateKey
+		, required string publicCertificate
 		,          string paramName  = "SAMLRequest"
 		,          string relayState = ""
 	) {
 		var osUtils    = _getOpenSamlUtils();
-		var credential = _getSigningCredential();
+		var credential = _getSigningCredential( arguments.privateKey, arguments.publicCertificate );
 		var sigAlg     = osUtils.getRedirectBindingSigAlg( credential );
 		var content    = arguments.paramName & "=" & _getDeflateEncoder().encode( arguments.samlXml );
 
@@ -47,12 +54,15 @@ component {
 	}
 
 // PRIVATE HELPERS
-	private any function _getSigningCredential() {
-		var keyStore = _getKeyStore();
+	private any function _getSigningCredential( required string privateKey, required string publicCertificate ) {
+		var keyPair = _getSamlCertificateService().getKeyPairForSigningCredential(
+			  privateKey = arguments.privateKey
+			, publicCert = arguments.publicCertificate
+		);
 
 		return _getOpenSamlUtils().getOpenSamlCredential(
-			  privateKey  = keyStore.getPrivateKey()
-			, certificate = keyStore.getCert()
+			  privateKey  = keyPair.privateKey
+			, certificate = keyPair.publicCertificate
 		);
 	}
 
@@ -68,11 +78,11 @@ component {
 		_deflateEncoder = arguments.deflateEncoder;
 	}
 
-	private any function _getKeyStore() {
-		return _keyStore;
+	private any function _getSamlCertificateService() {
+		return _samlCertificateService;
 	}
-	private void function _setKeyStore( required any keyStore ) {
-		_keyStore = arguments.keyStore;
+	private void function _setSamlCertificateService( required any samlCertificateService ) {
+		_samlCertificateService = arguments.samlCertificateService;
 	}
 
 	private any function _getOpenSamlUtils() {

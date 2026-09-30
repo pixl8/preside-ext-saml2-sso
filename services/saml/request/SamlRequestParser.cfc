@@ -47,15 +47,8 @@ component {
 			}
 
 			if ( StructCount( parsedRequest.issuerEntity ) ) {
-				var expectSigned = parsedRequest.issuerEntity.serviceProviderSsoRequirements.requestsWillBeSigned ?: "";
-				    expectSigned = IsBoolean( expectSigned ) && expectSigned;
-
-				if ( expectSigned && !_signatureIsValid( parsedRequest ) ) {
-					throw(
-						  type    = "saml2requestparser.invalid.signature"
-						, message = "The SAML request failed signature validation."
-						, detail  = parsedRequest.samlXml
-					);
+				if ( $helpers.isTrue( parsedRequest.issuerEntity.requests_will_be_signed ) && !_signatureIsValid( parsedRequest ) ) {
+					parsedRequest.error = "invalidsignature";
 				}
 			}
 
@@ -67,7 +60,7 @@ component {
 
 // PRIVATE HELPERS
 	private boolean function _signatureIsValid( required struct parsedRequest ) {
-		var signingCert = arguments.parsedRequest.issuerEntity.serviceProviderSsoRequirements.x509Certificate ?: "";
+		var signingCert = arguments.parsedRequest.issuerEntity.signing_certificate ?: "";
 
 		if ( _hasRedirectBindingSignature( arguments.parsedRequest ) ) {
 			return _getOpenSamlUtils().validateRedirectBindingSignature(

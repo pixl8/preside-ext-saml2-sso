@@ -181,6 +181,13 @@ component {
 	}
 
 	public string function getRedirectBindingSigAlg( required any credential ) {
+		var signatureMappings = _getSignatureMappings();
+		var certAlgorithm     = arguments.credential.getEntityCertificate().getSigAlgName();
+
+		if ( StructKeyExists( signatureMappings, certAlgorithm ) ) {
+			return _create( "org.opensaml.xml.signature.SignatureConstants" )[ signatureMappings[ certAlgorithm ] ];
+		}
+
 		var sigAlgs      = _getRedirectBindingSigAlgs();
 		var keyAlgorithm = arguments.credential.getPrivateKey().getAlgorithm();
 
@@ -217,13 +224,9 @@ component {
 	}
 
 	private any function _getCredentialFromCert( required string cert ) {
-		var x509Cert        = _ensureCertWrappedInHeaderAndFooter( Trim( arguments.cert ) );
-		var byteArrayOfCert = CreateObject( "java", "java.io.ByteArrayInputStream" ).init( x509Cert.getBytes() );
-		var certFactory     = CreateObject( "java", "java.security.cert.CertificateFactory" ).getInstance( "X.509" );
-		var cert            = certFactory.generateCertificate( byteArrayOfCert );
-		var credential      = _create( "org.opensaml.xml.security.x509.BasicX509Credential" );
+		var credential = _create( "org.opensaml.xml.security.x509.BasicX509Credential" );
 
-		credential.setEntityCertificate( cert );
+		credential.setEntityCertificate( new X509CertReader().read( arguments.cert ) );
 
 		return credential;
 	}
@@ -236,14 +239,6 @@ component {
 
 			server._saml2Jl = new javaloader.JavaLoader( loadPaths=libs, loadColdFusionClassPath=true );
 		}
-	}
-
-	private string function _ensureCertWrappedInHeaderAndFooter( required string cert ) {
-		if ( !arguments.cert.startsWith( "-----BEGIN CERTIFICATE-----" ) ) {
-			return "-----BEGIN CERTIFICATE-----" & Chr( 10 ) & arguments.cert & "-----END CERTIFICATE-----"
-		}
-
-		return arguments.cert;
 	}
 
 	private string function _normaliseBase64( required string base64 ) {
