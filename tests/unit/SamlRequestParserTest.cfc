@@ -109,7 +109,7 @@ component extends="testbox.system.BaseSpec" {
 		workflowService.$( "loadSamlVarsFromStoredWorkflow", true );
 		redirectParser.$( "parse", arguments.redirectRequest );
 
-		var parser = getMockBox().createMock( object=new samlIdProvider.SamlRequestParser(
+		var parser = getMockBox().createMock( object=CreateObject( "app.extensions.preside-ext-saml2-sso.services.saml.request.SamlRequestParser" ).init(
 			  samlEntityPool                   = entityPool
 			, httpPostRequestBindingParser     = postParser
 			, httpRedirectRequestBindingParser = redirectParser
