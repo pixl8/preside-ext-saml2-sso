@@ -114,6 +114,7 @@ component extends="testbox.system.BaseSpec" {
 			, httpPostRequestBindingParser     = postParser
 			, httpRedirectRequestBindingParser = redirectParser
 			, workflowService                  = workflowService
+			, openSamlUtils                   = arguments.utils
 		) );
 
 		parser.$( "_isPostRequest", false );
