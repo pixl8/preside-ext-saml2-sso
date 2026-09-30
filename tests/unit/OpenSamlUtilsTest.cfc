@@ -248,7 +248,14 @@ component extends="testbox.system.BaseSpec" {
 		verifier.initVerify( _getTestCert().getPublicKey() );
 		verifier.update( arguments.content.getBytes( "UTF-8" ) );
 
-		return verifier.verify( BinaryDecode( arguments.signature, "base64" ) );
+		try {
+			return verifier.verify( BinaryDecode( arguments.signature, "base64" ) );
+		} catch ( any e ) {
+			// A signature produced under a different digest does not decode as
+			// this algorithm's DigestInfo. Some JDKs report that as an exception
+			// rather than a failed verification.
+			return false;
+		}
 	}
 
 	private string function _getTestPrivateKeyPem() {
