@@ -19,6 +19,11 @@ component {
 			, "SHA384withRSA" : "ALGO_ID_DIGEST_SHA384"
 			, "SHA512withRSA" : "ALGO_ID_DIGEST_SHA512"
 		} );
+		_setRedirectBindingSigAlgs( {
+			  "RSA" = "http://www.w3.org/2001/04/xmldsig-more##rsa-sha256"
+			, "EC"  = "http://www.w3.org/2001/04/xmldsig-more##ecdsa-sha256"
+			, "DSA" = "http://www.w3.org/2000/09/xmldsig##dsa-sha1"
+		} );
 
 		return this;
 	}
@@ -135,6 +140,53 @@ component {
 		return validateSignature( signature=requestSig, credential=_getCredentialFromCert( arguments.signingCert ) );
 	}
 
+	/**
+	 * Validates a detached HTTP-Redirect binding signature (SAML Bindings 2.0, 3.4.4.1)
+	 * where the signature is passed as a URL parameter rather than embedded in the XML.
+	 *
+	 * @signedContent The raw, URL-encoded query string that was signed, e.g. SAMLRequest=...&RelayState=...&SigAlg=...
+	 * @signature     The base64 encoded value of the Signature URL parameter
+	 * @sigAlg        The signature algorithm URI passed in the SigAlg URL parameter
+	 * @signingCert   The X509 certificate of the issuer, from their metadata
+	 */
+	public boolean function validateRedirectBindingSignature(
+		  required string signedContent
+		, required string signature
+		, required string sigAlg
+		, required string signingCert
+	) {
+		if ( !Len( Trim( arguments.signedContent ) ) || !Len( Trim( arguments.signature ) ) || !Len( Trim( arguments.sigAlg ) ) ) {
+			return false;
+		}
+
+		try {
+			var credential     = _getCredentialFromCert( arguments.signingCert );
+			var signatureBytes = BinaryDecode( _normaliseBase64( arguments.signature ), "base64" );
+			var contentBytes   = arguments.signedContent.getBytes( "UTF-8" );
+
+			return _create( "org.opensaml.xml.security.SigningUtil" ).verifyWithURI( credential, arguments.sigAlg, signatureBytes, contentBytes );
+		} catch( any e ) {
+			return false;
+		}
+	}
+
+	public string function signRedirectBindingContent(
+		  required string content
+		, required any    credential
+		, required string sigAlg
+	) {
+		var signatureBytes = _create( "org.opensaml.xml.security.SigningUtil" ).signWithURI( arguments.credential, arguments.sigAlg, arguments.content.getBytes( "UTF-8" ) );
+
+		return BinaryEncode( signatureBytes, "base64" );
+	}
+
+	public string function getRedirectBindingSigAlg( required any credential ) {
+		var sigAlgs      = _getRedirectBindingSigAlgs();
+		var keyAlgorithm = arguments.credential.getPrivateKey().getAlgorithm();
+
+		return sigAlgs[ keyAlgorithm ] ?: sigAlgs.RSA;
+	}
+
 	public boolean function validateSignature( required any signature, required any credential ) {
 		var profileValidator = _create( "org.opensaml.security.SAMLSignatureProfileValidator" ).init();
 		try {
@@ -194,6 +246,10 @@ component {
 		return arguments.cert;
 	}
 
+	private string function _normaliseBase64( required string base64 ) {
+		return ReReplace( Replace( arguments.base64, " ", "+", "all" ), "[\r\n\t]", "", "all" );
+	}
+
 	private struct function _getSignatureMappings() {
 		return _signatureMappings;
 	}
@@ -206,6 +262,13 @@ component {
 	}
 	private void function _setDigestMappings( required struct digestMappings ) {
 		_digestMappings = arguments.digestMappings;
+	}
+
+	private struct function _getRedirectBindingSigAlgs() {
+		return _redirectBindingSigAlgs;
+	}
+	private void function _setRedirectBindingSigAlgs( required struct redirectBindingSigAlgs ) {
+		_redirectBindingSigAlgs = arguments.redirectBindingSigAlgs;
 	}
 
 }

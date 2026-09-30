@@ -10,6 +10,7 @@ component {
 	property name="samlSessionService"    inject="samlSessionService";
 	property name="samlMetadataGenerator" inject="samlProviderMetadataGenerator";
 	property name="debugger"              inject="saml2DebuggingService";
+	property name="redirectSigner"        inject="httpRedirectBindingSigner";
 
 	/**
 	 *
@@ -84,7 +85,7 @@ component {
 			} );
 		} else {
 			// REDIRECT BINDING, zip up xml to send in URL
-			var qs    = "samlRequest=" & deflateEncoder.encode( samlSpLogoutRequest );
+			var qs    = redirectSigner.buildSignedQueryString( samlXml=samlSpLogoutRequest, paramName="SAMLRequest" );
 			var delim = Find( redirectLocation, "?" ) ? "&" : "?";
 
 			setNextEvent( url=( redirectLocation & delim & qs ) );
@@ -138,7 +139,7 @@ component {
 			} );
 		} else {
 			// REDIRECT BINDING, zip up xml to send in URL
-			var qs    = "samlRequest=" & deflateEncoder.encode( logoutResponse );
+			var qs    = redirectSigner.buildSignedQueryString( samlXml=logoutResponse, paramName="SAMLResponse" );
 			var delim = Find( logoutEndpoint, "?" ) ? "&" : "?";
 
 			setNextEvent( url=( logoutEndpoint & delim & qs ) );
