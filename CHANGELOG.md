@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.0.21
+
+* Correct the approach to signature validation for incoming httpRedirect request bindings
+* Case sensitivy fix
+
 ## v6.0.20
 
 * Fixes for issues with later versions of java and default new signing algorithms causing unexpected results
