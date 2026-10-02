@@ -5,11 +5,11 @@ component {
 	property name="samlResponseBuilder"   inject="samlResponseBuilder";
 	property name="samlRequestBuilder"    inject="samlRequestBuilder";
 	property name="samlEntityPool"        inject="samlEntityPool";
-	property name="deflateEncoder"        inject="httpRedirectRequestDeflateEncoder";
 	property name="websiteLoginService"   inject="websiteLoginService";
 	property name="samlSessionService"    inject="samlSessionService";
 	property name="samlMetadataGenerator" inject="samlProviderMetadataGenerator";
 	property name="debugger"              inject="saml2DebuggingService";
+	property name="redirectSigner"        inject="httpRedirectBindingSigner";
 
 	/**
 	 *
@@ -84,7 +84,12 @@ component {
 			} );
 		} else {
 			// REDIRECT BINDING, zip up xml to send in URL
-			var qs    = "samlRequest=" & deflateEncoder.encode( samlSpLogoutRequest );
+			var qs = redirectSigner.buildSignedQueryString(
+				  samlXml           = samlSpLogoutRequest
+				, paramName         = "SAMLRequest"
+				, privateKey        = sessionDetail.issuer.private_key
+				, publicCertificate = sessionDetail.issuer.public_cert
+			);
 			var delim = Find( redirectLocation, "?" ) ? "&" : "?";
 
 			setNextEvent( url=( redirectLocation & delim & qs ) );
@@ -138,7 +143,12 @@ component {
 			} );
 		} else {
 			// REDIRECT BINDING, zip up xml to send in URL
-			var qs    = "samlRequest=" & deflateEncoder.encode( logoutResponse );
+			var qs = redirectSigner.buildSignedQueryString(
+				  samlXml           = logoutResponse
+				, paramName         = "SAMLResponse"
+				, privateKey        = spIssuer.consumerRecord.private_key
+				, publicCertificate = spIssuer.consumerRecord.public_cert
+			);
 			var delim = Find( logoutEndpoint, "?" ) ? "&" : "?";
 
 			setNextEvent( url=( logoutEndpoint & delim & qs ) );
