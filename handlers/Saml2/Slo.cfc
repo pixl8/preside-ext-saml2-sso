@@ -228,23 +228,7 @@ component {
 		debugInfo.relayState = samlRequest.relayState      ?: "";
 
 		if ( totallyBadRequest ) {
-			debugInfo.success = false;
-			debugger.log( argumentCollection=debugInfo );
-
-			event.setHTTPHeader( statusCode="400" );
-			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
-			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
-
-
-			rc.body = renderView(
-				  view          = "/page-types/samlSsoBadRequest/index"
-				, presideobject = "samlSsoBadRequest"
-				, id            = event.getCurrentPageId()
-				, args          = {}
-			);
-
-			event.setView( "/core/simpleBodyRenderer" );
-			return;
+			return _doBadRequest( argumentCollection=arguments, debugInfo=debugInfo );
 		}
 
 		// 2. Finer detail validation
@@ -331,25 +315,13 @@ component {
 		debugInfo.sp         = samlResponse.issuerEntity.consumerRecord.id ?: "";
 		debugInfo.samlXml    = samlResponse.samlXml ?: "";
 		debugInfo.relayState = samlResponse.relayState ?: "";
-		debugInfo.success    = !totallyBadRequest;
-
-		debugger.log( argumentCollection=debugInfo );
 
 		if ( totallyBadRequest ) {
-			event.setHTTPHeader( statusCode="400" );
-			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
-			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
-
-			rc.body = renderView(
-				  view          = "/page-types/samlSsoBadRequest/index"
-				, presideobject = "samlSsoBadRequest"
-				, id            = event.getCurrentPageId()
-				, args          = {}
-			);
-
-			event.setView( "/core/simpleBodyRenderer" );
-			return;
+			return _doBadRequest( argumentCollection=arguments, debugInfo=debugInfo );
 		}
+
+		debugInfo.success = true;
+		debugger.log( argumentCollection=debugInfo );
 
 		// 2. Remove the session that this logout request is a response to
 		samlSessionService.removeSessionById(
@@ -371,5 +343,31 @@ component {
 		}
 
 		return true;
+	}
+
+// HELPERS
+	private void function _doBadRequest( event, rc, prc, debugInfo={} ) {
+		arguments.debugInfo.success = false;
+		debugger.log( argumentCollection=arguments.debugInfo );
+
+
+		if ( isFeatureEnabled( "sitetree" ) ) {
+			event.setHTTPHeader( statusCode="400" );
+			event.setHTTPHeader( name="X-Robots-Tag", value="noindex" );
+			event.initializePresideSiteteePage( systemPage="samlSsoBadRequest" );
+			rc.body = renderView(
+				  view          = "/page-types/samlSsoBadRequest/index"
+				, presideobject = "samlSsoBadRequest"
+				, id            = event.getCurrentPageId()
+				, args          = {}
+			);
+
+			event.setView( "/core/simpleBodyRenderer" );
+
+			announceInterception( "postRenderSiteTreePage" );
+		} else {
+			event.renderData( data="Bad request", contentType="text/plain", statusCode=400 );
+		}
+
 	}
 }

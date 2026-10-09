@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.22
+
+* Compatability with latest preside and admin only applications
+
 ## v6.0.21
 
 * Correct the approach to signature validation for incoming httpRedirect request bindings
