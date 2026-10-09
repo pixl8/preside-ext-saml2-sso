@@ -46,7 +46,7 @@ component {
 
 	private void function _configureFeatures( settings ) {
 		settings.features.samlSsoProvider     = { enabled=true, siteTemplates=[ "*" ], widgets=[] };
-		settings.features.samlSsoProviderSlo  = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
+		settings.features.samlSsoProviderSlo  = { enabled=false, siteTemplates=[ "*" ], widgets=[], dependsOn="sitetree" };
 		settings.features.samlSsoConsumer     = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 		settings.features.saml2SSOUrlAsIssuer = { enabled=false, siteTemplates=[ "*" ], widgets=[] };
 	}
