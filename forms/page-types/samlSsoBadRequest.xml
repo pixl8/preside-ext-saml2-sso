@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<form>
+<form feature="sitetree">
     <tab id="main" sortorder="10">
         <fieldset id="main" sortorder="10">
             <field name="main_image" deleted="true" />
