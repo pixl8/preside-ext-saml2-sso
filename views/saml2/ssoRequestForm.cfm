@@ -51,7 +51,7 @@
 	</head>
 
 	<body>
-		<form id="samlform" action="#args.redirectLocation#" method="POST">
+		<form id="samlform" action="#EncodeForHTMLAttribute( args.redirectLocation )#" method="POST">
 			<cfif Len( Trim( args.samlRequest ) )>
 				<input type="hidden" name="SAMLRequest" value="#ToBase64( args.samlRequest )#" />
 			<cfelseif Len( Trim( args.samlResponse ) )>
@@ -59,13 +59,13 @@
 			</cfif>
 
 			<cfif not args.noRelayState>
-				<input type="hidden" name="RelayState" value="#args.samlRelayState#" />
+				<input type="hidden" name="RelayState" value="#EncodeForHTMLAttribute( args.samlRelayState )#" />
 			</cfif>
 
 			<div id="spinner"></div>
 			<p>
-				Please wait while you are redirected to <strong>#args.serviceName#</strong><br>
-				<span class="target-url">#args.redirectLocation#</span>
+				Please wait while you are redirected to <strong>#EncodeForHTML( args.serviceName )#</strong><br>
+				<span class="target-url">#EncodeForHTML( args.redirectLocation )#</span>
 			</p>
 		</form>
 
