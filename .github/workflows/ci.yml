@@ -70,7 +70,7 @@ jobs:
         run: |
           cd assets &&
           npm install &&
-          grunt &&
+          npx --no-install grunt &&
           rm -rf node_modules
 
       - name: Zip project
