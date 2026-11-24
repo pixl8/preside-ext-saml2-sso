@@ -1,8 +1,12 @@
 # Changelog
 
+## v6.0.24
+
+* Build fixes
+
 ## v6.0.23
 
-* [SAML-37](https://projects.pixl8.london/browse/SAML-37) - M1 SAML relay state is rendered unescaped
+* SAML relay state is rendered unescaped
 
 ## v6.0.22
 
