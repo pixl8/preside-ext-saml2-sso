@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.1.15
+
+* [SAML-37](https://projects.pixl8.london/browse/SAML-37) - M1 SAML relay state is rendered unescaped
+
 ## v5.1.11-14
 
 * Build fixes/improvements: hope to fix build issue
