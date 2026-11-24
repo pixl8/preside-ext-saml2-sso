@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.23
+
+* [SAML-37](https://projects.pixl8.london/browse/SAML-37) - M1 SAML relay state is rendered unescaped
+
 ## v6.0.22
 
 * Compatability with latest preside and admin only applications
